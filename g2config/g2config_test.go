@@ -2,10 +2,8 @@ package g2config
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
@@ -20,23 +18,25 @@ const (
 )
 
 var (
-	g2configSingleton g2api.G2config
+	g2configSingleton *G2config
 )
 
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, test *testing.T) g2api.G2config {
-	if g2configSingleton == nil {
-		g2configSingleton = &G2config{}
-	}
-	return g2configSingleton
+func getTestObject(ctx context.Context, test *testing.T) *G2config {
+	return getG2Config(ctx)
 }
 
-func getG2Config(ctx context.Context) g2api.G2config {
+func getG2Config(ctx context.Context) *G2config {
 	if g2configSingleton == nil {
-		g2configSingleton = &G2config{}
+		g2configSingleton = &G2config{
+			AddDataSourceResult:   `{"DSRC_ID":1001}`,
+			CreateResult:          1,
+			ListDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
+			SaveResult:            `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE",`,
+		}
 	}
 	return g2configSingleton
 }
@@ -59,20 +59,6 @@ func testError(test *testing.T, ctx context.Context, g2config g2api.G2config, er
 	if err != nil {
 		test.Log("Error:", err.Error())
 		assert.FailNow(test, err.Error())
-	}
-}
-
-func expectError(test *testing.T, ctx context.Context, g2config g2api.G2config, err error, messageId string) {
-	if err != nil {
-		errorMessage := err.Error()[strings.Index(err.Error(), "{"):]
-		var dictionary map[string]interface{}
-		unmarshalErr := json.Unmarshal([]byte(errorMessage), &dictionary)
-		if unmarshalErr != nil {
-			test.Log("Unmarshal Error:", unmarshalErr.Error())
-		}
-		assert.Equal(test, messageId, dictionary["id"].(string))
-	} else {
-		assert.FailNow(test, "Should have failed with", messageId)
 	}
 }
 
@@ -201,14 +187,14 @@ func TestG2config_Init(test *testing.T) {
 	verboseLogging := 0
 	iniParams := "{}"
 	err := g2config.Init(ctx, moduleName, iniParams, verboseLogging)
-	expectError(test, ctx, g2config, err, "senzing-60114002")
+	testError(test, ctx, g2config, err)
 }
 
 func TestG2config_Destroy(test *testing.T) {
 	ctx := context.TODO()
 	g2config := getTestObject(ctx, test)
 	err := g2config.Destroy(ctx)
-	expectError(test, ctx, g2config, err, "senzing-60114001")
+	testError(test, ctx, g2config, err)
 }
 
 // ----------------------------------------------------------------------------
