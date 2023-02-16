@@ -75,11 +75,8 @@ build-linux:
 .PHONY: test
 test:
 #	@go test -v -p 1 ./...
-	@go test -v ./g2config
-
-
-
-
+#	@go test -v ./g2config
+	@go test -v ./g2configmgr
 
 # -----------------------------------------------------------------------------
 # Run

@@ -224,7 +224,7 @@ func (client *G2config) Destroy(ctx context.Context) error {
 /*
 The GetSdkId method returns the identifier of this particular Software Development Kit (SDK).
 It is handy when working with multiple implementations of the same G2configInterface.
-For this implementation, "grpc" is returned.
+For this implementation, "mock" is returned.
 
 Input
   - ctx: A context to control lifecycle.
