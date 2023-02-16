@@ -74,48 +74,12 @@ build-linux:
 
 .PHONY: test
 test:
-	@go test -v -p 1 ./...
-
-# -----------------------------------------------------------------------------
-# docker-build
-#  - https://docs.docker.com/engine/reference/commandline/build/
-# -----------------------------------------------------------------------------
-
-.PHONY: docker-build
-docker-build:
-	@docker build \
-		--build-arg BUILD_ITERATION=$(BUILD_ITERATION) \
-		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
-		--build-arg GO_PACKAGE_NAME=$(GO_PACKAGE_NAME) \
-		--build-arg PROGRAM_NAME=$(PROGRAM_NAME) \
-		--file Dockerfile \
-		--tag $(DOCKER_IMAGE_NAME) \
-		--tag $(DOCKER_IMAGE_NAME):$(BUILD_VERSION) \
-		.
+#	@go test -v -p 1 ./...
+	@go test -v ./g2config
 
 
-.PHONY: docker-build-package
-docker-build-package:
-	@docker build \
-		--build-arg BUILD_ITERATION=$(BUILD_ITERATION) \
-		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
-		--build-arg GO_PACKAGE_NAME=$(GO_PACKAGE_NAME) \
-		--build-arg PROGRAM_NAME=$(PROGRAM_NAME) \
-		--no-cache \
-		--file package.Dockerfile \
-		--tag $(DOCKER_BUILD_IMAGE_NAME) \
-		.
 
-# -----------------------------------------------------------------------------
-# Package
-# -----------------------------------------------------------------------------
 
-.PHONY: package
-package: docker-build-package
-	@mkdir -p $(TARGET_DIRECTORY) || true
-	@CONTAINER_ID=$$(docker create $(DOCKER_BUILD_IMAGE_NAME)); \
-	docker cp $$CONTAINER_ID:/output/. $(TARGET_DIRECTORY)/; \
-	docker rm -v $$CONTAINER_ID
 
 # -----------------------------------------------------------------------------
 # Run
