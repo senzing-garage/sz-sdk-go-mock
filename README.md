@@ -22,7 +22,7 @@ Senzing C SDK APIs.
 The Senzing `g2-sdk-go-mock` packages enable Go programs to simulate calling Senzing library functions.
 The `g2-sdk-go-mock` implementation of the
 [g2-sdk-go](https://github.com/Senzing/g2-sdk-go)
-interface does not require the Senzing libraries to be installed.
+interface does not require the Senzing C libraries to be installed.
 
 Other implementations of the
 [g2-sdk-go](https://github.com/Senzing/g2-sdk-go)
