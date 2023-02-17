@@ -931,9 +931,9 @@ func (client *G2engine) FindPathByRecordID(ctx context.Context, dataSourceCode1 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(50, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, client.FindNetworkByRecordIDResult, err, time.Since(entryTime))
+		defer client.traceExit(50, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, client.FindPathByRecordIDResult, err, time.Since(entryTime))
 	}
-	return client.FindNetworkByRecordIDResult, err
+	return client.FindPathByRecordIDResult, err
 }
 
 /*
