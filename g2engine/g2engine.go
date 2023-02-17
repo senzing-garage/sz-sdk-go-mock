@@ -13,7 +13,6 @@ import (
 	"time"
 
 	g2engineapi "github.com/senzing/g2-sdk-go/g2engine"
-	g2pb "github.com/senzing/g2-sdk-proto/go/g2engine"
 	"github.com/senzing/go-logging/logger"
 	"github.com/senzing/go-logging/messagelogger"
 	"github.com/senzing/go-observing/observer"
@@ -25,73 +24,73 @@ import (
 // ----------------------------------------------------------------------------
 
 type G2engine struct {
-	isTrace                                      bool
-	logger                                       messagelogger.MessageLoggerInterface
-	observers                                    subject.Subject
-	AddRecordWithInfoResult                      string
-	AddRecordWithInfoWithReturnedRecordIDResult1 string
-	AddRecordWithInfoWithReturnedRecordIDResult2 string
-	AddRecordWithReturnedRecordIDResult          string
-	CheckRecordResult                            string
-	CountRedoRecordsResult                       int64
-	DeleteRecordWithInfoResult                   string
-	ExportConfigResult                           string
-	ExportConfigAndConfigIDResult1               string
-	ExportConfigAndConfigIDResult2               int64
-	ExportCSVEntityReportResult                  uintptr
-	ExportJSONEntityReportResult                 uintptr
-	FetchNextResult                              string
-	FindInterestingEntitiesByEntityIDResult      string
-	FindInterestingEntitiesByRecordIDResult      string
-	FindNetworkByEntityID_V2Result               string
-	FindNetworkByEntityIDResult                  string
-	FindNetworkByRecordID_V2Result               string
-	FindNetworkByRecordIDResult                  string
-	FindPathByEntityID_V2Result                  string
-	FindPathByEntityIDResult                     string
-	FindPathByRecordID_V2Result                  string
-	FindPathByRecordIDResult                     string
-	FindPathExcludingByEntityID_V2Result         string
-	FindPathExcludingByEntityIDResult            string
-	FindPathExcludingByRecordID_V2Result         string
-	FindPathExcludingByRecordIDResult            string
-	FindPathIncludingSourceByEntityID_V2Result   string
-	FindPathIncludingSourceByEntityIDResult      string
-	FindPathIncludingSourceByRecordID_V2Result   string
-	FindPathIncludingSourceByRecordIDResult      string
-	GetActiveConfigIDResult                      int64
-	GetEntityByEntityID_V2Result                 string
-	GetEntityByEntityIDResult                    string
-	GetEntityByRecordID_V2Result                 string
-	GetEntityByRecordIDResult                    string
-	GetRecord_V2Result                           string
-	GetRecordResult                              string
-	GetRedoRecordResult                          string
-	GetRepositoryLastModifiedTimeResult          int64
-	GetVirtualEntityByRecordID_V2Result          string
-	GetVirtualEntityByRecordIDResult             string
-	HowEntityByEntityID_V2Result                 string
-	HowEntityByEntityIDResult                    string
-	ProcessRedoRecordResult                      string
-	ProcessRedoRecordWithInfoResult1             string
-	ProcessRedoRecordWithInfoResult2             string
-	ProcessWithInfoResult                        string
-	ProcessWithResponseResult                    string
-	ProcessWithResponseResizeResult              string
-	ReevaluateEntityWithInfoResult               string
-	ReevaluateRecordWithInfoResult               string
-	ReplaceRecordWithInfoResult                  string
-	SearchByAttributes_V2Result                  string
-	SearchByAttributesResult                     string
-	StatsResult                                  string
-	WhyEntities_V2Result                         string
-	WhyEntitiesResult                            string
-	WhyEntityByEntityID_V2Result                 string
-	WhyEntityByEntityIDResult                    string
-	WhyEntityByRecordID_V2Result                 string
-	WhyEntityByRecordIDResult                    string
-	WhyRecords_V2Result                          string
-	WhyRecordsResult                             string
+	isTrace                                                bool
+	logger                                                 messagelogger.MessageLoggerInterface
+	observers                                              subject.Subject
+	AddRecordWithInfoResult                                string
+	AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo string
+	AddRecordWithInfoWithReturnedRecordIDResultRecordID    string
+	AddRecordWithReturnedRecordIDResult                    string
+	CheckRecordResult                                      string
+	CountRedoRecordsResult                                 int64
+	DeleteRecordWithInfoResult                             string
+	ExportConfigResult                                     string
+	ExportConfigAndConfigIDResultConfig                    string
+	ExportConfigAndConfigIDResultConfigID                  int64
+	ExportCSVEntityReportResult                            uintptr
+	ExportJSONEntityReportResult                           uintptr
+	FetchNextResult                                        string
+	FindInterestingEntitiesByEntityIDResult                string
+	FindInterestingEntitiesByRecordIDResult                string
+	FindNetworkByEntityID_V2Result                         string
+	FindNetworkByEntityIDResult                            string
+	FindNetworkByRecordID_V2Result                         string
+	FindNetworkByRecordIDResult                            string
+	FindPathByEntityID_V2Result                            string
+	FindPathByEntityIDResult                               string
+	FindPathByRecordID_V2Result                            string
+	FindPathByRecordIDResult                               string
+	FindPathExcludingByEntityID_V2Result                   string
+	FindPathExcludingByEntityIDResult                      string
+	FindPathExcludingByRecordID_V2Result                   string
+	FindPathExcludingByRecordIDResult                      string
+	FindPathIncludingSourceByEntityID_V2Result             string
+	FindPathIncludingSourceByEntityIDResult                string
+	FindPathIncludingSourceByRecordID_V2Result             string
+	FindPathIncludingSourceByRecordIDResult                string
+	GetActiveConfigIDResult                                int64
+	GetEntityByEntityID_V2Result                           string
+	GetEntityByEntityIDResult                              string
+	GetEntityByRecordID_V2Result                           string
+	GetEntityByRecordIDResult                              string
+	GetRecord_V2Result                                     string
+	GetRecordResult                                        string
+	GetRedoRecordResult                                    string
+	GetRepositoryLastModifiedTimeResult                    int64
+	GetVirtualEntityByRecordID_V2Result                    string
+	GetVirtualEntityByRecordIDResult                       string
+	HowEntityByEntityID_V2Result                           string
+	HowEntityByEntityIDResult                              string
+	ProcessRedoRecordResult                                string
+	ProcessRedoRecordWithInfoResult                        string
+	ProcessRedoRecordWithInfoResultWithInfo                string
+	ProcessWithInfoResult                                  string
+	ProcessWithResponseResult                              string
+	ProcessWithResponseResizeResult                        string
+	ReevaluateEntityWithInfoResult                         string
+	ReevaluateRecordWithInfoResult                         string
+	ReplaceRecordWithInfoResult                            string
+	SearchByAttributes_V2Result                            string
+	SearchByAttributesResult                               string
+	StatsResult                                            string
+	WhyEntities_V2Result                                   string
+	WhyEntitiesResult                                      string
+	WhyEntityByEntityID_V2Result                           string
+	WhyEntityByEntityIDResult                              string
+	WhyEntityByRecordID_V2Result                           string
+	WhyEntityByRecordIDResult                              string
+	WhyRecords_V2Result                                    string
+	WhyRecordsResult                                       string
 }
 
 // ----------------------------------------------------------------------------
@@ -153,13 +152,6 @@ func (client *G2engine) AddRecord(ctx context.Context, dataSourceCode string, re
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.AddRecordRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-	}
-	_, err := client.GrpcClient.AddRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -197,14 +189,6 @@ func (client *G2engine) AddRecordWithInfo(ctx context.Context, dataSourceCode st
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.AddRecordWithInfoRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.AddRecordWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -216,9 +200,9 @@ func (client *G2engine) AddRecordWithInfo(ctx context.Context, dataSourceCode st
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(4, dataSourceCode, recordID, jsonData, loadID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(4, dataSourceCode, recordID, jsonData, loadID, flags, client.AddRecordWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.AddRecordWithInfoResult, err
 }
 
 /*
@@ -243,27 +227,20 @@ func (client *G2engine) AddRecordWithInfoWithReturnedRecordID(ctx context.Contex
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.AddRecordWithInfoWithReturnedRecordIDRequest{
-		DataSourceCode: dataSourceCode,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.AddRecordWithInfoWithReturnedRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"dataSourceCode": dataSourceCode,
-				"recordID":       response.GetRecordID(),
+				"recordID":       client.AddRecordWithInfoWithReturnedRecordIDResultRecordID,
 				"loadID":         loadID,
 			}
 			client.notify(ctx, 8003, err, details)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(6, dataSourceCode, jsonData, loadID, flags, response.GetWithInfo(), response.GetRecordID(), err, time.Since(entryTime))
+		defer client.traceExit(6, dataSourceCode, jsonData, loadID, flags, client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err, time.Since(entryTime))
 	}
-	return response.GetWithInfo(), response.GetRecordID(), err
+	return client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err
 }
 
 /*
@@ -285,26 +262,20 @@ func (client *G2engine) AddRecordWithReturnedRecordID(ctx context.Context, dataS
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.AddRecordWithReturnedRecordIDRequest{
-		DataSourceCode: dataSourceCode,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-	}
-	response, err := client.GrpcClient.AddRecordWithReturnedRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"dataSourceCode": dataSourceCode,
-				"recordID":       response.GetResult(),
+				"recordID":       client.AddRecordWithReturnedRecordIDResult,
 				"loadID":         loadID,
 			}
 			client.notify(ctx, 8004, err, details)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(8, dataSourceCode, jsonData, loadID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(8, dataSourceCode, jsonData, loadID, client.AddRecordWithReturnedRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.AddRecordWithReturnedRecordIDResult, err
 }
 
 /*
@@ -326,11 +297,6 @@ func (client *G2engine) CheckRecord(ctx context.Context, record string, recordQu
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.CheckRecordRequest{
-		Record:          record,
-		RecordQueryList: recordQueryList,
-	}
-	response, err := client.GrpcClient.CheckRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -338,9 +304,9 @@ func (client *G2engine) CheckRecord(ctx context.Context, record string, recordQu
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(10, record, recordQueryList, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(10, record, recordQueryList, client.CheckRecordResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.CheckRecordResult, err
 }
 
 /*
@@ -358,10 +324,6 @@ func (client *G2engine) CloseExport(ctx context.Context, responseHandle uintptr)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.CloseExportRequest{
-		ResponseHandle: int64(responseHandle),
-	}
-	_, err := client.GrpcClient.CloseExport(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -389,8 +351,6 @@ func (client *G2engine) CountRedoRecords(ctx context.Context) (int64, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.CountRedoRecordsRequest{}
-	response, err := client.GrpcClient.CountRedoRecords(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -398,9 +358,9 @@ func (client *G2engine) CountRedoRecords(ctx context.Context) (int64, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(16, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(16, client.CountRedoRecordsResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.CountRedoRecordsResult, err
 }
 
 /*
@@ -419,12 +379,6 @@ func (client *G2engine) DeleteRecord(ctx context.Context, dataSourceCode string,
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.DeleteRecordRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		LoadID:         loadID,
-	}
-	_, err := client.GrpcClient.DeleteRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -462,13 +416,6 @@ func (client *G2engine) DeleteRecordWithInfo(ctx context.Context, dataSourceCode
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.DeleteRecordWithInfoRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		LoadID:         loadID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.DeleteRecordWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -480,9 +427,9 @@ func (client *G2engine) DeleteRecordWithInfo(ctx context.Context, dataSourceCode
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(20, dataSourceCode, recordID, loadID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(20, dataSourceCode, recordID, loadID, flags, client.DeleteRecordWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.DeleteRecordWithInfoResult, err
 }
 
 /*
@@ -498,8 +445,6 @@ func (client *G2engine) Destroy(ctx context.Context) error {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.DestroyRequest{}
-	_, err := client.GrpcClient.Destroy(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -527,8 +472,6 @@ func (client *G2engine) ExportConfig(ctx context.Context) (string, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ExportConfigRequest{}
-	response, err := client.GrpcClient.ExportConfig(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -536,9 +479,9 @@ func (client *G2engine) ExportConfig(ctx context.Context) (string, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(26, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(26, client.ExportConfigResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ExportConfigResult, err
 }
 
 /*
@@ -557,20 +500,18 @@ func (client *G2engine) ExportConfigAndConfigID(ctx context.Context) (string, in
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ExportConfigAndConfigIDRequest{}
-	response, err := client.GrpcClient.ExportConfigAndConfigID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"configID": strconv.FormatInt(response.GetConfigID(), 10),
+				"configID": strconv.FormatInt(client.ExportConfigAndConfigIDResultConfigID, 10),
 			}
 			client.notify(ctx, 8012, err, details)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(24, response.GetConfig(), int64(response.GetConfigID()), err, time.Since(entryTime))
+		defer client.traceExit(24, client.ExportConfigAndConfigIDResultConfig, client.ExportConfigAndConfigIDResultConfigID, err, time.Since(entryTime))
 	}
-	return response.GetConfig(), response.GetConfigID(), err
+	return client.ExportConfigAndConfigIDResultConfig, client.ExportConfigAndConfigIDResultConfigID, err
 }
 
 /*
@@ -592,11 +533,6 @@ func (client *G2engine) ExportCSVEntityReport(ctx context.Context, csvColumnList
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ExportCSVEntityReportRequest{
-		CsvColumnList: csvColumnList,
-		Flags:         flags,
-	}
-	response, err := client.GrpcClient.ExportCSVEntityReport(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -604,9 +540,9 @@ func (client *G2engine) ExportCSVEntityReport(ctx context.Context, csvColumnList
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(28, csvColumnList, flags, (uintptr)(response.GetResult()), err, time.Since(entryTime))
+		defer client.traceExit(28, csvColumnList, flags, client.ExportCSVEntityReportResult, err, time.Since(entryTime))
 	}
-	return uintptr(response.GetResult()), err
+	return client.ExportCSVEntityReportResult, err
 }
 
 /*
@@ -627,10 +563,6 @@ func (client *G2engine) ExportJSONEntityReport(ctx context.Context, flags int64)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ExportJSONEntityReportRequest{
-		Flags: flags,
-	}
-	response, err := client.GrpcClient.ExportJSONEntityReport(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -638,9 +570,9 @@ func (client *G2engine) ExportJSONEntityReport(ctx context.Context, flags int64)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(30, flags, (uintptr)(response.GetResult()), err, time.Since(entryTime))
+		defer client.traceExit(30, flags, client.ExportJSONEntityReportResult, err, time.Since(entryTime))
 	}
-	return uintptr(response.GetResult()), err
+	return client.ExportJSONEntityReportResult, err
 }
 
 /*
@@ -661,10 +593,6 @@ func (client *G2engine) FetchNext(ctx context.Context, responseHandle uintptr) (
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FetchNextRequest{
-		ResponseHandle: int64(responseHandle),
-	}
-	response, err := client.GrpcClient.FetchNext(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -672,9 +600,9 @@ func (client *G2engine) FetchNext(ctx context.Context, responseHandle uintptr) (
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(32, responseHandle, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(32, responseHandle, client.FetchNextResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FetchNextResult, err
 }
 
 /*
@@ -695,11 +623,6 @@ func (client *G2engine) FindInterestingEntitiesByEntityID(ctx context.Context, e
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindInterestingEntitiesByEntityIDRequest{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.FindInterestingEntitiesByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -709,9 +632,9 @@ func (client *G2engine) FindInterestingEntitiesByEntityID(ctx context.Context, e
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(34, entityID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(34, entityID, flags, client.FindInterestingEntitiesByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindInterestingEntitiesByEntityIDResult, err
 }
 
 /*
@@ -733,12 +656,6 @@ func (client *G2engine) FindInterestingEntitiesByRecordID(ctx context.Context, d
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindInterestingEntitiesByRecordIDRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.FindInterestingEntitiesByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -749,9 +666,9 @@ func (client *G2engine) FindInterestingEntitiesByRecordID(ctx context.Context, d
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(36, dataSourceCode, recordID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(36, dataSourceCode, recordID, flags, client.FindInterestingEntitiesByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindInterestingEntitiesByRecordIDResult, err
 }
 
 /*
@@ -777,13 +694,6 @@ func (client *G2engine) FindNetworkByEntityID(ctx context.Context, entityList st
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindNetworkByEntityIDRequest{
-		EntityList:     entityList,
-		MaxDegree:      int32(maxDegree),
-		BuildOutDegree: int32(buildOutDegree),
-		MaxEntities:    int32(maxEntities),
-	}
-	response, err := client.GrpcClient.FindNetworkByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -793,9 +703,9 @@ func (client *G2engine) FindNetworkByEntityID(ctx context.Context, entityList st
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(38, entityList, maxDegree, buildOutDegree, maxDegree, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(38, entityList, maxDegree, buildOutDegree, maxDegree, client.FindNetworkByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindNetworkByEntityIDResult, err
 }
 
 /*
@@ -822,14 +732,6 @@ func (client *G2engine) FindNetworkByEntityID_V2(ctx context.Context, entityList
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindNetworkByEntityID_V2Request{
-		EntityList:     entityList,
-		MaxDegree:      int32(maxDegree),
-		BuildOutDegree: int32(buildOutDegree),
-		MaxEntities:    int32(maxEntities),
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.FindNetworkByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -839,9 +741,9 @@ func (client *G2engine) FindNetworkByEntityID_V2(ctx context.Context, entityList
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(40, entityList, maxDegree, buildOutDegree, maxDegree, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(40, entityList, maxDegree, buildOutDegree, maxDegree, flags, client.FindNetworkByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindNetworkByEntityID_V2Result, err
 }
 
 /*
@@ -867,13 +769,6 @@ func (client *G2engine) FindNetworkByRecordID(ctx context.Context, recordList st
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindNetworkByRecordIDRequest{
-		RecordList:     recordList,
-		MaxDegree:      int32(maxDegree),
-		BuildOutDegree: int32(buildOutDegree),
-		MaxEntities:    int32(maxEntities),
-	}
-	response, err := client.GrpcClient.FindNetworkByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -883,9 +778,9 @@ func (client *G2engine) FindNetworkByRecordID(ctx context.Context, recordList st
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(42, recordList, maxDegree, buildOutDegree, maxDegree, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(42, recordList, maxDegree, buildOutDegree, maxDegree, client.FindNetworkByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindNetworkByRecordIDResult, err
 }
 
 /*
@@ -912,14 +807,6 @@ func (client *G2engine) FindNetworkByRecordID_V2(ctx context.Context, recordList
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindNetworkByRecordID_V2Request{
-		RecordList:     recordList,
-		MaxDegree:      int32(maxDegree),
-		BuildOutDegree: int32(buildOutDegree),
-		MaxEntities:    int32(maxEntities),
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.FindNetworkByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -929,9 +816,9 @@ func (client *G2engine) FindNetworkByRecordID_V2(ctx context.Context, recordList
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(44, recordList, maxDegree, buildOutDegree, maxDegree, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(44, recordList, maxDegree, buildOutDegree, maxDegree, flags, client.FindNetworkByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindNetworkByRecordID_V2Result, err
 }
 
 /*
@@ -955,12 +842,6 @@ func (client *G2engine) FindPathByEntityID(ctx context.Context, entityID1 int64,
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathByEntityIDRequest{
-		EntityID1: entityID1,
-		EntityID2: entityID2,
-		MaxDegree: int32(maxDegree),
-	}
-	response, err := client.GrpcClient.FindPathByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -971,9 +852,9 @@ func (client *G2engine) FindPathByEntityID(ctx context.Context, entityID1 int64,
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(46, entityID1, entityID2, maxDegree, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(46, entityID1, entityID2, maxDegree, client.FindPathByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathByEntityIDResult, err
 }
 
 /*
@@ -998,13 +879,6 @@ func (client *G2engine) FindPathByEntityID_V2(ctx context.Context, entityID1 int
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathByEntityID_V2Request{
-		EntityID1: entityID1,
-		EntityID2: entityID2,
-		MaxDegree: int32(maxDegree),
-		Flags:     flags,
-	}
-	response, err := client.GrpcClient.FindPathByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1015,9 +889,9 @@ func (client *G2engine) FindPathByEntityID_V2(ctx context.Context, entityID1 int
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(48, entityID1, entityID2, maxDegree, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(48, entityID1, entityID2, maxDegree, flags, client.FindPathByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathByEntityID_V2Result, err
 }
 
 /*
@@ -1045,14 +919,6 @@ func (client *G2engine) FindPathByRecordID(ctx context.Context, dataSourceCode1 
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathByRecordIDRequest{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-	}
-	response, err := client.GrpcClient.FindPathByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1065,9 +931,9 @@ func (client *G2engine) FindPathByRecordID(ctx context.Context, dataSourceCode1 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(50, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(50, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, client.FindNetworkByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindNetworkByRecordIDResult, err
 }
 
 /*
@@ -1095,15 +961,6 @@ func (client *G2engine) FindPathByRecordID_V2(ctx context.Context, dataSourceCod
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathByRecordID_V2Request{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-		Flags:           flags,
-	}
-	response, err := client.GrpcClient.FindPathByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1116,9 +973,9 @@ func (client *G2engine) FindPathByRecordID_V2(ctx context.Context, dataSourceCod
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(52, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(52, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, flags, client.FindPathByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathByRecordID_V2Result, err
 }
 
 /*
@@ -1144,13 +1001,6 @@ func (client *G2engine) FindPathExcludingByEntityID(ctx context.Context, entityI
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathExcludingByEntityIDRequest{
-		EntityID1:        entityID1,
-		EntityID2:        entityID2,
-		MaxDegree:        int32(maxDegree),
-		ExcludedEntities: excludedEntities,
-	}
-	response, err := client.GrpcClient.FindPathExcludingByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1161,9 +1011,9 @@ func (client *G2engine) FindPathExcludingByEntityID(ctx context.Context, entityI
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(54, entityID1, entityID2, maxDegree, excludedEntities, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(54, entityID1, entityID2, maxDegree, excludedEntities, client.FindPathExcludingByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathExcludingByEntityIDResult, err
 }
 
 /*
@@ -1195,14 +1045,6 @@ func (client *G2engine) FindPathExcludingByEntityID_V2(ctx context.Context, enti
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathExcludingByEntityID_V2Request{
-		EntityID1:        entityID1,
-		EntityID2:        entityID2,
-		MaxDegree:        int32(maxDegree),
-		ExcludedEntities: excludedEntities,
-		Flags:            flags,
-	}
-	response, err := client.GrpcClient.FindPathExcludingByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1213,9 +1055,9 @@ func (client *G2engine) FindPathExcludingByEntityID_V2(ctx context.Context, enti
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(56, entityID1, entityID2, maxDegree, excludedEntities, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(56, entityID1, entityID2, maxDegree, excludedEntities, flags, client.FindPathExcludingByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathExcludingByEntityID_V2Result, err
 }
 
 /*
@@ -1243,14 +1085,6 @@ func (client *G2engine) FindPathExcludingByRecordID(ctx context.Context, dataSou
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathExcludingByRecordIDRequest{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-	}
-	response, err := client.GrpcClient.FindPathExcludingByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1263,9 +1097,9 @@ func (client *G2engine) FindPathExcludingByRecordID(ctx context.Context, dataSou
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(58, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(58, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, client.FindPathExcludingByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathExcludingByRecordIDResult, err
 }
 
 /*
@@ -1299,15 +1133,6 @@ func (client *G2engine) FindPathExcludingByRecordID_V2(ctx context.Context, data
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathExcludingByRecordID_V2Request{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-		Flags:           flags,
-	}
-	response, err := client.GrpcClient.FindPathExcludingByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1320,9 +1145,9 @@ func (client *G2engine) FindPathExcludingByRecordID_V2(ctx context.Context, data
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(60, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(60, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, flags, client.FindPathExcludingByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathExcludingByRecordID_V2Result, err
 }
 
 /*
@@ -1350,14 +1175,6 @@ func (client *G2engine) FindPathIncludingSourceByEntityID(ctx context.Context, e
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathIncludingSourceByEntityIDRequest{
-		EntityID1:        entityID1,
-		EntityID2:        entityID2,
-		MaxDegree:        int32(maxDegree),
-		ExcludedEntities: excludedEntities,
-		RequiredDsrcs:    requiredDsrcs,
-	}
-	response, err := client.GrpcClient.FindPathIncludingSourceByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1368,9 +1185,9 @@ func (client *G2engine) FindPathIncludingSourceByEntityID(ctx context.Context, e
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(62, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(62, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, client.FindPathIncludingSourceByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathIncludingSourceByEntityIDResult, err
 }
 
 /*
@@ -1399,15 +1216,6 @@ func (client *G2engine) FindPathIncludingSourceByEntityID_V2(ctx context.Context
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathIncludingSourceByEntityID_V2Request{
-		EntityID1:        entityID1,
-		EntityID2:        entityID2,
-		MaxDegree:        int32(maxDegree),
-		ExcludedEntities: excludedEntities,
-		RequiredDsrcs:    requiredDsrcs,
-		Flags:            flags,
-	}
-	response, err := client.GrpcClient.FindPathIncludingSourceByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1418,9 +1226,9 @@ func (client *G2engine) FindPathIncludingSourceByEntityID_V2(ctx context.Context
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(64, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(64, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, flags, client.FindPathIncludingSourceByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathIncludingSourceByEntityID_V2Result, err
 }
 
 /*
@@ -1450,16 +1258,6 @@ func (client *G2engine) FindPathIncludingSourceByRecordID(ctx context.Context, d
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathIncludingSourceByRecordIDRequest{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-		ExcludedRecords: excludedRecords,
-		RequiredDsrcs:   requiredDsrcs,
-	}
-	response, err := client.GrpcClient.FindPathIncludingSourceByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1472,9 +1270,9 @@ func (client *G2engine) FindPathIncludingSourceByRecordID(ctx context.Context, d
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(66, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(66, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, client.FindPathIncludingSourceByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathIncludingSourceByRecordIDResult, err
 }
 
 /*
@@ -1505,17 +1303,6 @@ func (client *G2engine) FindPathIncludingSourceByRecordID_V2(ctx context.Context
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.FindPathIncludingSourceByRecordID_V2Request{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		MaxDegree:       int32(maxDegree),
-		ExcludedRecords: excludedRecords,
-		RequiredDsrcs:   requiredDsrcs,
-		Flags:           flags,
-	}
-	response, err := client.GrpcClient.FindPathIncludingSourceByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1528,9 +1315,9 @@ func (client *G2engine) FindPathIncludingSourceByRecordID_V2(ctx context.Context
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(68, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(68, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, flags, client.FindPathIncludingSourceByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.FindPathIncludingSourceByRecordID_V2Result, err
 }
 
 /*
@@ -1548,8 +1335,6 @@ func (client *G2engine) GetActiveConfigID(ctx context.Context) (int64, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetActiveConfigIDRequest{}
-	response, err := client.GrpcClient.GetActiveConfigID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -1557,9 +1342,9 @@ func (client *G2engine) GetActiveConfigID(ctx context.Context) (int64, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(70, int64(response.GetResult()), err, time.Since(entryTime))
+		defer client.traceExit(70, client.GetActiveConfigIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetActiveConfigIDResult, err
 }
 
 /*
@@ -1581,10 +1366,6 @@ func (client *G2engine) GetEntityByEntityID(ctx context.Context, entityID int64)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetEntityByEntityIDRequest{
-		EntityID: entityID,
-	}
-	response, err := client.GrpcClient.GetEntityByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1594,9 +1375,9 @@ func (client *G2engine) GetEntityByEntityID(ctx context.Context, entityID int64)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(72, entityID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(72, entityID, client.GetEntityByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetEntityByEntityIDResult, err
 }
 
 /*
@@ -1618,11 +1399,6 @@ func (client *G2engine) GetEntityByEntityID_V2(ctx context.Context, entityID int
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetEntityByEntityID_V2Request{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.GetEntityByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1632,9 +1408,9 @@ func (client *G2engine) GetEntityByEntityID_V2(ctx context.Context, entityID int
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(74, entityID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(74, entityID, flags, client.GetEntityByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetEntityByEntityID_V2Result, err
 }
 
 /*
@@ -1656,11 +1432,6 @@ func (client *G2engine) GetEntityByRecordID(ctx context.Context, dataSourceCode 
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetEntityByRecordIDRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-	}
-	response, err := client.GrpcClient.GetEntityByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1671,9 +1442,9 @@ func (client *G2engine) GetEntityByRecordID(ctx context.Context, dataSourceCode 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(76, dataSourceCode, recordID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(76, dataSourceCode, recordID, client.GetEntityByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetEntityByRecordIDResult, err
 }
 
 /*
@@ -1696,12 +1467,6 @@ func (client *G2engine) GetEntityByRecordID_V2(ctx context.Context, dataSourceCo
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetEntityByRecordID_V2Request{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.GetEntityByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1712,9 +1477,9 @@ func (client *G2engine) GetEntityByRecordID_V2(ctx context.Context, dataSourceCo
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(78, dataSourceCode, recordID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(78, dataSourceCode, recordID, flags, client.GetEntityByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetEntityByRecordID_V2Result, err
 }
 
 /*
@@ -1736,11 +1501,6 @@ func (client *G2engine) GetRecord(ctx context.Context, dataSourceCode string, re
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetRecordRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-	}
-	response, err := client.GrpcClient.GetRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1751,9 +1511,9 @@ func (client *G2engine) GetRecord(ctx context.Context, dataSourceCode string, re
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(84, dataSourceCode, recordID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(84, dataSourceCode, recordID, client.GetRecordResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetRecordResult, err
 }
 
 /*
@@ -1776,12 +1536,6 @@ func (client *G2engine) GetRecord_V2(ctx context.Context, dataSourceCode string,
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetRecord_V2Request{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.GetRecord_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1792,9 +1546,9 @@ func (client *G2engine) GetRecord_V2(ctx context.Context, dataSourceCode string,
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(86, dataSourceCode, recordID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(86, dataSourceCode, recordID, flags, client.GetRecord_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetRecord_V2Result, err
 }
 
 /*
@@ -1814,8 +1568,6 @@ func (client *G2engine) GetRedoRecord(ctx context.Context) (string, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetRedoRecordRequest{}
-	response, err := client.GrpcClient.GetRedoRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -1823,9 +1575,9 @@ func (client *G2engine) GetRedoRecord(ctx context.Context) (string, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(88, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(88, client.GetRedoRecordResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetRedoRecordResult, err
 }
 
 /*
@@ -1844,8 +1596,6 @@ func (client *G2engine) GetRepositoryLastModifiedTime(ctx context.Context) (int6
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetRepositoryLastModifiedTimeRequest{}
-	response, err := client.GrpcClient.GetRepositoryLastModifiedTime(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -1853,9 +1603,9 @@ func (client *G2engine) GetRepositoryLastModifiedTime(ctx context.Context) (int6
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(90, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(90, client.GetRepositoryLastModifiedTimeResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetRepositoryLastModifiedTimeResult, err
 }
 
 /*
@@ -1902,10 +1652,6 @@ func (client *G2engine) GetVirtualEntityByRecordID(ctx context.Context, recordLi
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetVirtualEntityByRecordIDRequest{
-		RecordList: recordList,
-	}
-	response, err := client.GrpcClient.GetVirtualEntityByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1915,9 +1661,9 @@ func (client *G2engine) GetVirtualEntityByRecordID(ctx context.Context, recordLi
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(92, recordList, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(92, recordList, client.GetVirtualEntityByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetVirtualEntityByRecordIDResult, err
 }
 
 /*
@@ -1940,11 +1686,6 @@ func (client *G2engine) GetVirtualEntityByRecordID_V2(ctx context.Context, recor
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.GetVirtualEntityByRecordID_V2Request{
-		RecordList: recordList,
-		Flags:      flags,
-	}
-	response, err := client.GrpcClient.GetVirtualEntityByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1954,9 +1695,9 @@ func (client *G2engine) GetVirtualEntityByRecordID_V2(ctx context.Context, recor
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(94, recordList, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(94, recordList, flags, client.GetVirtualEntityByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.GetVirtualEntityByRecordID_V2Result, err
 }
 
 /*
@@ -1977,10 +1718,6 @@ func (client *G2engine) HowEntityByEntityID(ctx context.Context, entityID int64)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.HowEntityByEntityIDRequest{
-		EntityID: entityID,
-	}
-	response, err := client.GrpcClient.HowEntityByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1990,9 +1727,9 @@ func (client *G2engine) HowEntityByEntityID(ctx context.Context, entityID int64)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(96, entityID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(96, entityID, client.HowEntityByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.HowEntityByEntityIDResult, err
 }
 
 /*
@@ -2014,11 +1751,6 @@ func (client *G2engine) HowEntityByEntityID_V2(ctx context.Context, entityID int
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.HowEntityByEntityID_V2Request{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.HowEntityByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2028,9 +1760,9 @@ func (client *G2engine) HowEntityByEntityID_V2(ctx context.Context, entityID int
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(98, entityID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(98, entityID, flags, client.HowEntityByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.HowEntityByEntityID_V2Result, err
 }
 
 /*
@@ -2049,12 +1781,6 @@ func (client *G2engine) Init(ctx context.Context, moduleName string, iniParams s
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.InitRequest{
-		ModuleName:     moduleName,
-		IniParams:      iniParams,
-		VerboseLogging: int32(verboseLogging),
-	}
-	_, err := client.GrpcClient.Init(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2088,13 +1814,6 @@ func (client *G2engine) InitWithConfigID(ctx context.Context, moduleName string,
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.InitWithConfigIDRequest{
-		ModuleName:     moduleName,
-		IniParams:      iniParams,
-		InitConfigID:   initConfigID,
-		VerboseLogging: int32(verboseLogging),
-	}
-	_, err := client.GrpcClient.InitWithConfigID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2126,8 +1845,6 @@ func (client *G2engine) PrimeEngine(ctx context.Context) error {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.PrimeEngineRequest{}
-	_, err := client.GrpcClient.PrimeEngine(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2153,10 +1870,6 @@ func (client *G2engine) Process(ctx context.Context, record string) error {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessRequest{
-		Record: record,
-	}
-	_, err := client.GrpcClient.Process(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2185,8 +1898,6 @@ func (client *G2engine) ProcessRedoRecord(ctx context.Context) (string, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessRedoRecordRequest{}
-	response, err := client.GrpcClient.ProcessRedoRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2194,9 +1905,9 @@ func (client *G2engine) ProcessRedoRecord(ctx context.Context) (string, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(108, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(108, client.ProcessRedoRecordResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ProcessRedoRecordResult, err
 }
 
 /*
@@ -2217,10 +1928,6 @@ func (client *G2engine) ProcessRedoRecordWithInfo(ctx context.Context, flags int
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessRedoRecordWithInfoRequest{
-		Flags: flags,
-	}
-	response, err := client.GrpcClient.ProcessRedoRecordWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2228,9 +1935,9 @@ func (client *G2engine) ProcessRedoRecordWithInfo(ctx context.Context, flags int
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(110, flags, response.GetResult(), response.GetWithInfo(), err, time.Since(entryTime))
+		defer client.traceExit(110, flags, client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err, time.Since(entryTime))
 	}
-	return response.GetResult(), response.GetWithInfo(), err
+	return client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err
 }
 
 /*
@@ -2251,11 +1958,6 @@ func (client *G2engine) ProcessWithInfo(ctx context.Context, record string, flag
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessWithInfoRequest{
-		Record: record,
-		Flags:  flags,
-	}
-	response, err := client.GrpcClient.ProcessWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2263,9 +1965,9 @@ func (client *G2engine) ProcessWithInfo(ctx context.Context, record string, flag
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(112, record, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(112, record, flags, client.ProcessWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ProcessWithInfoResult, err
 }
 
 /*
@@ -2285,10 +1987,6 @@ func (client *G2engine) ProcessWithResponse(ctx context.Context, record string) 
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessWithResponseRequest{
-		Record: record,
-	}
-	response, err := client.GrpcClient.ProcessWithResponse(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2296,9 +1994,9 @@ func (client *G2engine) ProcessWithResponse(ctx context.Context, record string) 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(114, record, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(114, record, client.ProcessWithResponseResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ProcessWithResponseResult, err
 }
 
 /*
@@ -2318,10 +2016,6 @@ func (client *G2engine) ProcessWithResponseResize(ctx context.Context, record st
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ProcessWithResponseResizeRequest{
-		Record: record,
-	}
-	response, err := client.GrpcClient.ProcessWithResponseResize(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2329,9 +2023,9 @@ func (client *G2engine) ProcessWithResponseResize(ctx context.Context, record st
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(116, record, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(116, record, client.ProcessWithResponseResizeResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ProcessWithResponseResizeResult, err
 }
 
 /*
@@ -2350,8 +2044,6 @@ func (client *G2engine) PurgeRepository(ctx context.Context) error {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.PurgeRepositoryRequest{}
-	_, err := client.GrpcClient.PurgeRepository(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2378,11 +2070,6 @@ func (client *G2engine) ReevaluateEntity(ctx context.Context, entityID int64, fl
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReevaluateEntityRequest{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	_, err := client.GrpcClient.ReevaluateEntity(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2416,11 +2103,6 @@ func (client *G2engine) ReevaluateEntityWithInfo(ctx context.Context, entityID i
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReevaluateEntityWithInfoRequest{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.ReevaluateEntityWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2430,9 +2112,9 @@ func (client *G2engine) ReevaluateEntityWithInfo(ctx context.Context, entityID i
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(122, entityID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(122, entityID, flags, client.ReevaluateEntityWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ReevaluateEntityWithInfoResult, err
 }
 
 /*
@@ -2450,12 +2132,6 @@ func (client *G2engine) ReevaluateRecord(ctx context.Context, dataSourceCode str
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReevaluateRecordRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	_, err := client.GrpcClient.ReevaluateRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2491,12 +2167,6 @@ func (client *G2engine) ReevaluateRecordWithInfo(ctx context.Context, dataSource
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReevaluateRecordWithInfoRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.ReevaluateRecordWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2507,9 +2177,9 @@ func (client *G2engine) ReevaluateRecordWithInfo(ctx context.Context, dataSource
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(126, dataSourceCode, recordID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(126, dataSourceCode, recordID, flags, client.ReevaluateRecordWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ReevaluateRecordWithInfoResult, err
 }
 
 /*
@@ -2523,7 +2193,6 @@ func (client *G2engine) RegisterObserver(ctx context.Context, observer observer.
 	if client.isTrace {
 		client.traceEntry(157, observer.GetObserverId(ctx))
 	}
-	var err error = nil
 	entryTime := time.Now()
 	if client.observers == nil {
 		client.observers = &subject.SubjectImpl{}
@@ -2556,10 +2225,6 @@ func (client *G2engine) Reinit(ctx context.Context, initConfigID int64) error {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReinitRequest{
-		InitConfigID: initConfigID,
-	}
-	_, err := client.GrpcClient.Reinit(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2591,13 +2256,6 @@ func (client *G2engine) ReplaceRecord(ctx context.Context, dataSourceCode string
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReplaceRecordRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-	}
-	_, err := client.GrpcClient.ReplaceRecord(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2636,14 +2294,6 @@ func (client *G2engine) ReplaceRecordWithInfo(ctx context.Context, dataSourceCod
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.ReplaceRecordWithInfoRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		JsonData:       jsonData,
-		LoadID:         loadID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.ReplaceRecordWithInfo(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2655,9 +2305,9 @@ func (client *G2engine) ReplaceRecordWithInfo(ctx context.Context, dataSourceCod
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(132, dataSourceCode, recordID, jsonData, loadID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(132, dataSourceCode, recordID, jsonData, loadID, flags, client.ReplaceRecordWithInfoResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.ReplaceRecordWithInfoResult, err
 }
 
 /*
@@ -2678,10 +2328,6 @@ func (client *G2engine) SearchByAttributes(ctx context.Context, jsonData string)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.SearchByAttributesRequest{
-		JsonData: jsonData,
-	}
-	response, err := client.GrpcClient.SearchByAttributes(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2689,9 +2335,9 @@ func (client *G2engine) SearchByAttributes(ctx context.Context, jsonData string)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(134, jsonData, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(134, jsonData, client.SearchByAttributesResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.SearchByAttributesResult, err
 }
 
 /*
@@ -2713,11 +2359,6 @@ func (client *G2engine) SearchByAttributes_V2(ctx context.Context, jsonData stri
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.SearchByAttributes_V2Request{
-		JsonData: jsonData,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.SearchByAttributes_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2725,9 +2366,9 @@ func (client *G2engine) SearchByAttributes_V2(ctx context.Context, jsonData stri
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(136, jsonData, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(136, jsonData, flags, client.SearchByAttributes_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.SearchByAttributes_V2Result, err
 }
 
 /*
@@ -2741,7 +2382,6 @@ func (client *G2engine) SetLogLevel(ctx context.Context, logLevel logger.Level) 
 	if client.isTrace {
 		client.traceEntry(137, logLevel)
 	}
-	var err error = nil
 	entryTime := time.Now()
 	var err error = nil
 	client.getLogger().SetLogLevel(messagelogger.Level(logLevel))
@@ -2777,8 +2417,6 @@ func (client *G2engine) Stats(ctx context.Context) (string, error) {
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.StatsRequest{}
-	response, err := client.GrpcClient.Stats(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -2786,9 +2424,9 @@ func (client *G2engine) Stats(ctx context.Context) (string, error) {
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(140, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(140, client.StatsResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.StatsResult, err
 }
 
 /*
@@ -2802,7 +2440,6 @@ func (client *G2engine) UnregisterObserver(ctx context.Context, observer observe
 	if client.isTrace {
 		client.traceEntry(159, observer.GetObserverId(ctx))
 	}
-	var err error = nil
 	entryTime := time.Now()
 	var err error = nil
 	if client.observers != nil {
@@ -2847,11 +2484,6 @@ func (client *G2engine) WhyEntities(ctx context.Context, entityID1 int64, entity
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntitiesRequest{
-		EntityID1: entityID1,
-		EntityID2: entityID2,
-	}
-	response, err := client.GrpcClient.WhyEntities(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2862,9 +2494,9 @@ func (client *G2engine) WhyEntities(ctx context.Context, entityID1 int64, entity
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(142, entityID1, entityID2, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(142, entityID1, entityID2, client.WhyEntitiesResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntitiesResult, err
 }
 
 /*
@@ -2890,12 +2522,6 @@ func (client *G2engine) WhyEntities_V2(ctx context.Context, entityID1 int64, ent
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntities_V2Request{
-		EntityID1: entityID1,
-		EntityID2: entityID2,
-		Flags:     flags,
-	}
-	response, err := client.GrpcClient.WhyEntities_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2906,9 +2532,9 @@ func (client *G2engine) WhyEntities_V2(ctx context.Context, entityID1 int64, ent
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(144, entityID1, entityID2, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(144, entityID1, entityID2, flags, client.WhyEntities_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntities_V2Result, err
 }
 
 /*
@@ -2930,10 +2556,6 @@ func (client *G2engine) WhyEntityByEntityID(ctx context.Context, entityID int64)
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntityByEntityIDRequest{
-		EntityID: entityID,
-	}
-	response, err := client.GrpcClient.WhyEntityByEntityID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2943,9 +2565,9 @@ func (client *G2engine) WhyEntityByEntityID(ctx context.Context, entityID int64)
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(146, entityID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(146, entityID, client.WhyEntityByEntityIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntityByEntityIDResult, err
 }
 
 /*
@@ -2967,11 +2589,6 @@ func (client *G2engine) WhyEntityByEntityID_V2(ctx context.Context, entityID int
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntityByEntityID_V2Request{
-		EntityID: entityID,
-		Flags:    flags,
-	}
-	response, err := client.GrpcClient.WhyEntityByEntityID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -2981,9 +2598,9 @@ func (client *G2engine) WhyEntityByEntityID_V2(ctx context.Context, entityID int
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(148, entityID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(148, entityID, flags, client.WhyEntityByEntityID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntityByEntityID_V2Result, err
 }
 
 /*
@@ -3005,11 +2622,6 @@ func (client *G2engine) WhyEntityByRecordID(ctx context.Context, dataSourceCode 
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntityByRecordIDRequest{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-	}
-	response, err := client.GrpcClient.WhyEntityByRecordID(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -3020,9 +2632,9 @@ func (client *G2engine) WhyEntityByRecordID(ctx context.Context, dataSourceCode 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(150, dataSourceCode, recordID, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(150, dataSourceCode, recordID, client.WhyEntityByRecordIDResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntityByRecordIDResult, err
 }
 
 /*
@@ -3045,12 +2657,6 @@ func (client *G2engine) WhyEntityByRecordID_V2(ctx context.Context, dataSourceCo
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyEntityByRecordID_V2Request{
-		DataSourceCode: dataSourceCode,
-		RecordID:       recordID,
-		Flags:          flags,
-	}
-	response, err := client.GrpcClient.WhyEntityByRecordID_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -3061,9 +2667,9 @@ func (client *G2engine) WhyEntityByRecordID_V2(ctx context.Context, dataSourceCo
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(152, dataSourceCode, recordID, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(152, dataSourceCode, recordID, flags, client.WhyEntityByRecordID_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyEntityByRecordID_V2Result, err
 }
 
 /*
@@ -3088,13 +2694,6 @@ func (client *G2engine) WhyRecords(ctx context.Context, dataSourceCode1 string, 
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyRecordsRequest{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-	}
-	response, err := client.GrpcClient.WhyRecords(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -3107,9 +2706,9 @@ func (client *G2engine) WhyRecords(ctx context.Context, dataSourceCode1 string, 
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(154, dataSourceCode1, recordID1, dataSourceCode2, recordID2, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(154, dataSourceCode1, recordID1, dataSourceCode2, recordID2, client.WhyRecordsResult, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyRecordsResult, err
 }
 
 /*
@@ -3134,14 +2733,6 @@ func (client *G2engine) WhyRecords_V2(ctx context.Context, dataSourceCode1 strin
 	}
 	var err error = nil
 	entryTime := time.Now()
-	request := g2pb.WhyRecords_V2Request{
-		DataSourceCode1: dataSourceCode1,
-		RecordID1:       recordID1,
-		DataSourceCode2: dataSourceCode2,
-		RecordID2:       recordID2,
-		Flags:           flags,
-	}
-	response, err := client.GrpcClient.WhyRecords_V2(ctx, &request)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -3154,7 +2745,7 @@ func (client *G2engine) WhyRecords_V2(ctx context.Context, dataSourceCode1 strin
 		}()
 	}
 	if client.isTrace {
-		defer client.traceExit(156, dataSourceCode1, recordID1, dataSourceCode2, recordID2, flags, response.GetResult(), err, time.Since(entryTime))
+		defer client.traceExit(156, dataSourceCode1, recordID1, dataSourceCode2, recordID2, flags, client.WhyRecords_V2Result, err, time.Since(entryTime))
 	}
-	return response.GetResult(), err
+	return client.WhyRecords_V2Result, err
 }
