@@ -7,14 +7,12 @@ package g2config
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
 	g2configapi "github.com/senzing/g2-sdk-go/g2config"
-	"github.com/senzing/go-logging/logger"
-	"github.com/senzing/go-logging/messagelogger"
+	"github.com/senzing/go-logging/logging"
+	"github.com/senzing/go-observing/notifier"
 	"github.com/senzing/go-observing/observer"
 	"github.com/senzing/go-observing/subject"
 )
@@ -25,7 +23,7 @@ import (
 
 type G2config struct {
 	isTrace               bool
-	logger                messagelogger.MessageLoggerInterface
+	logger                logging.LoggingInterface
 	observers             subject.Subject
 	AddDataSourceResult   string
 	CreateResult          uintptr
@@ -37,29 +35,21 @@ type G2config struct {
 // Internal methods
 // ----------------------------------------------------------------------------
 
+// --- Logging ----------------------------------------------------------------
+
 // Get the Logger singleton.
-func (client *G2config) getLogger() messagelogger.MessageLoggerInterface {
+func (client *G2config) getLogger() logging.LoggingInterface {
+	var err error = nil
 	if client.logger == nil {
-		client.logger, _ = messagelogger.NewSenzingApiLogger(ProductId, g2configapi.IdMessages, g2configapi.IdStatuses, messagelogger.LevelInfo)
+		options := []interface{}{
+			&logging.OptionCallerSkip{Value: 4},
+		}
+		client.logger, err = logging.NewSenzingSdkLogger(ProductId, g2configapi.IdMessages, options...)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return client.logger
-}
-
-// Notify registered observers.
-func (client *G2config) notify(ctx context.Context, messageId int, err error, details map[string]string) {
-	now := time.Now()
-	details["subjectId"] = strconv.Itoa(ProductId)
-	details["messageId"] = strconv.Itoa(messageId)
-	details["messageTime"] = strconv.FormatInt(now.UnixNano(), 10)
-	if err != nil {
-		details["error"] = err.Error()
-	}
-	message, err := json.Marshal(details)
-	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
-	} else {
-		client.observers.NotifyObservers(ctx, string(message))
-	}
 }
 
 // Trace method entry.
@@ -90,22 +80,20 @@ Output
     See the example output.
 */
 func (client *G2config) AddDataSource(ctx context.Context, configHandle uintptr, inputJson string) (string, error) {
-	if client.isTrace {
-		client.traceEntry(1, configHandle, inputJson)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(1, configHandle, inputJson)
+		defer client.traceExit(2, configHandle, inputJson, client.AddDataSourceResult, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"inputJson": inputJson,
 				"return":    client.AddDataSourceResult,
 			}
-			client.notify(ctx, 8001, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8001, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(2, configHandle, inputJson, client.AddDataSourceResult, err, time.Since(entryTime))
 	}
 	return client.AddDataSourceResult, err
 }
@@ -119,19 +107,17 @@ Input
   - configHandle: An identifier of an in-memory configuration.
 */
 func (client *G2config) Close(ctx context.Context, configHandle uintptr) error {
-	if client.isTrace {
-		client.traceEntry(5, configHandle)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(5, configHandle)
+		defer client.traceExit(6, configHandle, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8002, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8002, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(6, configHandle, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -150,19 +136,17 @@ Output
   - A Pointer to an in-memory Senzing configuration.
 */
 func (client *G2config) Create(ctx context.Context) (uintptr, error) {
-	if client.isTrace {
-		client.traceEntry(7)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(7)
+		defer client.traceExit(8, client.CreateResult, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8003, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8003, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(8, client.CreateResult, err, time.Since(entryTime))
 	}
 	return client.CreateResult, err
 }
@@ -177,21 +161,19 @@ Input
   - inputJson: A JSON document in the format `{"DSRC_CODE": "NAME_OF_DATASOURCE"}`.
 */
 func (client *G2config) DeleteDataSource(ctx context.Context, configHandle uintptr, inputJson string) error {
-	if client.isTrace {
-		client.traceEntry(9, configHandle, inputJson)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(9, configHandle, inputJson)
+		defer client.traceExit(10, configHandle, inputJson, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"inputJson": inputJson,
 			}
-			client.notify(ctx, 8004, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8004, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(10, configHandle, inputJson, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -204,19 +186,17 @@ Input
   - ctx: A context to control lifecycle.
 */
 func (client *G2config) Destroy(ctx context.Context) error {
-	if client.isTrace {
-		client.traceEntry(11)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(11)
+		defer client.traceExit(12, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8005, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8005, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(12, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -230,19 +210,17 @@ Input
   - ctx: A context to control lifecycle.
 */
 func (client *G2config) GetSdkId(ctx context.Context) string {
-	if client.isTrace {
-		client.traceEntry(31)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(31)
+		defer client.traceExit(32, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8010, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8010, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(32, err, time.Since(entryTime))
 	}
 	return "mock"
 }
@@ -258,11 +236,12 @@ Input
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *G2config) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int) error {
-	if client.isTrace {
-		client.traceEntry(17, moduleName, iniParams, verboseLogging)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(17, moduleName, iniParams, verboseLogging)
+		defer client.traceExit(18, moduleName, iniParams, verboseLogging, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -270,11 +249,8 @@ func (client *G2config) Init(ctx context.Context, moduleName string, iniParams s
 				"moduleName":     moduleName,
 				"verboseLogging": strconv.Itoa(verboseLogging),
 			}
-			client.notify(ctx, 8006, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8006, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(18, moduleName, iniParams, verboseLogging, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -292,19 +268,17 @@ Output
     See the example output.
 */
 func (client *G2config) ListDataSources(ctx context.Context, configHandle uintptr) (string, error) {
-	if client.isTrace {
-		client.traceEntry(19, configHandle)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(19, configHandle)
+		defer client.traceExit(20, configHandle, client.ListDataSourcesResult, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8007, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8007, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(20, configHandle, client.ListDataSourcesResult, err, time.Since(entryTime))
 	}
 	return client.ListDataSourcesResult, err
 }
@@ -319,19 +293,17 @@ Input
   - jsonConfig: A JSON document containing the Senzing configuration.
 */
 func (client *G2config) Load(ctx context.Context, configHandle uintptr, jsonConfig string) error {
-	if client.isTrace {
-		client.traceEntry(21, configHandle, jsonConfig)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(21, configHandle, jsonConfig)
+		defer client.traceExit(22, configHandle, jsonConfig, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8008, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8008, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(22, configHandle, jsonConfig, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -344,24 +316,23 @@ Input
   - observer: The observer to be added.
 */
 func (client *G2config) RegisterObserver(ctx context.Context, observer observer.Observer) error {
+	var err error = nil
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(27, observer.GetObserverId(ctx))
+		defer client.traceExit(28, observer.GetObserverId(ctx), err, time.Since(entryTime))
 	}
-	entryTime := time.Now()
 	if client.observers == nil {
 		client.observers = &subject.SubjectImpl{}
 	}
-	err := client.observers.RegisterObserver(ctx, observer)
+	err = client.observers.RegisterObserver(ctx, observer)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"observerID": observer.GetObserverId(ctx),
 			}
-			client.notify(ctx, 8011, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8011, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(28, observer.GetObserverId(ctx), err, time.Since(entryTime))
 	}
 	return err
 }
@@ -379,19 +350,17 @@ Output
     See the example output.
 */
 func (client *G2config) Save(ctx context.Context, configHandle uintptr) (string, error) {
-	if client.isTrace {
-		client.traceEntry(23, configHandle)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(23, configHandle)
+		defer client.traceExit(24, configHandle, client.SaveResult, err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8009, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8009, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(24, configHandle, client.SaveResult, err, time.Since(entryTime))
 	}
 	return client.SaveResult, err
 }
@@ -403,24 +372,22 @@ Input
   - ctx: A context to control lifecycle.
   - logLevel: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
 */
-func (client *G2config) SetLogLevel(ctx context.Context, logLevel logger.Level) error {
-	if client.isTrace {
-		client.traceEntry(25, logLevel)
-	}
+func (client *G2config) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
-	entryTime := time.Now()
-	client.getLogger().SetLogLevel(messagelogger.Level(logLevel))
-	client.isTrace = (client.getLogger().GetLogLevel() == messagelogger.LevelTrace)
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(25, logLevelName)
+		defer client.traceExit(26, logLevelName, err, time.Since(entryTime))
+	}
+	client.getLogger().SetLogLevel(logLevelName)
+	client.isTrace = (logLevelName == logging.LevelTraceName)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"logLevel": logger.LevelToTextMap[logLevel],
+				"logLevel": logLevelName,
 			}
-			client.notify(ctx, 8012, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8012, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(26, logLevel, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -433,11 +400,12 @@ Input
   - observer: The observer to be added.
 */
 func (client *G2config) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
-	if client.isTrace {
-		client.traceEntry(29, observer.GetObserverId(ctx))
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(29, observer.GetObserverId(ctx))
+		defer client.traceExit(30, observer.GetObserverId(ctx), err, time.Since(entryTime))
+	}
 	if client.observers != nil {
 		// Tricky code:
 		// client.notify is called synchronously before client.observers is set to nil.
@@ -446,14 +414,11 @@ func (client *G2config) UnregisterObserver(ctx context.Context, observer observe
 		details := map[string]string{
 			"observerID": observer.GetObserverId(ctx),
 		}
-		client.notify(ctx, 8013, err, details)
+		notifier.Notify(ctx, client.observers, ProductId, 8013, err, details)
 	}
 	err = client.observers.UnregisterObserver(ctx, observer)
 	if !client.observers.HasObservers(ctx) {
 		client.observers = nil
-	}
-	if client.isTrace {
-		defer client.traceExit(30, observer.GetObserverId(ctx), err, time.Since(entryTime))
 	}
 	return err
 }
