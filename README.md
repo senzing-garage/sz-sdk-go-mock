@@ -40,48 +40,8 @@ interface include:
 
 (TODO:)
 
-## Development
+## References
 
-### Install Go
-
-1. See Go's [Download and install](https://go.dev/doc/install)
-
-### Install Git repository
-
-1. Identify git repository.
-
-    ```console
-    export GIT_ACCOUNT=senzing
-    export GIT_REPOSITORY=g2-sdk-go-mock
-    export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
-    export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
-
-    ```
-
-1. Using the environment variables values just set, follow steps in
-   [clone-repository](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/clone-repository.md) to install the Git repository.
-
-### Test
-
-1. Run tests.
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}
-    make clean test
-
-## Error prefixes
-
-Error identifiers are in the format `senzing-PPPPnnnn` where:
-
-`P` is a prefix used to identify the package.
-`n` is a location within the package.
-
-Prefixes:
-
-1. `6031` - g2config
-1. `6032` - g2configmgr
-1. `6033` - g2diagnostic
-1. `6034` - g2engine
-1. `6035` - g2hasher
-1. `6036` - g2product
-1. `6037` - g2ssadm
+- [Development](docs/development.md)
+- [Errors](docs/errors.md)
+- [Examples](docs/examples.md)
