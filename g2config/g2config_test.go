@@ -8,7 +8,7 @@ import (
 
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing/g2-sdk-go/g2api"
-	"github.com/senzing/go-logging/logger"
+	"github.com/senzing/go-logging/logging"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -316,7 +316,7 @@ func ExampleG2config_SetLogLevel() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2config/g2config_test.go
 	ctx := context.TODO()
 	g2config := getG2Config(ctx)
-	err := g2config.SetLogLevel(ctx, logger.LevelInfo)
+	err := g2config.SetLogLevel(ctx, logging.LevelInfoName)
 	if err != nil {
 		fmt.Println(err)
 	}

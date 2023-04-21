@@ -7,14 +7,12 @@ package g2diagnostic
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
 	g2diagnosticapi "github.com/senzing/g2-sdk-go/g2diagnostic"
-	"github.com/senzing/go-logging/logger"
-	"github.com/senzing/go-logging/messagelogger"
+	"github.com/senzing/go-logging/logging"
+	"github.com/senzing/go-observing/notifier"
 	"github.com/senzing/go-observing/observer"
 	"github.com/senzing/go-observing/subject"
 )
@@ -25,7 +23,7 @@ import (
 
 type G2diagnostic struct {
 	isTrace                        bool
-	logger                         messagelogger.MessageLoggerInterface
+	logger                         logging.LoggingInterface
 	observers                      subject.Subject
 	CheckDBPerfResult              string
 	FetchNextEntityBySizeResult    string
@@ -51,29 +49,21 @@ type G2diagnostic struct {
 // Internal methods
 // ----------------------------------------------------------------------------
 
+// --- Logging ----------------------------------------------------------------
+
 // Get the Logger singleton.
-func (client *G2diagnostic) getLogger() messagelogger.MessageLoggerInterface {
+func (client *G2diagnostic) getLogger() logging.LoggingInterface {
+	var err error = nil
 	if client.logger == nil {
-		client.logger, _ = messagelogger.NewSenzingApiLogger(ProductId, g2diagnosticapi.IdMessages, g2diagnosticapi.IdStatuses, messagelogger.LevelInfo)
+		options := []interface{}{
+			&logging.OptionCallerSkip{Value: 4},
+		}
+		client.logger, err = logging.NewSenzingSdkLogger(ProductId, g2diagnosticapi.IdMessages, options...)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return client.logger
-}
-
-// Notify registered observers.
-func (client *G2diagnostic) notify(ctx context.Context, messageId int, err error, details map[string]string) {
-	now := time.Now()
-	details["subjectId"] = strconv.Itoa(ProductId)
-	details["messageId"] = strconv.Itoa(messageId)
-	details["messageTime"] = strconv.FormatInt(now.UnixNano(), 10)
-	if err != nil {
-		details["error"] = err.Error()
-	}
-	message, err := json.Marshal(details)
-	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
-	} else {
-		client.observers.NotifyObservers(ctx, string(message))
-	}
 }
 
 // Trace method entry.
@@ -103,19 +93,17 @@ Output
     Example: `{"numRecordsInserted":0,"insertTime":0}`
 */
 func (client *G2diagnostic) CheckDBPerf(ctx context.Context, secondsToRun int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(1, secondsToRun)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(1, secondsToRun)
+		defer func() { client.traceExit(2, secondsToRun, client.CheckDBPerfResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8001, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8001, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(2, secondsToRun, client.CheckDBPerfResult, err, time.Since(entryTime))
 	}
 	return client.CheckDBPerfResult, err
 }
@@ -131,19 +119,17 @@ Input
   - entityListBySizeHandle: A handle created by GetEntityListBySize().
 */
 func (client *G2diagnostic) CloseEntityListBySize(ctx context.Context, entityListBySizeHandle uintptr) error {
-	if client.isTrace {
-		client.traceEntry(5)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(5)
+		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8002, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8002, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(6, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -156,19 +142,17 @@ Input
   - ctx: A context to control lifecycle.
 */
 func (client *G2diagnostic) Destroy(ctx context.Context) error {
-	if client.isTrace {
-		client.traceEntry(7)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(7)
+		defer func() { client.traceExit(8, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8003, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8003, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(8, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -188,19 +172,17 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) FetchNextEntityBySize(ctx context.Context, entityListBySizeHandle uintptr) (string, error) {
-	if client.isTrace {
-		client.traceEntry(9)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(9)
+		defer func() { client.traceExit(10, client.FetchNextEntityBySizeResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8004, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8004, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(10, client.FetchNextEntityBySizeResult, err, time.Since(entryTime))
 	}
 	return client.FetchNextEntityBySizeResult, err
 }
@@ -219,19 +201,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) FindEntitiesByFeatureIDs(ctx context.Context, features string) (string, error) {
-	if client.isTrace {
-		client.traceEntry(11, features)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(11, features)
+		defer func() {
+			client.traceExit(12, features, client.FindEntitiesByFeatureIDsResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8005, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8005, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(12, features, client.FindEntitiesByFeatureIDsResult, err, time.Since(entryTime))
 	}
 	return client.FindEntitiesByFeatureIDsResult, err
 }
@@ -246,19 +228,17 @@ Output
   - Number of bytes of available memory.
 */
 func (client *G2diagnostic) GetAvailableMemory(ctx context.Context) (int64, error) {
-	if client.isTrace {
-		client.traceEntry(13)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(13)
+		defer func() { client.traceExit(14, client.GetAvailableMemoryResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8006, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8006, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(14, client.GetAvailableMemoryResult, err, time.Since(entryTime))
 	}
 	return client.GetAvailableMemoryResult, err
 }
@@ -274,19 +254,17 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetDataSourceCounts(ctx context.Context) (string, error) {
-	if client.isTrace {
-		client.traceEntry(15)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(15)
+		defer func() { client.traceExit(16, client.GetDataSourceCountsResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8007, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8007, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(16, client.GetDataSourceCountsResult, err, time.Since(entryTime))
 	}
 	return client.GetDataSourceCountsResult, err
 }
@@ -302,19 +280,17 @@ Output
     Example: `{"Hybrid Mode":false,"Database Details":[{"Name":"0.0.0.0","Type":"postgresql"}]}`
 */
 func (client *G2diagnostic) GetDBInfo(ctx context.Context) (string, error) {
-	if client.isTrace {
-		client.traceEntry(17)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(17)
+		defer func() { client.traceExit(18, client.GetDBInfoResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8008, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8008, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(18, client.GetDBInfoResult, err, time.Since(entryTime))
 	}
 	return client.GetDBInfoResult, err
 }
@@ -332,19 +308,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetEntityDetails(ctx context.Context, entityID int64, includeInternalFeatures int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(19, entityID, includeInternalFeatures)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(19, entityID, includeInternalFeatures)
+		defer func() {
+			client.traceExit(20, entityID, includeInternalFeatures, client.GetEntityDetailsResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8009, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8009, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(20, entityID, includeInternalFeatures, client.GetEntityDetailsResult, err, time.Since(entryTime))
 	}
 	return client.GetEntityDetailsResult, err
 }
@@ -363,19 +339,17 @@ Output
   - A handle to an entity list to be used with FetchNextEntityBySize() and CloseEntityListBySize().
 */
 func (client *G2diagnostic) GetEntityListBySize(ctx context.Context, entitySize int) (uintptr, error) {
-	if client.isTrace {
-		client.traceEntry(21, entitySize)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(21, entitySize)
+		defer func() { client.traceExit(22, entitySize, client.GetEntityListBySizeResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8010, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8010, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(22, entitySize, client.GetEntityListBySizeResult, err, time.Since(entryTime))
 	}
 	return client.GetEntityListBySizeResult, err
 }
@@ -392,19 +366,17 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetEntityResume(ctx context.Context, entityID int64) (string, error) {
-	if client.isTrace {
-		client.traceEntry(23, entityID)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(23, entityID)
+		defer func() { client.traceExit(24, entityID, client.GetEntityResumeResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8011, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8011, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(24, entityID, client.GetEntityResumeResult, err, time.Since(entryTime))
 	}
 	return client.GetEntityResumeResult, err
 }
@@ -422,19 +394,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetEntitySizeBreakdown(ctx context.Context, minimumEntitySize int, includeInternalFeatures int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(25, minimumEntitySize, includeInternalFeatures)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(25, minimumEntitySize, includeInternalFeatures)
+		defer func() {
+			client.traceExit(26, minimumEntitySize, includeInternalFeatures, client.GetEntitySizeBreakdownResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8012, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8012, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(26, minimumEntitySize, includeInternalFeatures, client.GetEntitySizeBreakdownResult, err, time.Since(entryTime))
 	}
 	return client.GetEntitySizeBreakdownResult, err
 }
@@ -451,19 +423,17 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetFeature(ctx context.Context, libFeatID int64) (string, error) {
-	if client.isTrace {
-		client.traceEntry(27, libFeatID)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(27, libFeatID)
+		defer func() { client.traceExit(28, libFeatID, client.GetFeatureResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8013, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8013, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(28, libFeatID, client.GetFeatureResult, err, time.Since(entryTime))
 	}
 	return client.GetFeatureResult, err
 }
@@ -481,19 +451,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetGenericFeatures(ctx context.Context, featureType string, maximumEstimatedCount int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(29, featureType, maximumEstimatedCount)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(29, featureType, maximumEstimatedCount)
+		defer func() {
+			client.traceExit(30, featureType, maximumEstimatedCount, client.GetGenericFeaturesResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8014, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8014, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(30, featureType, maximumEstimatedCount, client.GetGenericFeaturesResult, err, time.Since(entryTime))
 	}
 	return client.GetGenericFeaturesResult, err
 }
@@ -508,19 +478,17 @@ Output
   - Number of logical cores.
 */
 func (client *G2diagnostic) GetLogicalCores(ctx context.Context) (int, error) {
-	if client.isTrace {
-		client.traceEntry(35)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(35)
+		defer func() { client.traceExit(36, client.GetLogicalCoresResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8015, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8015, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(36, client.GetLogicalCoresResult, err, time.Since(entryTime))
 	}
 	return client.GetLogicalCoresResult, err
 }
@@ -537,19 +505,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetMappingStatistics(ctx context.Context, includeInternalFeatures int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(37, includeInternalFeatures)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(37, includeInternalFeatures)
+		defer func() {
+			client.traceExit(38, includeInternalFeatures, client.GetMappingStatisticsResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8016, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8016, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(38, includeInternalFeatures, client.GetMappingStatisticsResult, err, time.Since(entryTime))
 	}
 	return client.GetMappingStatisticsResult, err
 }
@@ -564,19 +532,17 @@ Output
   - Number of physical cores.
 */
 func (client *G2diagnostic) GetPhysicalCores(ctx context.Context) (int, error) {
-	if client.isTrace {
-		client.traceEntry(39)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(39)
+		defer func() { client.traceExit(40, client.GetPhysicalCoresResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8017, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8017, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(40, client.GetPhysicalCoresResult, err, time.Since(entryTime))
 	}
 	return client.GetPhysicalCoresResult, err
 }
@@ -594,19 +560,19 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetRelationshipDetails(ctx context.Context, relationshipID int64, includeInternalFeatures int) (string, error) {
-	if client.isTrace {
-		client.traceEntry(41, relationshipID, includeInternalFeatures)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(41, relationshipID, includeInternalFeatures)
+		defer func() {
+			client.traceExit(42, relationshipID, includeInternalFeatures, client.GetRelationshipDetailsResult, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8018, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8018, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(42, relationshipID, includeInternalFeatures, client.GetRelationshipDetailsResult, err, time.Since(entryTime))
 	}
 	return client.GetRelationshipDetailsResult, err
 }
@@ -622,19 +588,17 @@ Output
     See the example output.
 */
 func (client *G2diagnostic) GetResolutionStatistics(ctx context.Context) (string, error) {
-	if client.isTrace {
-		client.traceEntry(43)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(43)
+		defer func() { client.traceExit(44, client.GetResolutionStatisticsResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8019, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8019, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(44, client.GetResolutionStatisticsResult, err, time.Since(entryTime))
 	}
 	return client.GetResolutionStatisticsResult, err
 }
@@ -648,19 +612,17 @@ Input
   - ctx: A context to control lifecycle.
 */
 func (client *G2diagnostic) GetSdkId(ctx context.Context) string {
-	if client.isTrace {
-		client.traceEntry(59)
-	}
-	entryTime := time.Now()
 	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(59)
+		defer func() { client.traceExit(60, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8024, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8024, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(60, err, time.Since(entryTime))
 	}
 	return "mock"
 }
@@ -675,19 +637,17 @@ Output
   - Number of bytes of memory.
 */
 func (client *G2diagnostic) GetTotalSystemMemory(ctx context.Context) (int64, error) {
-	if client.isTrace {
-		client.traceEntry(57)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(57)
+		defer func() { client.traceExit(46, client.GetTotalSystemMemoryResult, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			client.notify(ctx, 8020, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8020, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(46, client.GetTotalSystemMemoryResult, err, time.Since(entryTime))
 	}
 	return client.GetTotalSystemMemoryResult, err
 }
@@ -703,11 +663,12 @@ Input
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int) error {
-	if client.isTrace {
-		client.traceEntry(47, moduleName, iniParams, verboseLogging)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(47, moduleName, iniParams, verboseLogging)
+		defer func() { client.traceExit(48, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -715,11 +676,8 @@ func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniPara
 				"moduleName":     moduleName,
 				"verboseLogging": strconv.Itoa(verboseLogging),
 			}
-			client.notify(ctx, 8021, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8021, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(48, moduleName, iniParams, verboseLogging, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -736,11 +694,14 @@ Input
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int) error {
-	if client.isTrace {
-		client.traceEntry(49, moduleName, iniParams, initConfigID, verboseLogging)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(49, moduleName, iniParams, initConfigID, verboseLogging)
+		defer func() {
+			client.traceExit(50, moduleName, iniParams, initConfigID, verboseLogging, err, time.Since(entryTime))
+		}()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -749,11 +710,8 @@ func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName str
 				"moduleName":     moduleName,
 				"verboseLogging": strconv.Itoa(verboseLogging),
 			}
-			client.notify(ctx, 8022, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8022, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(50, moduleName, iniParams, initConfigID, verboseLogging, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -766,24 +724,23 @@ Input
   - observer: The observer to be added.
 */
 func (client *G2diagnostic) RegisterObserver(ctx context.Context, observer observer.Observer) error {
+	var err error = nil
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(55, observer.GetObserverId(ctx))
+		defer func() { client.traceExit(56, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}
-	entryTime := time.Now()
 	if client.observers == nil {
 		client.observers = &subject.SubjectImpl{}
 	}
-	err := client.observers.RegisterObserver(ctx, observer)
+	err = client.observers.RegisterObserver(ctx, observer)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"observerID": observer.GetObserverId(ctx),
 			}
-			client.notify(ctx, 8025, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8025, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(56, observer.GetObserverId(ctx), err, time.Since(entryTime))
 	}
 	return err
 }
@@ -796,21 +753,19 @@ Input
   - initConfigID: The configuration ID used for the initialization.
 */
 func (client *G2diagnostic) Reinit(ctx context.Context, initConfigID int64) error {
-	if client.isTrace {
-		client.traceEntry(51, initConfigID)
-	}
 	var err error = nil
-	entryTime := time.Now()
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(51, initConfigID)
+		defer func() { client.traceExit(52, initConfigID, err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
 				"initConfigID": strconv.FormatInt(initConfigID, 10),
 			}
-			client.notify(ctx, 8023, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8023, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(52, initConfigID, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -822,24 +777,22 @@ Input
   - ctx: A context to control lifecycle.
   - logLevel: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
 */
-func (client *G2diagnostic) SetLogLevel(ctx context.Context, logLevel logger.Level) error {
-	if client.isTrace {
-		client.traceEntry(53, logLevel)
-	}
-	entryTime := time.Now()
+func (client *G2diagnostic) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
-	client.getLogger().SetLogLevel(messagelogger.Level(logLevel))
-	client.isTrace = (client.getLogger().GetLogLevel() == messagelogger.LevelTrace)
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(53, logLevelName)
+		defer func() { client.traceExit(54, logLevelName, err, time.Since(entryTime)) }()
+	}
+	client.getLogger().SetLogLevel(logLevelName)
+	client.isTrace = (logLevelName == logging.LevelTraceName)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"logLevel": logger.LevelToTextMap[logLevel],
+				"logLevel": logLevelName,
 			}
-			client.notify(ctx, 8026, err, details)
+			notifier.Notify(ctx, client.observers, ProductId, 8026, err, details)
 		}()
-	}
-	if client.isTrace {
-		defer client.traceExit(54, logLevel, err, time.Since(entryTime))
 	}
 	return err
 }
@@ -852,11 +805,12 @@ Input
   - observer: The observer to be added.
 */
 func (client *G2diagnostic) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
-	if client.isTrace {
-		client.traceEntry(57, observer.GetObserverId(ctx))
-	}
-	entryTime := time.Now()
 	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(57, observer.GetObserverId(ctx))
+		defer func() { client.traceExit(58, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
+	}
 	if client.observers != nil {
 		// Tricky code:
 		// client.notify is called synchronously before client.observers is set to nil.
@@ -865,14 +819,11 @@ func (client *G2diagnostic) UnregisterObserver(ctx context.Context, observer obs
 		details := map[string]string{
 			"observerID": observer.GetObserverId(ctx),
 		}
-		client.notify(ctx, 8027, err, details)
+		notifier.Notify(ctx, client.observers, ProductId, 8027, err, details)
 	}
 	err = client.observers.UnregisterObserver(ctx, observer)
 	if !client.observers.HasObservers(ctx) {
 		client.observers = nil
-	}
-	if client.isTrace {
-		defer client.traceExit(58, observer.GetObserverId(ctx), err, time.Since(entryTime))
 	}
 	return err
 }
