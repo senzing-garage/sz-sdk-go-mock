@@ -201,6 +201,22 @@ func teardown() error {
 // Test interface functions
 // ----------------------------------------------------------------------------
 
+func TestG2engine_SetObserverOrigin(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	origin := "Machine: nn; Task: UnitTest"
+	g2engine.SetObserverOrigin(ctx, origin)
+}
+
+func TestG2engine_GetObserverOrigin(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	origin := "Machine: nn; Task: UnitTest"
+	g2engine.SetObserverOrigin(ctx, origin)
+	actual := g2engine.GetObserverOrigin(ctx)
+	assert.Equal(test, origin, actual)
+}
+
 func TestG2engine_AddRecord(test *testing.T) {
 	ctx := context.TODO()
 	g2engine := getTestObject(ctx, test)
@@ -950,6 +966,26 @@ func TestG2engine_Destroy(test *testing.T) {
 // ----------------------------------------------------------------------------
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
+
+func ExampleG2engine_SetObserverOrigin() {
+	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_test.go
+	ctx := context.TODO()
+	g2engine := getG2Engine(ctx)
+	origin := "Machine: nn; Task: UnitTest"
+	g2engine.SetObserverOrigin(ctx, origin)
+	// Output:
+}
+
+func ExampleG2engine_GetObserverOrigin() {
+	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2config/g2engine_test.go
+	ctx := context.TODO()
+	g2engine := getG2Engine(ctx)
+	origin := "Machine: nn; Task: UnitTest"
+	g2engine.SetObserverOrigin(ctx, origin)
+	result := g2engine.GetObserverOrigin(ctx)
+	fmt.Println(result)
+	// Output: Machine: nn; Task: UnitTest
+}
 
 func ExampleG2engine_AddRecord() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_test.go

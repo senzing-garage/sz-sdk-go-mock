@@ -5,4 +5,4 @@ package g2config
 // ----------------------------------------------------------------------------
 
 // Identfier of the g2config package found messages having the format "senzing-6031xxxx".
-const ProductId = 6031
+const ComponentId = 6031
