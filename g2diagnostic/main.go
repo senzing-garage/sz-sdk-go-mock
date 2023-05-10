@@ -5,4 +5,4 @@ package g2diagnostic
 // ----------------------------------------------------------------------------
 
 // Identfier of the g2diagnostic package found messages having the format "senzing-6033xxxx".
-const ProductId = 6033
+const ComponentId = 6033
