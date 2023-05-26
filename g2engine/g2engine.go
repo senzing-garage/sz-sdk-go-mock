@@ -2336,7 +2336,7 @@ func (client *G2engine) SetLogLevel(ctx context.Context, logLevelName string) er
 		client.traceEntry(137, logLevelName)
 		defer func() { client.traceExit(138, logLevelName, err, time.Since(entryTime)) }()
 	}
-	client.getLogger().SetLogLevel(logLevelName)
+	err = client.getLogger().SetLogLevel(logLevelName)
 	client.isTrace = (logLevelName == logging.LevelTraceName)
 	if client.observers != nil {
 		go func() {

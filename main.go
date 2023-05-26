@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"log"
-	"math/rand"
-	"strconv"
+	"math/big"
 	"time"
 
 	"github.com/senzing/g2-sdk-go-mock/g2config"
@@ -163,7 +163,11 @@ func demonstrateConfigFunctions(ctx context.Context, g2Config g2api.G2config, g2
 
 func demonstrateAddRecord(ctx context.Context, g2Engine g2api.G2engine) (string, error) {
 	dataSourceCode := "TEST"
-	recordID := strconv.Itoa(rand.Intn(1000000000))
+	randomNumber, err := rand.Int(rand.Reader, big.NewInt(1000000000))
+	if err != nil {
+		panic(err)
+	}
+	recordID := randomNumber.String()
 	jsonData := fmt.Sprintf(
 		"%s%s%s",
 		`{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1983", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "TEST", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "`,
@@ -184,7 +188,10 @@ func demonstrateAdditionalFunctions(ctx context.Context, g2Diagnostic g2api.G2di
 	if err != nil {
 		failOnError(5300, err)
 	}
-	logger.Log(2002, actual)
+	err = logger.Log(2002, actual)
+	if err != nil {
+		panic(err)
+	}
 
 	// Using G2Engine: Purge repository.
 
@@ -199,7 +206,10 @@ func demonstrateAdditionalFunctions(ctx context.Context, g2Diagnostic g2api.G2di
 	if err != nil {
 		failOnError(5302, err)
 	}
-	logger.Log(2003, withInfo)
+	err = logger.Log(2003, withInfo)
+	if err != nil {
+		panic(err)
+	}
 
 	// Using G2Product: Show license metadata.
 
@@ -207,7 +217,10 @@ func demonstrateAdditionalFunctions(ctx context.Context, g2Diagnostic g2api.G2di
 	if err != nil {
 		failOnError(5303, err)
 	}
-	logger.Log(2004, license)
+	err = logger.Log(2004, license)
+	if err != nil {
+		panic(err)
+	}
 
 	// Using G2Engine: Purge repository again.
 
@@ -250,7 +263,10 @@ func destroyObjects(ctx context.Context, g2Config g2api.G2config, g2Configmgr g2
 }
 
 func failOnError(msgId int, err error) {
-	logger.Log(msgId, err)
+	err2 := logger.Log(msgId, err)
+	if err2 != nil {
+		panic(err)
+	}
 	panic(err.Error())
 }
 
@@ -279,7 +295,10 @@ func main() {
 	}
 
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
-	logger.Log(2001, "Just a test of logging", programmMetadataMap)
+	err = logger.Log(2001, "Just a test of logging", programmMetadataMap)
+	if err != nil {
+		panic(err)
+	}
 
 	// Create 2 observers.
 
@@ -293,13 +312,19 @@ func main() {
 	if err != nil {
 		failOnError(5001, err)
 	}
-	g2Config.RegisterObserver(ctx, observer1)
+	err = g2Config.RegisterObserver(ctx, observer1)
+	if err != nil {
+		failOnError(9999, err)
+	}
 
 	g2Configmgr, err := getG2configmgr(ctx)
 	if err != nil {
 		failOnError(5005, err)
 	}
-	g2Configmgr.RegisterObserver(ctx, observer1)
+	err = g2Configmgr.RegisterObserver(ctx, observer1)
+	if err != nil {
+		failOnError(9999, err)
+	}
 
 	// Persist the Senzing configuration to the Senzing repository.
 
@@ -314,19 +339,28 @@ func main() {
 	if err != nil {
 		failOnError(5009, err)
 	}
-	g2Diagnostic.RegisterObserver(ctx, observer1)
+	err = g2Diagnostic.RegisterObserver(ctx, observer1)
+	if err != nil {
+		failOnError(9999, err)
+	}
 
 	g2Engine, err := getG2engine(ctx)
 	if err != nil {
 		failOnError(5010, err)
 	}
-	g2Engine.RegisterObserver(ctx, observer1)
+	err = g2Engine.RegisterObserver(ctx, observer1)
+	if err != nil {
+		failOnError(9999, err)
+	}
 
 	g2Product, err := getG2product(ctx)
 	if err != nil {
 		failOnError(5011, err)
 	}
-	g2Product.RegisterObserver(ctx, observer1)
+	err = g2Product.RegisterObserver(ctx, observer1)
+	if err != nil {
+		failOnError(9999, err)
+	}
 
 	// Demonstrate tests.
 
