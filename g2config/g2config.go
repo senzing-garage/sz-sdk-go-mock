@@ -26,6 +26,7 @@ type G2config struct {
 	CreateResult          uintptr
 	isTrace               bool
 	ListDataSourcesResult string
+	LoadResult            uintptr
 	logger                logging.LoggingInterface
 	observerOrigin        string
 	observers             subject.Subject
@@ -308,12 +309,12 @@ Input
   - configHandle: An identifier of an in-memory configuration.
   - jsonConfig: A JSON document containing the Senzing configuration.
 */
-func (client *G2config) Load(ctx context.Context, configHandle uintptr, jsonConfig string) error {
+func (client *G2config) Load(ctx context.Context, jsonConfig string) (uintptr, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(21, configHandle, jsonConfig)
-		defer func() { client.traceExit(22, configHandle, jsonConfig, err, time.Since(entryTime)) }()
+		client.traceEntry(21, jsonConfig)
+		defer func() { client.traceExit(22, jsonConfig, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -321,7 +322,7 @@ func (client *G2config) Load(ctx context.Context, configHandle uintptr, jsonConf
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8008, err, details)
 		}()
 	}
-	return err
+	return client.LoadResult, err
 }
 
 /*
@@ -395,7 +396,7 @@ func (client *G2config) SetLogLevel(ctx context.Context, logLevelName string) er
 		client.traceEntry(25, logLevelName)
 		defer func() { client.traceExit(26, logLevelName, err, time.Since(entryTime)) }()
 	}
-	client.getLogger().SetLogLevel(logLevelName)
+	err = client.getLogger().SetLogLevel(logLevelName)
 	client.isTrace = (logLevelName == logging.LevelTraceName)
 	if client.observers != nil {
 		go func() {
