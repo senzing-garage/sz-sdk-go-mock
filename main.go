@@ -314,66 +314,66 @@ func main() {
 	}
 	err = g2Config.RegisterObserver(ctx, observer1)
 	if err != nil {
-		failOnError(9999, err)
+		failOnError(5002, err)
 	}
 
 	g2Configmgr, err := getG2configmgr(ctx)
 	if err != nil {
-		failOnError(5005, err)
+		failOnError(5003, err)
 	}
 	err = g2Configmgr.RegisterObserver(ctx, observer1)
 	if err != nil {
-		failOnError(9999, err)
+		failOnError(5004, err)
 	}
 
 	// Persist the Senzing configuration to the Senzing repository.
 
 	err = demonstrateConfigFunctions(ctx, g2Config, g2Configmgr)
 	if err != nil {
-		failOnError(5008, err)
+		failOnError(5005, err)
 	}
 
 	// Now that a Senzing configuration is installed, get the remainder of the Senzing objects.
 
 	g2Diagnostic, err := getG2diagnostic(ctx)
 	if err != nil {
-		failOnError(5009, err)
+		failOnError(5006, err)
 	}
 	err = g2Diagnostic.RegisterObserver(ctx, observer1)
 	if err != nil {
-		failOnError(9999, err)
+		failOnError(5007, err)
 	}
 
 	g2Engine, err := getG2engine(ctx)
 	if err != nil {
-		failOnError(5010, err)
+		failOnError(5008, err)
 	}
 	err = g2Engine.RegisterObserver(ctx, observer1)
 	if err != nil {
-		failOnError(9999, err)
+		failOnError(5009, err)
 	}
 
 	g2Product, err := getG2product(ctx)
 	if err != nil {
-		failOnError(5011, err)
+		failOnError(5010, err)
 	}
 	err = g2Product.RegisterObserver(ctx, observer1)
 	if err != nil {
-		failOnError(9999, err)
+		failOnError(5011, err)
 	}
 
 	// Demonstrate tests.
 
 	err = demonstrateAdditionalFunctions(ctx, g2Diagnostic, g2Engine, g2Product)
 	if err != nil {
-		failOnError(5015, err)
+		failOnError(5012, err)
 	}
 
 	// Destroy Senzing objects.
 
 	err = destroyObjects(ctx, g2Config, g2Configmgr, g2Diagnostic, g2Engine, g2Product)
 	if err != nil {
-		failOnError(5016, err)
+		failOnError(5013, err)
 	}
 
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
