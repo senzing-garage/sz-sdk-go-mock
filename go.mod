@@ -8,7 +8,7 @@ require (
 	github.com/senzing/go-common v0.1.3
 	github.com/senzing/go-logging v1.2.5
 	github.com/senzing/go-observing v0.2.5
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
