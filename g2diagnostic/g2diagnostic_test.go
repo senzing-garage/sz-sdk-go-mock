@@ -138,28 +138,6 @@ func TestG2diagnostic_CheckDBPerf(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestG2diagnostic_EntityListBySize(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	aSize := 1000
-	aHandle, err := g2diagnostic.GetEntityListBySize(ctx, aSize)
-	testError(test, ctx, g2diagnostic, err)
-	anEntity, err := g2diagnostic.FetchNextEntityBySize(ctx, aHandle)
-	testError(test, ctx, g2diagnostic, err)
-	printResult(test, "Entity", anEntity)
-	err = g2diagnostic.CloseEntityListBySize(ctx, aHandle)
-	testError(test, ctx, g2diagnostic, err)
-}
-
-func TestG2diagnostic_FindEntitiesByFeatureIDs(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	features := "{\"ENTITY_ID\":1,\"LIB_FEAT_IDS\":[1,3,4]}"
-	actual, err := g2diagnostic.FindEntitiesByFeatureIDs(ctx, features)
-	testError(test, ctx, g2diagnostic, err)
-	printResult(test, "len(Actual)", len(actual))
-}
-
 func TestG2diagnostic_GetAvailableMemory(test *testing.T) {
 	ctx := context.TODO()
 	g2diagnostic := getTestObject(ctx, test)
@@ -169,66 +147,10 @@ func TestG2diagnostic_GetAvailableMemory(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestG2diagnostic_GetDataSourceCounts(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	actual, err := g2diagnostic.GetDataSourceCounts(ctx)
-	testError(test, ctx, g2diagnostic, err)
-	printResult(test, "Data Source counts", actual)
-}
-
 func TestG2diagnostic_GetDBInfo(test *testing.T) {
 	ctx := context.TODO()
 	g2diagnostic := getTestObject(ctx, test)
 	actual, err := g2diagnostic.GetDBInfo(ctx)
-	testError(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetEntityDetails(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	entityID := int64(1)
-	includeInternalFeatures := 1
-	actual, err := g2diagnostic.GetEntityDetails(ctx, entityID, includeInternalFeatures)
-	testErrorNoFail(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetEntityResume(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	entityID := int64(1)
-	actual, err := g2diagnostic.GetEntityResume(ctx, entityID)
-	testErrorNoFail(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetEntitySizeBreakdown(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	minimumEntitySize := 1
-	includeInternalFeatures := 1
-	actual, err := g2diagnostic.GetEntitySizeBreakdown(ctx, minimumEntitySize, includeInternalFeatures)
-	testError(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetFeature(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	libFeatID := int64(1)
-	actual, err := g2diagnostic.GetFeature(ctx, libFeatID)
-	testErrorNoFail(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetGenericFeatures(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	featureType := "PHONE"
-	maximumEstimatedCount := 10
-	actual, err := g2diagnostic.GetGenericFeatures(ctx, featureType, maximumEstimatedCount)
 	testError(test, ctx, g2diagnostic, err)
 	printActual(test, actual)
 }
@@ -242,39 +164,12 @@ func TestG2diagnostic_GetLogicalCores(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestG2diagnostic_GetMappingStatistics(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	includeInternalFeatures := 1
-	actual, err := g2diagnostic.GetMappingStatistics(ctx, includeInternalFeatures)
-	testError(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
 func TestG2diagnostic_GetPhysicalCores(test *testing.T) {
 	ctx := context.TODO()
 	g2diagnostic := getTestObject(ctx, test)
 	actual, err := g2diagnostic.GetPhysicalCores(ctx)
 	testError(test, ctx, g2diagnostic, err)
 	assert.Greater(test, actual, 0)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetRelationshipDetails(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	relationshipID := int64(1)
-	includeInternalFeatures := 1
-	actual, err := g2diagnostic.GetRelationshipDetails(ctx, relationshipID, includeInternalFeatures)
-	testErrorNoFail(test, ctx, g2diagnostic, err)
-	printActual(test, actual)
-}
-
-func TestG2diagnostic_GetResolutionStatistics(test *testing.T) {
-	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	actual, err := g2diagnostic.GetResolutionStatistics(ctx)
-	testError(test, ctx, g2diagnostic, err)
 	printActual(test, actual)
 }
 
