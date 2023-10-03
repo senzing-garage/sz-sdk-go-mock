@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.3.0] - 2023-10-03
+
+### Changed in 0.3.0
+
+- Supports SenzingAPI 3.8.0
+- Deprecated functions have been removed
+- Update dependencies
+  - github.com/senzing/g2-sdk-go v0.7.0
+
 ## [0.2.2] - 2023-09-01
 
 ### Changed in 0.2.2
