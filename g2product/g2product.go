@@ -22,14 +22,12 @@ import (
 // ----------------------------------------------------------------------------
 
 type G2product struct {
-	isTrace                           bool
-	LicenseResult                     string
-	logger                            logging.LoggingInterface
-	observerOrigin                    string
-	observers                         subject.Subject
-	ValidateLicenseFileResult         string
-	ValidateLicenseStringBase64Result string
-	VersionResult                     string
+	isTrace        bool
+	LicenseResult  string
+	logger         logging.LoggingInterface
+	observerOrigin string
+	observers      subject.Subject
+	VersionResult  string
 }
 
 // ----------------------------------------------------------------------------
@@ -279,67 +277,6 @@ func (client *G2product) UnregisterObserver(ctx context.Context, observer observ
 		client.observers = nil
 	}
 	return err
-}
-
-/*
-The ValidateLicenseFile method validates the licence file has not expired.
-
-Input
-  - ctx: A context to control lifecycle.
-  - licenseFilePath: A fully qualified path to the Senzing license file.
-
-Output
-  - if error is nil, license is valid.
-  - If error not nil, license is not valid.
-  - The returned string has additional information.
-*/
-func (client *G2product) ValidateLicenseFile(ctx context.Context, licenseFilePath string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(15, licenseFilePath)
-		defer func() {
-			client.traceExit(16, licenseFilePath, client.ValidateLicenseFileResult, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8004, err, details)
-		}()
-	}
-	return client.ValidateLicenseFileResult, err
-}
-
-/*
-The ValidateLicenseStringBase64 method validates the licence, represented by a Base-64 string, has not expired.
-
-Input
-  - ctx: A context to control lifecycle.
-  - licenseString: A Senzing license represented by a Base-64 encoded string.
-
-Output
-  - if error is nil, license is valid.
-  - If error not nil, license is not valid.
-  - The returned string has additional information.
-    See the example output.
-*/
-func (client *G2product) ValidateLicenseStringBase64(ctx context.Context, licenseString string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(17, licenseString)
-		defer func() {
-			client.traceExit(18, licenseString, client.ValidateLicenseStringBase64Result, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8005, err, details)
-		}()
-	}
-	return client.ValidateLicenseStringBase64Result, err
 }
 
 /*
