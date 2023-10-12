@@ -26,7 +26,7 @@ hello-world-osarch-specific:
 
 .PHONY: run-osarch-specific
 run-osarch-specific:
-	@go run -exec macos_exec_dyld.sh main.go
+	@go run -exec main.go
 
 
 .PHONY: setup-osarch-specific
@@ -36,7 +36,7 @@ setup-osarch-specific:
 
 .PHONY: test-osarch-specific
 test-osarch-specific:
-	@go test -exec macos_exec_dyld.sh -v -p 1 ./...
+	@go test -exec -v -p 1 ./...
 
 # -----------------------------------------------------------------------------
 # Makefile targets supported only by this platform.
