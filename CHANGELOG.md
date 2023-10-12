@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.3.1] - 2023-10-12
+
+### Changed in 0.3.1
+
+- Changed from `int` to `int64` where required by the SenzingAPI
+- Update dependencies
+  - github.com/senzing/g2-sdk-go v0.7.3
+
+### Deleted in 0.3.1
+
+- `g2product.ValidateLicenseFile`
+- `g2product.ValidateLicenseStringBase64`
+
 ## [0.3.0] - 2023-10-03
 
 ### Changed in 0.3.0
