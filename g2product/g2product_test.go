@@ -120,7 +120,7 @@ func TestG2product_Init(test *testing.T) {
 	g2product := getG2Product(ctx)
 	moduleName := "Test module name"
 	iniParams := "{}"
-	verboseLogging := 0
+	verboseLogging := int64(0)
 	err := g2product.Init(ctx, moduleName, iniParams, verboseLogging)
 	testError(test, ctx, g2product, err)
 }

@@ -7,11 +7,15 @@ on: [push]
 
 jobs:
   go-test-darwin:
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      GO111MODULE: on
+      CGO_ENABLED: 1
     strategy:
       matrix:
+        os: [macos-latest]
         go: ["1.21"]
-    name: Go ${{ matrix.go }} - darwin
+    name: "OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

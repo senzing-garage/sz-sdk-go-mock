@@ -39,7 +39,7 @@ func ExampleG2product_Init() {
 	g2product := getG2Product(ctx)
 	moduleName := "Test module name"
 	iniParams := "{}"
-	verboseLogging := 0
+	verboseLogging := int64(0)
 	err := g2product.Init(ctx, moduleName, iniParams, verboseLogging)
 	if err != nil {
 		// This should produce a "senzing-60164002" error.

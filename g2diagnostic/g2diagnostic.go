@@ -676,7 +676,7 @@ Input
   - iniParams: A JSON string containing configuration parameters.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int) error {
+func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -688,7 +688,7 @@ func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniPara
 			details := map[string]string{
 				"iniParams":      iniParams,
 				"moduleName":     moduleName,
-				"verboseLogging": strconv.Itoa(verboseLogging),
+				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8021, err, details)
 		}()
@@ -707,7 +707,7 @@ Input
   - initConfigID: The configuration ID used for the initialization.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int) error {
+func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -722,7 +722,7 @@ func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName str
 				"iniParams":      iniParams,
 				"initConfigID":   strconv.FormatInt(initConfigID, 10),
 				"moduleName":     moduleName,
-				"verboseLogging": strconv.Itoa(verboseLogging),
+				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8022, err, details)
 		}()

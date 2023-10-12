@@ -297,7 +297,7 @@ func ExampleG2diagnostic_Init() {
 	g2diagnostic := &G2diagnostic{}
 	moduleName := "Test module name"
 	iniParams := "{}"
-	verboseLogging := 0
+	verboseLogging := int64(0)
 	err := g2diagnostic.Init(ctx, moduleName, iniParams, verboseLogging)
 	if err != nil {
 		// This should produce a "senzing-60134002" error.
@@ -312,7 +312,7 @@ func ExampleG2diagnostic_InitWithConfigID() {
 	moduleName := "Test module name"
 	iniParams := "{}"
 	initConfigID := int64(1)
-	verboseLogging := 0
+	verboseLogging := int64(0)
 	err := g2diagnostic.InitWithConfigID(ctx, moduleName, iniParams, initConfigID, verboseLogging)
 	if err != nil {
 		// This should produce a "senzing-60134003" error.
