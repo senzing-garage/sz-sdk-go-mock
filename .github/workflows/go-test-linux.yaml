@@ -13,8 +13,8 @@ jobs:
       CGO_ENABLED: 1
     strategy:
       matrix:
-        os: [ubuntu-latest]
         go: ["1.21"]
+        os: [ubuntu-latest]
     name: "go test with OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     steps:
       - name: Checkout repository
