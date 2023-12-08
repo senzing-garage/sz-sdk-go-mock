@@ -81,50 +81,50 @@ func ExampleG2engine_AddRecordWithInfo() {
 	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1003","AFFECTED_ENTITIES":[{"ENTITY_ID":1}],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
 }
 
-func ExampleG2engine_AddRecordWithInfoWithReturnedRecordID() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	dataSourceCode := "CUSTOMERS"
-	jsonData := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Kellar", "PRIMARY_NAME_FIRST": "Candace", "ADDR_LINE1": "1824 AspenOak Way", "ADDR_CITY": "Elmwood Park", "ADDR_STATE": "CA", "ADDR_POSTAL_CODE": "95865", "EMAIL_ADDRESS": "info@ca-state.gov"}`
-	loadID := "G2Engine_test"
-	flags := int64(0)
-	result, _, err := g2engine.AddRecordWithInfoWithReturnedRecordID(ctx, dataSourceCode, jsonData, loadID, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(truncate(result, 42))
-	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":...
-}
+// func ExampleG2engine_AddRecordWithInfoWithReturnedRecordID() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	dataSourceCode := "CUSTOMERS"
+// 	jsonData := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Kellar", "PRIMARY_NAME_FIRST": "Candace", "ADDR_LINE1": "1824 AspenOak Way", "ADDR_CITY": "Elmwood Park", "ADDR_STATE": "CA", "ADDR_POSTAL_CODE": "95865", "EMAIL_ADDRESS": "info@ca-state.gov"}`
+// 	loadID := "G2Engine_test"
+// 	flags := int64(0)
+// 	result, _, err := g2engine.AddRecordWithInfoWithReturnedRecordID(ctx, dataSourceCode, jsonData, loadID, flags)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(truncate(result, 42))
+// 	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":...
+// }
 
-func ExampleG2engine_AddRecordWithReturnedRecordID() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	dataSourceCode := "CUSTOMERS"
-	jsonData := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Sanders", "PRIMARY_NAME_FIRST": "Sandy", "ADDR_LINE1": "1376 BlueBell Rd", "ADDR_CITY": "Sacramento", "ADDR_STATE": "CA", "ADDR_POSTAL_CODE": "95823", "EMAIL_ADDRESS": "info@ca-state.gov"}`
-	loadID := "G2Engine_test"
-	result, err := g2engine.AddRecordWithReturnedRecordID(ctx, dataSourceCode, jsonData, loadID)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Printf("Length of record identifier is %d hexadecimal characters.\n", len(result))
-	// Output: Length of record identifier is 40 hexadecimal characters.
-}
+// func ExampleG2engine_AddRecordWithReturnedRecordID() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	dataSourceCode := "CUSTOMERS"
+// 	jsonData := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Sanders", "PRIMARY_NAME_FIRST": "Sandy", "ADDR_LINE1": "1376 BlueBell Rd", "ADDR_CITY": "Sacramento", "ADDR_STATE": "CA", "ADDR_POSTAL_CODE": "95823", "EMAIL_ADDRESS": "info@ca-state.gov"}`
+// 	loadID := "G2Engine_test"
+// 	result, err := g2engine.AddRecordWithReturnedRecordID(ctx, dataSourceCode, jsonData, loadID)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Printf("Length of record identifier is %d hexadecimal characters.\n", len(result))
+// 	// Output: Length of record identifier is 40 hexadecimal characters.
+// }
 
-func ExampleG2engine_CheckRecord() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
-	recordQueryList := `{"RECORDS": [{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "1001"},{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "123456789"}]}`
-	result, err := g2engine.CheckRecord(ctx, record, recordQueryList)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"CHECK_RECORD_RESPONSE":[{"DSRC_CODE":"CUSTOMERS","RECORD_ID":"1001","MATCH_LEVEL":0,"MATCH_LEVEL_CODE":"","MATCH_KEY":"","ERRULE_CODE":"","ERRULE_ID":0,"CANDIDATE_MATCH":"N","NON_GENERIC_CANDIDATE_MATCH":"N"}]}
-}
+// func ExampleG2engine_CheckRecord() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
+// 	recordQueryList := `{"RECORDS": [{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "1001"},{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "123456789"}]}`
+// 	result, err := g2engine.CheckRecord(ctx, record, recordQueryList)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	// Output: {"CHECK_RECORD_RESPONSE":[{"DSRC_CODE":"CUSTOMERS","RECORD_ID":"1001","MATCH_LEVEL":0,"MATCH_LEVEL_CODE":"","MATCH_KEY":"","ERRULE_CODE":"","ERRULE_ID":0,"CANDIDATE_MATCH":"N","NON_GENERIC_CANDIDATE_MATCH":"N"}]}
+// }
 
 func ExampleG2engine_CloseExport() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
@@ -151,20 +151,6 @@ func ExampleG2engine_CountRedoRecords() {
 	// Output: 1
 }
 
-func ExampleG2engine_ExportCSVEntityReport() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	csvColumnList := ""
-	flags := int64(0)
-	responseHandle, err := g2engine.ExportCSVEntityReport(ctx, csvColumnList, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(responseHandle > 0) // Dummy output.
-	// Output: true
-}
-
 func ExampleG2engine_ExportConfig() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
 	ctx := context.TODO()
@@ -186,6 +172,20 @@ func ExampleG2engine_ExportConfigAndConfigID() {
 		fmt.Println(err)
 	}
 	fmt.Println(configId > 0) // Dummy output.
+	// Output: true
+}
+
+func ExampleG2engine_ExportCSVEntityReport() {
+	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+	ctx := context.TODO()
+	g2engine := getG2Engine(ctx)
+	csvColumnList := ""
+	flags := int64(0)
+	responseHandle, err := g2engine.ExportCSVEntityReport(ctx, csvColumnList, flags)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(responseHandle > 0) // Dummy output.
 	// Output: true
 }
 
@@ -889,30 +889,30 @@ func ExampleG2engine_Process() {
 	// Output:
 }
 
-func ExampleG2engine_ProcessRedoRecord() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	result, err := g2engine.ProcessRedoRecord(ctx)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output:
-}
+// func ExampleG2engine_ProcessRedoRecord() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-base/blob/main/g2engine/g2engine_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	result, err := g2engine.ProcessRedoRecord(ctx)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	// Output:
+// }
 
-func ExampleG2engine_ProcessRedoRecordWithInfo() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	flags := int64(0)
-	_, result, err := g2engine.ProcessRedoRecordWithInfo(ctx, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output:
-}
+// func ExampleG2engine_ProcessRedoRecordWithInfo() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-base/blob/main/g2engine/g2engine_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	flags := int64(0)
+// 	_, result, err := g2engine.ProcessRedoRecordWithInfo(ctx, flags)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	// Output:
+// }
 
 func ExampleG2engine_ProcessWithInfo() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
@@ -928,31 +928,31 @@ func ExampleG2engine_ProcessWithInfo() {
 	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","AFFECTED_ENTITIES":[],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
 }
 
-func ExampleG2engine_ProcessWithResponse() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
-	result, err := g2engine.ProcessWithResponse(ctx, record)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"MESSAGE": "ER SKIPPED - DUPLICATE RECORD IN G2"}
-}
+// func ExampleG2engine_ProcessWithResponse() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-base/blob/main/g2engine/g2engine_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
+// 	result, err := g2engine.ProcessWithResponse(ctx, record)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	// Output: {"MESSAGE": "ER SKIPPED - DUPLICATE RECORD IN G2"}
+// }
 
-func ExampleG2engine_ProcessWithResponseResize() {
-	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
-	ctx := context.TODO()
-	g2engine := getG2Engine(ctx)
-	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
-	result, err := g2engine.ProcessWithResponseResize(ctx, record)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"MESSAGE": "ER SKIPPED - DUPLICATE RECORD IN G2"}
-}
+// func ExampleG2engine_ProcessWithResponseResize() {
+// 	// For more information, visit https://github.com/Senzing/g2-sdk-go-base/blob/main/g2engine/g2engine_test.go
+// 	ctx := context.TODO()
+// 	g2engine := getG2Engine(ctx)
+// 	record := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1001", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robert", "DATE_OF_BIRTH": "12/11/1978", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 Main Street, Las Vegas NV 89132", "PHONE_TYPE": "HOME", "PHONE_NUMBER": "702-919-1300", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/2/18", "STATUS": "Active", "AMOUNT": "100"}`
+// 	result, err := g2engine.ProcessWithResponseResize(ctx, record)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	// Output: {"MESSAGE": "ER SKIPPED - DUPLICATE RECORD IN G2"}
+// }
 
 func ExampleG2engine_ReevaluateEntity() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go

@@ -80,8 +80,8 @@ Output
 */
 func (client *G2configmgr) AddConfig(ctx context.Context, configStr string, configComments string) (int64, error) {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(1, configStr, configComments)
 		defer func() {
 			client.traceExit(2, configStr, configComments, client.AddConfigResult, err, time.Since(entryTime))
@@ -107,8 +107,8 @@ Input
 */
 func (client *G2configmgr) Destroy(ctx context.Context) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(5)
 		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
 	}
@@ -134,8 +134,8 @@ Output
 */
 func (client *G2configmgr) GetConfig(ctx context.Context, configID int64) (string, error) {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(7, configID)
 		defer func() { client.traceExit(8, configID, client.GetConfigResult, err, time.Since(entryTime)) }()
 	}
@@ -160,8 +160,8 @@ Output
 */
 func (client *G2configmgr) GetConfigList(ctx context.Context) (string, error) {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(9)
 		defer func() { client.traceExit(10, client.GetConfigListResult, err, time.Since(entryTime)) }()
 	}
@@ -185,8 +185,8 @@ Output
 */
 func (client *G2configmgr) GetDefaultConfigID(ctx context.Context) (int64, error) {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(11)
 		defer func() { client.traceExit(12, client.GetDefaultConfigIDResult, err, time.Since(entryTime)) }()
 	}
@@ -222,8 +222,8 @@ Input
 */
 func (client *G2configmgr) GetSdkId(ctx context.Context) string {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(29)
 		defer func() { client.traceExit(30, err, time.Since(entryTime)) }()
 	}
@@ -248,8 +248,8 @@ Input
 */
 func (client *G2configmgr) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(17, moduleName, iniParams, verboseLogging)
 		defer func() { client.traceExit(18, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
 	}
@@ -275,8 +275,8 @@ Input
 */
 func (client *G2configmgr) RegisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(25, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(26, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}
@@ -308,8 +308,8 @@ Input
 */
 func (client *G2configmgr) ReplaceDefaultConfigID(ctx context.Context, oldConfigID int64, newConfigID int64) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(19, oldConfigID, newConfigID)
 		defer func() { client.traceExit(20, oldConfigID, newConfigID, err, time.Since(entryTime)) }()
 	}
@@ -334,8 +334,8 @@ Input
 */
 func (client *G2configmgr) SetDefaultConfigID(ctx context.Context, configID int64) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(21, configID)
 		defer func() { client.traceExit(22, configID, err, time.Since(entryTime)) }()
 	}
@@ -359,8 +359,8 @@ Input
 */
 func (client *G2configmgr) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(23, logLevelName)
 		defer func() { client.traceExit(24, logLevelName, err, time.Since(entryTime)) }()
 	}
@@ -397,8 +397,8 @@ Input
 */
 func (client *G2configmgr) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
+	entryTime := time.Now()
 	if client.isTrace {
-		entryTime := time.Now()
 		client.traceEntry(27, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(28, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}

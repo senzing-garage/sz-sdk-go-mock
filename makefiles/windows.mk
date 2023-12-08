@@ -1,4 +1,4 @@
-# Makefile extensions for linux.
+# Makefile extensions for windows.
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -6,22 +6,18 @@
 
 
 # -----------------------------------------------------------------------------
-# OS-ARCH specific targets
+# OS specific targets
 # -----------------------------------------------------------------------------
-
-.PHONY: build-osarch-specific
-build-osarch-specific: linux/amd64
-
 
 .PHONY: clean-osarch-specific
 clean-osarch-specific:
-	@rm -rf $(TARGET_DIRECTORY) || true
-	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
+	del /F /S /Q $(TARGET_DIRECTORY)
+	del /F /S /Q $(GOPATH)/bin/$(PROGRAM_NAME)
 
 
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
-	@echo "Hello World, from linux."
+	@echo "Hello World, from windows."
 
 
 .PHONY: run-osarch-specific
@@ -31,7 +27,7 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
+	@echo "No setup required."
 
 
 .PHONY: test-osarch-specific
@@ -42,6 +38,6 @@ test-osarch-specific:
 # Makefile targets supported only by this platform.
 # -----------------------------------------------------------------------------
 
-.PHONY: only-linux
-only-linux:
-	@echo "Only linux has this Makefile target."
+.PHONY: only-windows
+only-windows:
+	@echo "Only windows has this Makefile target."
