@@ -79,6 +79,10 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func getIniParams() (string, error) {
+	return "{}", nil
+}
+
 func setup() error {
 	var err error = nil
 	return err
@@ -249,8 +253,9 @@ func TestG2config_Init(test *testing.T) {
 	g2config := getTestObject(ctx, test)
 	moduleName := "Test module name"
 	verboseLogging := int64(0)
-	iniParams := "{}"
-	err := g2config.Init(ctx, moduleName, iniParams, verboseLogging)
+	iniParams, err := getIniParams()
+	testError(test, ctx, g2config, err)
+	err = g2config.Init(ctx, moduleName, iniParams, verboseLogging)
 	testError(test, ctx, g2config, err)
 }
 
