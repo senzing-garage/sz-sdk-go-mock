@@ -21,7 +21,7 @@ const (
 	defaultTruncation = 76
 	loadId            = "G2Engine_test"
 	moduleName        = "Engine Test Module"
-	printResults      = true
+	printResults      = false
 	verboseLogging    = 0
 )
 
@@ -328,7 +328,12 @@ func TestG2engine_ExportCSVEntityReport(test *testing.T) {
 	}()
 	testError(test, ctx, g2engine, err)
 	actualCount := 0
-	for actual := range g2engine.ExportCSVEntityReportIterator(ctx, csvColumnList, flags) {
+	for {
+		actual, err := g2engine.FetchNext(ctx, aHandle)
+		testError(test, ctx, g2engine, err)
+		if len(actual) == 0 {
+			break
+		}
 		assert.Equal(test, expected[actualCount], strings.TrimSpace(actual))
 		actualCount += 1
 	}
