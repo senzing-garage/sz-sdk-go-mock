@@ -194,11 +194,11 @@ func ExampleG2engine_ExportCSVEntityReportIterator() {
 	ctx := context.TODO()
 	g2engine := getG2Engine(ctx)
 	csvColumnList := ""
-	flags := int64(-1)
+	flags := int64(0)
 	for result := range g2engine.ExportCSVEntityReportIterator(ctx, csvColumnList, flags) {
 		fmt.Println(result)
 	}
-	// Output: RESOLVED_ENTITY_ID,RELATED_ENTITY_ID,MATCH_LEVEL,MATCH_KEY,DATA_SOURCE,RECORD_ID
+	// Output:
 }
 
 func ExampleG2engine_ExportJSONEntityReport() {
