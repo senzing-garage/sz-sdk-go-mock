@@ -189,6 +189,18 @@ func ExampleG2engine_ExportCSVEntityReport() {
 	// Output: true
 }
 
+func ExampleG2engine_ExportCSVEntityReportIterator() {
+	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+	ctx := context.TODO()
+	g2engine := getG2Engine(ctx)
+	csvColumnList := ""
+	flags := int64(-1)
+	for result := range g2engine.ExportCSVEntityReportIterator(ctx, csvColumnList, flags) {
+		fmt.Println(result)
+	}
+	// Output: RESOLVED_ENTITY_ID,RELATED_ENTITY_ID,MATCH_LEVEL,MATCH_KEY,DATA_SOURCE,RECORD_ID
+}
+
 func ExampleG2engine_ExportJSONEntityReport() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
 	ctx := context.TODO()
@@ -200,6 +212,17 @@ func ExampleG2engine_ExportJSONEntityReport() {
 	}
 	fmt.Println(responseHandle > 0) // Dummy output.
 	// Output: true
+}
+
+func ExampleG2engine_ExportJSONEntityReportIterator() {
+	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+	ctx := context.TODO()
+	g2engine := getG2Engine(ctx)
+	flags := int64(0)
+	for result := range g2engine.ExportJSONEntityReportIterator(ctx, flags) {
+		fmt.Println(result)
+	}
+	// Output:
 }
 
 func ExampleG2engine_FetchNext() {
@@ -757,7 +780,6 @@ func ExampleG2engine_Stats() {
 	// Output: { "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...
 }
 
-// FIXME: Remove after GDEV-3576 is fixed
 func ExampleG2engine_WhyEntities() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
 	ctx := context.TODO()
@@ -772,7 +794,6 @@ func ExampleG2engine_WhyEntities() {
 	// Output: {"WHY_RESULTS":[{"ENTITY_ID":1,"ENTITY_ID_2":1,"MATCH_INFO":{"WHY_KEY":...
 }
 
-// FIXME: Remove after GDEV-3576 is fixed
 func ExampleG2engine_WhyEntities_V2() {
 	// For more information, visit https://github.com/Senzing/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
 	ctx := context.TODO()
