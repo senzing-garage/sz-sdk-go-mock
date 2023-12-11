@@ -95,8 +95,8 @@ Output
 */
 func (client *G2diagnostic) CheckDBPerf(ctx context.Context, secondsToRun int) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(1, secondsToRun)
 		defer func() { client.traceExit(2, secondsToRun, client.CheckDBPerfResult, err, time.Since(entryTime)) }()
 	}
@@ -144,8 +144,8 @@ Input
 */
 func (client *G2diagnostic) Destroy(ctx context.Context) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(7)
 		defer func() { client.traceExit(8, err, time.Since(entryTime)) }()
 	}
@@ -230,8 +230,8 @@ Output
 */
 func (client *G2diagnostic) GetAvailableMemory(ctx context.Context) (int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(13)
 		defer func() { client.traceExit(14, client.GetAvailableMemoryResult, err, time.Since(entryTime)) }()
 	}
@@ -282,8 +282,8 @@ Output
 */
 func (client *G2diagnostic) GetDBInfo(ctx context.Context) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(17)
 		defer func() { client.traceExit(18, client.GetDBInfoResult, err, time.Since(entryTime)) }()
 	}
@@ -480,8 +480,8 @@ Output
 */
 func (client *G2diagnostic) GetLogicalCores(ctx context.Context) (int, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(35)
 		defer func() { client.traceExit(36, client.GetLogicalCoresResult, err, time.Since(entryTime)) }()
 	}
@@ -547,8 +547,8 @@ Output
 */
 func (client *G2diagnostic) GetPhysicalCores(ctx context.Context) (int, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(39)
 		defer func() { client.traceExit(40, client.GetPhysicalCoresResult, err, time.Since(entryTime)) }()
 	}
@@ -627,8 +627,8 @@ Input
 */
 func (client *G2diagnostic) GetSdkId(ctx context.Context) string {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(59)
 		defer func() { client.traceExit(60, err, time.Since(entryTime)) }()
 	}
@@ -652,8 +652,8 @@ Output
 */
 func (client *G2diagnostic) GetTotalSystemMemory(ctx context.Context) (int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(57)
 		defer func() { client.traceExit(46, client.GetTotalSystemMemoryResult, err, time.Since(entryTime)) }()
 	}
@@ -678,8 +678,8 @@ Input
 */
 func (client *G2diagnostic) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(47, moduleName, iniParams, verboseLogging)
 		defer func() { client.traceExit(48, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
 	}
@@ -709,8 +709,8 @@ Input
 */
 func (client *G2diagnostic) InitWithConfigID(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(49, moduleName, iniParams, initConfigID, verboseLogging)
 		defer func() {
 			client.traceExit(50, moduleName, iniParams, initConfigID, verboseLogging, err, time.Since(entryTime))
@@ -739,8 +739,8 @@ Input
 */
 func (client *G2diagnostic) RegisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(55, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(56, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}
@@ -768,8 +768,8 @@ Input
 */
 func (client *G2diagnostic) Reinit(ctx context.Context, initConfigID int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(51, initConfigID)
 		defer func() { client.traceExit(52, initConfigID, err, time.Since(entryTime)) }()
 	}
@@ -793,8 +793,8 @@ Input
 */
 func (client *G2diagnostic) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(53, logLevelName)
 		defer func() { client.traceExit(54, logLevelName, err, time.Since(entryTime)) }()
 	}
@@ -831,8 +831,8 @@ Input
 */
 func (client *G2diagnostic) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(57, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(58, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}

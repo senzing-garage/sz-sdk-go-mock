@@ -140,8 +140,8 @@ Input
 */
 func (client *G2engine) AddRecord(ctx context.Context, dataSourceCode string, recordID string, jsonData string, loadID string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(1, dataSourceCode, recordID, jsonData, loadID)
 		defer func() { client.traceExit(2, dataSourceCode, recordID, jsonData, loadID, err, time.Since(entryTime)) }()
 	}
@@ -175,8 +175,8 @@ Output
 */
 func (client *G2engine) AddRecordWithInfo(ctx context.Context, dataSourceCode string, recordID string, jsonData string, loadID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(3, dataSourceCode, recordID, jsonData, loadID, flags)
 		defer func() {
 			client.traceExit(4, dataSourceCode, recordID, jsonData, loadID, flags, client.AddRecordWithInfoResult, err, time.Since(entryTime))
@@ -310,8 +310,8 @@ Input
 */
 func (client *G2engine) CloseExport(ctx context.Context, responseHandle uintptr) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(13, responseHandle)
 		defer func() { client.traceExit(14, responseHandle, err, time.Since(entryTime)) }()
 	}
@@ -335,8 +335,8 @@ Output
 */
 func (client *G2engine) CountRedoRecords(ctx context.Context) (int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(15)
 		defer func() { client.traceExit(16, client.CountRedoRecordsResult, err, time.Since(entryTime)) }()
 	}
@@ -361,8 +361,8 @@ Input
 */
 func (client *G2engine) DeleteRecord(ctx context.Context, dataSourceCode string, recordID string, loadID string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(17, dataSourceCode, recordID, loadID)
 		defer func() { client.traceExit(18, dataSourceCode, recordID, loadID, err, time.Since(entryTime)) }()
 	}
@@ -396,8 +396,8 @@ Output
 */
 func (client *G2engine) DeleteRecordWithInfo(ctx context.Context, dataSourceCode string, recordID string, loadID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(19, dataSourceCode, recordID, loadID, flags)
 		defer func() {
 			client.traceExit(20, dataSourceCode, recordID, loadID, flags, client.DeleteRecordWithInfoResult, err, time.Since(entryTime))
@@ -425,8 +425,8 @@ Input
 */
 func (client *G2engine) Destroy(ctx context.Context) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(21)
 		defer func() { client.traceExit(22, err, time.Since(entryTime)) }()
 	}
@@ -450,8 +450,8 @@ Output
 */
 func (client *G2engine) ExportConfig(ctx context.Context) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(25)
 		defer func() { client.traceExit(26, client.ExportConfigResult, err, time.Since(entryTime)) }()
 	}
@@ -476,8 +476,8 @@ Output
 */
 func (client *G2engine) ExportConfigAndConfigID(ctx context.Context) (string, int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(23)
 		defer func() {
 			client.traceExit(24, client.ExportConfigAndConfigIDResultConfig, client.ExportConfigAndConfigIDResultConfigID, err, time.Since(entryTime))
@@ -509,8 +509,8 @@ Output
 */
 func (client *G2engine) ExportCSVEntityReport(ctx context.Context, csvColumnList string, flags int64) (uintptr, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(27, csvColumnList, flags)
 		defer func() {
 			client.traceExit(28, csvColumnList, flags, client.ExportCSVEntityReportResult, err, time.Since(entryTime))
@@ -578,8 +578,8 @@ Output
 */
 func (client *G2engine) ExportJSONEntityReport(ctx context.Context, flags int64) (uintptr, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(29, flags)
 		defer func() { client.traceExit(30, flags, client.ExportJSONEntityReportResult, err, time.Since(entryTime)) }()
 	}
@@ -644,8 +644,8 @@ Output
 */
 func (client *G2engine) FetchNext(ctx context.Context, responseHandle uintptr) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(31, responseHandle)
 		defer func() { client.traceExit(32, responseHandle, client.FetchNextResult, err, time.Since(entryTime)) }()
 	}
@@ -672,8 +672,8 @@ Output
 */
 func (client *G2engine) FindInterestingEntitiesByEntityID(ctx context.Context, entityID int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(33, entityID, flags)
 		defer func() {
 			client.traceExit(34, entityID, flags, client.FindInterestingEntitiesByEntityIDResult, err, time.Since(entryTime))
@@ -705,8 +705,8 @@ Output
 */
 func (client *G2engine) FindInterestingEntitiesByRecordID(ctx context.Context, dataSourceCode string, recordID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(35, dataSourceCode, recordID, flags)
 		defer func() {
 			client.traceExit(36, dataSourceCode, recordID, flags, client.FindInterestingEntitiesByRecordIDResult, err, time.Since(entryTime))
@@ -743,8 +743,8 @@ Output
 */
 func (client *G2engine) FindNetworkByEntityID(ctx context.Context, entityList string, maxDegree int64, buildOutDegree int64, maxEntities int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(37, entityList, maxDegree, buildOutDegree, maxDegree)
 		defer func() {
 			client.traceExit(38, entityList, maxDegree, buildOutDegree, maxDegree, client.FindNetworkByEntityIDResult, err, time.Since(entryTime))
@@ -781,8 +781,8 @@ Output
 */
 func (client *G2engine) FindNetworkByEntityID_V2(ctx context.Context, entityList string, maxDegree int64, buildOutDegree int64, maxEntities int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(39, entityList, maxDegree, buildOutDegree, maxDegree, flags)
 		defer func() {
 			client.traceExit(40, entityList, maxDegree, buildOutDegree, maxDegree, flags, client.FindNetworkByEntityID_V2Result, err, time.Since(entryTime))
@@ -818,8 +818,8 @@ Output
 */
 func (client *G2engine) FindNetworkByRecordID(ctx context.Context, recordList string, maxDegree int64, buildOutDegree int64, maxEntities int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(41, recordList, maxDegree, buildOutDegree, maxDegree)
 		defer func() {
 			client.traceExit(42, recordList, maxDegree, buildOutDegree, maxDegree, client.FindNetworkByRecordIDResult, err, time.Since(entryTime))
@@ -856,8 +856,8 @@ Output
 */
 func (client *G2engine) FindNetworkByRecordID_V2(ctx context.Context, recordList string, maxDegree int64, buildOutDegree int64, maxEntities int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(43, recordList, maxDegree, buildOutDegree, maxDegree, flags)
 		defer func() {
 			client.traceExit(44, recordList, maxDegree, buildOutDegree, maxDegree, flags, client.FindNetworkByRecordID_V2Result, err, time.Since(entryTime))
@@ -891,8 +891,8 @@ Output
 */
 func (client *G2engine) FindPathByEntityID(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(45, entityID1, entityID2, maxDegree)
 		defer func() {
 			client.traceExit(46, entityID1, entityID2, maxDegree, client.FindPathByEntityIDResult, err, time.Since(entryTime))
@@ -928,8 +928,8 @@ Output
 */
 func (client *G2engine) FindPathByEntityID_V2(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(47, entityID1, entityID2, maxDegree, flags)
 		defer func() {
 			client.traceExit(48, entityID1, entityID2, maxDegree, flags, client.FindPathByEntityID_V2Result, err, time.Since(entryTime))
@@ -968,8 +968,8 @@ Output
 */
 func (client *G2engine) FindPathByRecordID(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(49, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree)
 		defer func() {
 			client.traceExit(50, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, client.FindPathByRecordIDResult, err, time.Since(entryTime))
@@ -1010,8 +1010,8 @@ Output
 */
 func (client *G2engine) FindPathByRecordID_V2(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(51, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, flags)
 		defer func() {
 			client.traceExit(52, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, flags, client.FindPathByRecordID_V2Result, err, time.Since(entryTime))
@@ -1050,8 +1050,8 @@ Output
 */
 func (client *G2engine) FindPathExcludingByEntityID(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64, excludedEntities string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(53, entityID1, entityID2, maxDegree, excludedEntities)
 		defer func() {
 			client.traceExit(54, entityID1, entityID2, maxDegree, excludedEntities, client.FindPathExcludingByEntityIDResult, err, time.Since(entryTime))
@@ -1094,8 +1094,8 @@ Output
 */
 func (client *G2engine) FindPathExcludingByEntityID_V2(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64, excludedEntities string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(55, entityID1, entityID2, maxDegree, excludedEntities, flags)
 		defer func() {
 			client.traceExit(56, entityID1, entityID2, maxDegree, excludedEntities, flags, client.FindPathExcludingByEntityID_V2Result, err, time.Since(entryTime))
@@ -1134,8 +1134,8 @@ Output
 */
 func (client *G2engine) FindPathExcludingByRecordID(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64, excludedRecords string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(57, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords)
 		defer func() {
 			client.traceExit(58, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, client.FindPathExcludingByRecordIDResult, err, time.Since(entryTime))
@@ -1182,8 +1182,8 @@ Output
 */
 func (client *G2engine) FindPathExcludingByRecordID_V2(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64, excludedRecords string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(59, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, flags)
 		defer func() {
 			client.traceExit(60, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, flags, client.FindPathExcludingByRecordID_V2Result, err, time.Since(entryTime))
@@ -1224,8 +1224,8 @@ Output
 */
 func (client *G2engine) FindPathIncludingSourceByEntityID(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64, excludedEntities string, requiredDsrcs string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(61, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs)
 		defer func() {
 			client.traceExit(62, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, client.FindPathIncludingSourceByEntityIDResult, err, time.Since(entryTime))
@@ -1265,8 +1265,8 @@ Output
 */
 func (client *G2engine) FindPathIncludingSourceByEntityID_V2(ctx context.Context, entityID1 int64, entityID2 int64, maxDegree int64, excludedEntities string, requiredDsrcs string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(63, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, flags)
 		defer func() {
 			client.traceExit(64, entityID1, entityID2, maxDegree, excludedEntities, requiredDsrcs, flags, client.FindPathIncludingSourceByEntityID_V2Result, err, time.Since(entryTime))
@@ -1307,8 +1307,8 @@ Output
 */
 func (client *G2engine) FindPathIncludingSourceByRecordID(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64, excludedRecords string, requiredDsrcs string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(65, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs)
 		defer func() {
 			client.traceExit(66, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, client.FindPathIncludingSourceByRecordIDResult, err, time.Since(entryTime))
@@ -1352,8 +1352,8 @@ Output
 */
 func (client *G2engine) FindPathIncludingSourceByRecordID_V2(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, maxDegree int64, excludedRecords string, requiredDsrcs string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(67, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, flags)
 		defer func() {
 			client.traceExit(68, dataSourceCode1, recordID1, dataSourceCode2, recordID2, maxDegree, excludedRecords, requiredDsrcs, flags, client.FindPathIncludingSourceByRecordID_V2Result, err, time.Since(entryTime))
@@ -1384,8 +1384,8 @@ Output
 */
 func (client *G2engine) GetActiveConfigID(ctx context.Context) (int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(69)
 		defer func() { client.traceExit(70, client.GetActiveConfigIDResult, err, time.Since(entryTime)) }()
 	}
@@ -1413,8 +1413,8 @@ Output
 */
 func (client *G2engine) GetEntityByEntityID(ctx context.Context, entityID int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(71, entityID)
 		defer func() { client.traceExit(72, entityID, client.GetEntityByEntityIDResult, err, time.Since(entryTime)) }()
 	}
@@ -1444,8 +1444,8 @@ Output
 */
 func (client *G2engine) GetEntityByEntityID_V2(ctx context.Context, entityID int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(73, entityID, flags)
 		defer func() {
 			client.traceExit(74, entityID, flags, client.GetEntityByEntityID_V2Result, err, time.Since(entryTime))
@@ -1477,8 +1477,8 @@ Output
 */
 func (client *G2engine) GetEntityByRecordID(ctx context.Context, dataSourceCode string, recordID string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(75, dataSourceCode, recordID)
 		defer func() {
 			client.traceExit(76, dataSourceCode, recordID, client.GetEntityByRecordIDResult, err, time.Since(entryTime))
@@ -1512,8 +1512,8 @@ Output
 */
 func (client *G2engine) GetEntityByRecordID_V2(ctx context.Context, dataSourceCode string, recordID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(77, dataSourceCode, recordID, flags)
 		defer func() {
 			client.traceExit(78, dataSourceCode, recordID, flags, client.GetEntityByRecordID_V2Result, err, time.Since(entryTime))
@@ -1559,8 +1559,8 @@ Output
 */
 func (client *G2engine) GetRecord(ctx context.Context, dataSourceCode string, recordID string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(83, dataSourceCode, recordID)
 		defer func() {
 			client.traceExit(84, dataSourceCode, recordID, client.GetRecordResult, err, time.Since(entryTime))
@@ -1594,8 +1594,8 @@ Output
 */
 func (client *G2engine) GetRecord_V2(ctx context.Context, dataSourceCode string, recordID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(85, dataSourceCode, recordID, flags)
 		defer func() {
 			client.traceExit(86, dataSourceCode, recordID, flags, client.GetRecord_V2Result, err, time.Since(entryTime))
@@ -1626,8 +1626,8 @@ Output
 */
 func (client *G2engine) GetRedoRecord(ctx context.Context) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(87)
 		defer func() { client.traceExit(88, client.GetRedoRecordResult, err, time.Since(entryTime)) }()
 	}
@@ -1652,8 +1652,8 @@ Output
 */
 func (client *G2engine) GetRepositoryLastModifiedTime(ctx context.Context) (int64, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(89)
 		defer func() { client.traceExit(90, client.GetRepositoryLastModifiedTimeResult, err, time.Since(entryTime)) }()
 	}
@@ -1676,8 +1676,8 @@ Input
 */
 func (client *G2engine) GetSdkId(ctx context.Context) string {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(161)
 		defer func() { client.traceExit(162, err, time.Since(entryTime)) }()
 	}
@@ -1704,8 +1704,8 @@ Output
 */
 func (client *G2engine) GetVirtualEntityByRecordID(ctx context.Context, recordList string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(91, recordList)
 		defer func() {
 			client.traceExit(92, recordList, client.GetVirtualEntityByRecordIDResult, err, time.Since(entryTime))
@@ -1738,8 +1738,8 @@ Output
 */
 func (client *G2engine) GetVirtualEntityByRecordID_V2(ctx context.Context, recordList string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(93, recordList, flags)
 		defer func() {
 			client.traceExit(94, recordList, flags, client.GetVirtualEntityByRecordID_V2Result, err, time.Since(entryTime))
@@ -1770,8 +1770,8 @@ Output
 */
 func (client *G2engine) HowEntityByEntityID(ctx context.Context, entityID int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(95, entityID)
 		defer func() { client.traceExit(96, entityID, client.HowEntityByEntityIDResult, err, time.Since(entryTime)) }()
 	}
@@ -1801,8 +1801,8 @@ Output
 */
 func (client *G2engine) HowEntityByEntityID_V2(ctx context.Context, entityID int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(97, entityID, flags)
 		defer func() {
 			client.traceExit(98, entityID, flags, client.HowEntityByEntityID_V2Result, err, time.Since(entryTime))
@@ -1831,8 +1831,8 @@ Input
 */
 func (client *G2engine) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(99, moduleName, iniParams, verboseLogging)
 		defer func() { client.traceExit(100, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
 	}
@@ -1862,8 +1862,8 @@ Input
 */
 func (client *G2engine) InitWithConfigID(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(101, moduleName, iniParams, initConfigID, verboseLogging)
 		defer func() {
 			client.traceExit(102, moduleName, iniParams, initConfigID, verboseLogging, err, time.Since(entryTime))
@@ -1893,8 +1893,8 @@ Input
 */
 func (client *G2engine) PrimeEngine(ctx context.Context) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(103)
 		defer func() { client.traceExit(104, err, time.Since(entryTime)) }()
 	}
@@ -1916,8 +1916,8 @@ Input
 */
 func (client *G2engine) Process(ctx context.Context, record string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(105, record)
 		defer func() { client.traceExit(106, record, err, time.Since(entryTime)) }()
 	}
@@ -2000,8 +2000,8 @@ Output
 */
 func (client *G2engine) ProcessWithInfo(ctx context.Context, record string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(111, record, flags)
 		defer func() { client.traceExit(112, record, flags, client.ProcessWithInfoResult, err, time.Since(entryTime)) }()
 	}
@@ -2082,8 +2082,8 @@ Input
 */
 func (client *G2engine) PurgeRepository(ctx context.Context) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(117)
 		defer func() { client.traceExit(118, err, time.Since(entryTime)) }()
 	}
@@ -2106,8 +2106,8 @@ Input
 */
 func (client *G2engine) ReevaluateEntity(ctx context.Context, entityID int64, flags int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(119, entityID, flags)
 		defer func() { client.traceExit(120, entityID, flags, err, time.Since(entryTime)) }()
 	}
@@ -2137,8 +2137,8 @@ Output
 */
 func (client *G2engine) ReevaluateEntityWithInfo(ctx context.Context, entityID int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(121, entityID, flags)
 		defer func() {
 			client.traceExit(122, entityID, flags, client.ReevaluateEntityWithInfoResult, err, time.Since(entryTime))
@@ -2166,8 +2166,8 @@ Input
 */
 func (client *G2engine) ReevaluateRecord(ctx context.Context, dataSourceCode string, recordID string, flags int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(123, dataSourceCode, recordID, flags)
 		defer func() { client.traceExit(124, dataSourceCode, recordID, flags, err, time.Since(entryTime)) }()
 	}
@@ -2199,8 +2199,8 @@ Output
 */
 func (client *G2engine) ReevaluateRecordWithInfo(ctx context.Context, dataSourceCode string, recordID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(125, dataSourceCode, recordID, flags)
 		defer func() {
 			client.traceExit(126, dataSourceCode, recordID, flags, client.ReevaluateRecordWithInfoResult, err, time.Since(entryTime))
@@ -2227,8 +2227,8 @@ Input
 */
 func (client *G2engine) RegisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(157, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(158, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}
@@ -2256,8 +2256,8 @@ Input
 */
 func (client *G2engine) Reinit(ctx context.Context, initConfigID int64) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(127, initConfigID)
 		defer func() { client.traceExit(128, initConfigID, err, time.Since(entryTime)) }()
 	}
@@ -2285,8 +2285,8 @@ Input
 */
 func (client *G2engine) ReplaceRecord(ctx context.Context, dataSourceCode string, recordID string, jsonData string, loadID string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(129, dataSourceCode, recordID, jsonData, loadID)
 		defer func() { client.traceExit(130, dataSourceCode, recordID, jsonData, loadID, err, time.Since(entryTime)) }()
 	}
@@ -2321,8 +2321,8 @@ Output
 */
 func (client *G2engine) ReplaceRecordWithInfo(ctx context.Context, dataSourceCode string, recordID string, jsonData string, loadID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(131, dataSourceCode, recordID, jsonData, loadID, flags)
 		defer func() {
 			client.traceExit(132, dataSourceCode, recordID, jsonData, loadID, flags, client.ReplaceRecordWithInfoResult, err, time.Since(entryTime))
@@ -2355,8 +2355,8 @@ Output
 */
 func (client *G2engine) SearchByAttributes(ctx context.Context, jsonData string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(133, jsonData)
 		defer func() { client.traceExit(134, jsonData, client.SearchByAttributesResult, err, time.Since(entryTime)) }()
 	}
@@ -2384,8 +2384,8 @@ Output
 */
 func (client *G2engine) SearchByAttributes_V2(ctx context.Context, jsonData string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(135, jsonData, flags)
 		defer func() {
 			client.traceExit(136, jsonData, flags, client.SearchByAttributes_V2Result, err, time.Since(entryTime))
@@ -2409,8 +2409,8 @@ Input
 */
 func (client *G2engine) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(137, logLevelName)
 		defer func() { client.traceExit(138, logLevelName, err, time.Since(entryTime)) }()
 	}
@@ -2451,8 +2451,8 @@ Output
 */
 func (client *G2engine) Stats(ctx context.Context) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(139)
 		defer func() { client.traceExit(140, client.StatsResult, err, time.Since(entryTime)) }()
 	}
@@ -2474,8 +2474,8 @@ Input
 */
 func (client *G2engine) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(159, observer.GetObserverId(ctx))
 		defer func() { client.traceExit(160, observer.GetObserverId(ctx), err, time.Since(entryTime)) }()
 	}
@@ -2514,8 +2514,8 @@ Output
 */
 func (client *G2engine) WhyEntities(ctx context.Context, entityID1 int64, entityID2 int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(141, entityID1, entityID2)
 		defer func() {
 			client.traceExit(142, entityID1, entityID2, client.WhyEntitiesResult, err, time.Since(entryTime))
@@ -2552,8 +2552,8 @@ Output
 */
 func (client *G2engine) WhyEntities_V2(ctx context.Context, entityID1 int64, entityID2 int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(143, entityID1, entityID2, flags)
 		defer func() {
 			client.traceExit(144, entityID1, entityID2, flags, client.WhyEntities_V2Result, err, time.Since(entryTime))
@@ -2586,8 +2586,8 @@ Output
 */
 func (client *G2engine) WhyEntityByEntityID(ctx context.Context, entityID int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(145, entityID)
 		defer func() { client.traceExit(146, entityID, client.WhyEntityByEntityIDResult, err, time.Since(entryTime)) }()
 	}
@@ -2617,8 +2617,8 @@ Output
 */
 func (client *G2engine) WhyEntityByEntityID_V2(ctx context.Context, entityID int64, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(147, entityID, flags)
 		defer func() {
 			client.traceExit(148, entityID, flags, client.WhyEntityByEntityID_V2Result, err, time.Since(entryTime))
@@ -2650,8 +2650,8 @@ Output
 */
 func (client *G2engine) WhyEntityByRecordID(ctx context.Context, dataSourceCode string, recordID string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(149, dataSourceCode, recordID)
 		defer func() {
 			client.traceExit(150, dataSourceCode, recordID, client.WhyEntityByRecordIDResult, err, time.Since(entryTime))
@@ -2685,8 +2685,8 @@ Output
 */
 func (client *G2engine) WhyEntityByRecordID_V2(ctx context.Context, dataSourceCode string, recordID string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(151, dataSourceCode, recordID, flags)
 		defer func() {
 			client.traceExit(152, dataSourceCode, recordID, flags, client.WhyEntityByRecordID_V2Result, err, time.Since(entryTime))
@@ -2722,8 +2722,8 @@ Output
 */
 func (client *G2engine) WhyRecords(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(153, dataSourceCode1, recordID1, dataSourceCode2, recordID2)
 		defer func() {
 			client.traceExit(154, dataSourceCode1, recordID1, dataSourceCode2, recordID2, client.WhyRecordsResult, err, time.Since(entryTime))
@@ -2761,8 +2761,8 @@ Output
 */
 func (client *G2engine) WhyRecords_V2(ctx context.Context, dataSourceCode1 string, recordID1 string, dataSourceCode2 string, recordID2 string, flags int64) (string, error) {
 	var err error = nil
-	entryTime := time.Now()
 	if client.isTrace {
+		entryTime := time.Now()
 		client.traceEntry(155, dataSourceCode1, recordID1, dataSourceCode2, recordID2, flags)
 		defer func() {
 			client.traceExit(156, dataSourceCode1, recordID1, dataSourceCode2, recordID2, flags, client.WhyRecords_V2Result, err, time.Since(entryTime))
