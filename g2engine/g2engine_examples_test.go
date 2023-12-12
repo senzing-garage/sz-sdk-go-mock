@@ -196,7 +196,11 @@ func ExampleG2engine_ExportCSVEntityReportIterator() {
 	csvColumnList := ""
 	flags := int64(0)
 	for result := range g2engine.ExportCSVEntityReportIterator(ctx, csvColumnList, flags) {
-		fmt.Println(result)
+		if result.Error != nil {
+			fmt.Println(result.Error)
+			break
+		}
+		fmt.Println(result.Value)
 	}
 	// Output:
 }
@@ -220,7 +224,11 @@ func ExampleG2engine_ExportJSONEntityReportIterator() {
 	g2engine := getG2Engine(ctx)
 	flags := int64(0)
 	for result := range g2engine.ExportJSONEntityReportIterator(ctx, flags) {
-		fmt.Println(result)
+		if result.Error != nil {
+			fmt.Println(result.Error)
+			break
+		}
+		fmt.Println(result.Value)
 	}
 	// Output:
 }
@@ -234,8 +242,23 @@ func ExampleG2engine_FetchNext() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	anEntity, _ := g2engine.FetchNext(ctx, responseHandle)
-	fmt.Println(len(anEntity) >= 0) // Dummy output.
+	defer func() {
+		err = g2engine.CloseExport(ctx, responseHandle)
+	}()
+
+	jsonEntityReport := ""
+	for {
+		jsonEntityReportFragment, err := g2engine.FetchNext(ctx, responseHandle)
+		if err != nil {
+			fmt.Println(err)
+		}
+		if len(jsonEntityReportFragment) == 0 {
+			break
+		}
+		jsonEntityReport += jsonEntityReportFragment
+	}
+
+	fmt.Println(len(jsonEntityReport) >= 0) // Dummy output.
 	// Output: true
 }
 
