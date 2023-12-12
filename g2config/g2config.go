@@ -130,7 +130,7 @@ func (client *G2config) Close(ctx context.Context, configHandle uintptr) error {
 The Create method creates an in-memory Senzing configuration from the g2config.json
 template configuration file located in the PIPELINE.RESOURCEPATH path.
 A handle is returned to identify the in-memory configuration.
-The handle is used by the AddDataSource(), ListDataSources(), DeleteDataSource(), Load(), and Save() methods.
+The handle is used by the AddDataSource(), ListDataSources(), DeleteDataSource(), and Save() methods.
 The handle is terminated by the Close() method.
 
 Input
@@ -301,13 +301,14 @@ func (client *G2config) ListDataSources(ctx context.Context, configHandle uintpt
 }
 
 /*
-The Load method initializes the Senzing G2Config object from a JSON string.
-The configHandle is created by the Create() method.
+The Load method initializes the in-memory Senzing G2Config object from a JSON string.
 
 Input
   - ctx: A context to control lifecycle.
-  - configHandle: An identifier of an in-memory configuration.
   - jsonConfig: A JSON document containing the Senzing configuration.
+
+Output
+  - An identifier of an in-memory configuration.
 */
 func (client *G2config) Load(ctx context.Context, jsonConfig string) (uintptr, error) {
 	var err error = nil

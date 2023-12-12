@@ -159,7 +159,7 @@ func TestG2configmgr_ReplaceDefaultConfigID(test *testing.T) {
 		assert.FailNow(test, "g2configmgr.GetDefaultConfigID()")
 	}
 
-	// FIXME: This is kind of a cheeter.
+	// FIXME: This is kind of a cheater.
 
 	newConfigID, err2 := g2configmgr.GetDefaultConfigID(ctx)
 	if err2 != nil {

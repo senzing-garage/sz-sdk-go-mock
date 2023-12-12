@@ -8,9 +8,6 @@ on: [push]
 jobs:
   go-test-darwin:
     runs-on: ${{ matrix.os }}
-    env:
-      GO111MODULE: on
-      CGO_ENABLED: 1
     strategy:
       matrix:
         go: ["1.21"]

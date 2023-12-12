@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing/g2-sdk-go/g2api"
 	"github.com/senzing/go-common/record"
+	"github.com/senzing/go-common/testfixtures"
 	"github.com/senzing/go-common/truthset"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +20,9 @@ import (
 const (
 	defaultTruncation = 76
 	loadId            = "G2Engine_test"
+	moduleName        = "Engine Test Module"
 	printResults      = false
+	verboseLogging    = 0
 )
 
 type GetEntityByRecordIDResponse struct {
@@ -29,6 +33,7 @@ type GetEntityByRecordIDResponse struct {
 
 var (
 	g2engineSingleton *G2engine
+	senzingConfigId   int64 = 0
 )
 
 // ----------------------------------------------------------------------------
@@ -186,6 +191,10 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func getIniParams() (string, error) {
+	return "{}", nil
+}
+
 func setup() error {
 	var err error = nil
 	return err
@@ -237,35 +246,35 @@ func TestG2engine_AddRecordWithInfo(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestG2engine_AddRecordWithInfoWithReturnedRecordID(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	record := truthset.TestRecordsWithoutRecordId[0]
-	flags := int64(0)
-	actual, actualRecordID, err := g2engine.AddRecordWithInfoWithReturnedRecordID(ctx, record.DataSource, record.Json, loadId, flags)
-	testError(test, ctx, g2engine, err)
-	printResult(test, "Actual RecordID", actualRecordID)
-	printActual(test, actual)
-}
+// func TestG2engine_AddRecordWithInfoWithReturnedRecordID(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	record := truthset.TestRecordsWithoutRecordId[0]
+// 	flags := int64(0)
+// 	actual, actualRecordID, err := g2engine.AddRecordWithInfoWithReturnedRecordID(ctx, record.DataSource, record.Json, loadId, flags)
+// 	testError(test, ctx, g2engine, err)
+// 	printResult(test, "Actual RecordID", actualRecordID)
+// 	printActual(test, actual)
+// }
 
-func TestG2engine_AddRecordWithReturnedRecordID(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	record := truthset.TestRecordsWithoutRecordId[1]
-	actual, err := g2engine.AddRecordWithReturnedRecordID(ctx, record.DataSource, record.Json, loadId)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-}
+// func TestG2engine_AddRecordWithReturnedRecordID(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	record := truthset.TestRecordsWithoutRecordId[1]
+// 	actual, err := g2engine.AddRecordWithReturnedRecordID(ctx, record.DataSource, record.Json, loadId)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// }
 
-func TestG2engine_CheckRecord(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1001"]
-	recordQueryList := `{"RECORDS": [{"DATA_SOURCE": "` + record.DataSource + `","RECORD_ID": "` + record.Id + `"},{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "123456789"}]}`
-	actual, err := g2engine.CheckRecord(ctx, record.Json, recordQueryList)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-}
+// func TestG2engine_CheckRecord(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	record := truthset.CustomerRecords["1001"]
+// 	recordQueryList := `{"RECORDS": [{"DATA_SOURCE": "` + record.DataSource + `","RECORD_ID": "` + record.Id + `"},{"DATA_SOURCE": "CUSTOMERS","RECORD_ID": "123456789"}]}`
+// 	actual, err := g2engine.CheckRecord(ctx, record.Json, recordQueryList)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// }
 
 func TestG2engine_CountRedoRecords(test *testing.T) {
 	ctx := context.TODO()
@@ -306,15 +315,85 @@ func TestG2engine_ExportConfig(test *testing.T) {
 	printActual(test, actual)
 }
 
-//func TestG2engine_ExportCSVEntityReport(test *testing.T) {
-//	ctx := context.TODO()
-//	g2engine := getTestObject(ctx, test)
-//	csvColumnList := ""
-//	flags := int64(0)
-//	actual, err := g2engine.ExportCSVEntityReport(ctx, csvColumnList, flags)
-//	testError(test, ctx, g2engine, err)
-//	test.Log("Actual:", actual)
-//}
+func TestG2engine_ExportCSVEntityReport(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	expected := []string{}
+	csvColumnList := ""
+	flags := int64(-1)
+	aHandle, err := g2engine.ExportCSVEntityReport(ctx, csvColumnList, flags)
+	defer func() {
+		err := g2engine.CloseExport(ctx, aHandle)
+		testError(test, ctx, g2engine, err)
+	}()
+	testError(test, ctx, g2engine, err)
+	actualCount := 0
+	for {
+		actual, err := g2engine.FetchNext(ctx, aHandle)
+		testError(test, ctx, g2engine, err)
+		if len(actual) == 0 {
+			break
+		}
+		assert.Equal(test, expected[actualCount], strings.TrimSpace(actual))
+		actualCount += 1
+	}
+	assert.Equal(test, len(expected), actualCount)
+}
+
+func TestG2engine_ExportCSVEntityReportIterator(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	expected := []string{}
+	csvColumnList := ""
+	flags := int64(-1)
+	actualCount := 0
+	for actual := range g2engine.ExportCSVEntityReportIterator(ctx, csvColumnList, flags) {
+		testError(test, ctx, g2engine, actual.Error)
+		assert.Equal(test, expected[actualCount], strings.TrimSpace(actual.Value))
+		actualCount += 1
+	}
+	assert.Equal(test, len(expected), actualCount)
+}
+
+func TestG2engine_ExportJSONEntityReport(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	aRecord := testfixtures.FixtureRecords["65536-periods"]
+	err := g2engine.AddRecord(ctx, aRecord.DataSource, aRecord.Id, aRecord.Json, loadId)
+	testError(test, ctx, g2engine, err)
+	defer g2engine.DeleteRecord(ctx, aRecord.DataSource, aRecord.Id, loadId)
+	flags := int64(-1)
+	aHandle, err := g2engine.ExportJSONEntityReport(ctx, flags)
+	defer func() {
+		err := g2engine.CloseExport(ctx, aHandle)
+		testError(test, ctx, g2engine, err)
+	}()
+	testError(test, ctx, g2engine, err)
+	jsonEntityReport := ""
+	for {
+		jsonEntityReportFragment, err := g2engine.FetchNext(ctx, aHandle)
+		testError(test, ctx, g2engine, err)
+		if len(jsonEntityReportFragment) == 0 {
+			break
+		}
+		jsonEntityReport += jsonEntityReportFragment
+	}
+	testError(test, ctx, g2engine, err)
+	assert.True(test, len(jsonEntityReport) == 0)
+}
+
+func TestG2engine_ExportJSONEntityReportIterator(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	flags := int64(-1)
+	actualCount := 0
+	for actual := range g2engine.ExportJSONEntityReportIterator(ctx, flags) {
+		testError(test, ctx, g2engine, actual.Error)
+		printActual(test, actual.Value)
+		actualCount += 1
+	}
+	assert.Equal(test, 0, actualCount)
+}
 
 func TestG2engine_FindInterestingEntitiesByEntityID(test *testing.T) {
 	ctx := context.TODO()
@@ -359,7 +438,7 @@ func TestG2engine_FindNetworkByEntityID_V2(test *testing.T) {
 	maxDegree := int64(2)
 	buildOutDegree := int64(1)
 	maxEntities := int64(10)
-	flags := int64(0)
+	var flags int64 = int64(0)
 	actual, err := g2engine.FindNetworkByEntityID_V2(ctx, entityList, maxDegree, buildOutDegree, maxEntities, flags)
 	testErrorNoFail(test, ctx, g2engine, err)
 	printActual(test, actual)
@@ -688,23 +767,23 @@ func TestG2engine_Process(test *testing.T) {
 	testError(test, ctx, g2engine, err)
 }
 
-func TestG2engine_ProcessRedoRecord(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	actual, err := g2engine.ProcessRedoRecord(ctx)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-}
+// func TestG2engine_ProcessRedoRecord(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	actual, err := g2engine.ProcessRedoRecord(ctx)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// }
 
-func TestG2engine_ProcessRedoRecordWithInfo(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	flags := int64(0)
-	actual, actualInfo, err := g2engine.ProcessRedoRecordWithInfo(ctx, flags)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-	printResult(test, "Actual Info", actualInfo)
-}
+// func TestG2engine_ProcessRedoRecordWithInfo(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	flags := int64(0)
+// 	actual, actualInfo, err := g2engine.ProcessRedoRecordWithInfo(ctx, flags)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// 	printResult(test, "Actual Info", actualInfo)
+// }
 
 func TestG2engine_ProcessWithInfo(test *testing.T) {
 	ctx := context.TODO()
@@ -716,23 +795,23 @@ func TestG2engine_ProcessWithInfo(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestG2engine_ProcessWithResponse(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1001"]
-	actual, err := g2engine.ProcessWithResponse(ctx, record.Json)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-}
+// func TestG2engine_ProcessWithResponse(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	record := truthset.CustomerRecords["1001"]
+// 	actual, err := g2engine.ProcessWithResponse(ctx, record.Json)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// }
 
-func TestG2engine_ProcessWithResponseResize(test *testing.T) {
-	ctx := context.TODO()
-	g2engine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1001"]
-	actual, err := g2engine.ProcessWithResponseResize(ctx, record.Json)
-	testError(test, ctx, g2engine, err)
-	printActual(test, actual)
-}
+// func TestG2engine_ProcessWithResponseResize(test *testing.T) {
+// 	ctx := context.TODO()
+// 	g2engine := getTestObject(ctx, test)
+// 	record := truthset.CustomerRecords["1001"]
+// 	actual, err := g2engine.ProcessWithResponseResize(ctx, record.Json)
+// 	testError(test, ctx, g2engine, err)
+// 	printActual(test, actual)
+// }
 
 func TestG2engine_ReevaluateEntity(test *testing.T) {
 	ctx := context.TODO()
@@ -772,31 +851,37 @@ func TestG2engine_ReevaluateRecordWithInfo(test *testing.T) {
 	printActual(test, actual)
 }
 
-// FIXME: Remove after GDEV-3576 is fixed
-// func TestG2engine_ReplaceRecord(test *testing.T) {
-// 	ctx := context.TODO()
-// 	g2engine := getTestObject(ctx, test)
-// 	dataSourceCode := "CUSTOMERS"
-// 	recordID := "1001"
-// 	jsonData := `{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1984", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "CUSTOMERS", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "1001", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "JOHNSON", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`
-// 	loadID := "CUSTOMERS"
-// 	err := g2engine.ReplaceRecord(ctx, dataSourceCode, recordID, jsonData, loadID)
-// 	testError(test, ctx, g2engine, err)
-// }
+func TestG2engine_ReplaceRecord(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	dataSourceCode := "CUSTOMERS"
+	recordID := "1001"
+	jsonData := `{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1984", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "CUSTOMERS", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "1001", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "JOHNSON", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`
+	loadID := "CUSTOMERS"
+	err := g2engine.ReplaceRecord(ctx, dataSourceCode, recordID, jsonData, loadID)
+	testError(test, ctx, g2engine, err)
+
+	record := truthset.CustomerRecords["1001"]
+	err = g2engine.ReplaceRecord(ctx, record.DataSource, record.Id, record.Json, loadID)
+	testError(test, ctx, g2engine, err)
+}
 
 // FIXME: Remove after GDEV-3576 is fixed
-// func TestG2engine_ReplaceRecordWithInfo(test *testing.T) {
-// 	ctx := context.TODO()
-// 	g2engine := getTestObject(ctx, test)
-// 	dataSourceCode := "CUSTOMERS"
-// 	recordID := "1001"
-// 	jsonData := `{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1985", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "CUSTOMERS", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "1001", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "JOHNSON", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`
-// 	loadID := "CUSTOMERS"
-// 	flags := int64(0)
-// 	actual, err := g2engine.ReplaceRecordWithInfo(ctx, dataSourceCode, recordID, jsonData, loadID, flags)
-// 	testError(test, ctx, g2engine, err)
-// 	printActual(test, actual)
-// }
+func TestG2engine_ReplaceRecordWithInfo(test *testing.T) {
+	ctx := context.TODO()
+	g2engine := getTestObject(ctx, test)
+	dataSourceCode := "CUSTOMERS"
+	recordID := "1001"
+	jsonData := `{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1985", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "CUSTOMERS", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "1001", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "JOHNSON", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`
+	loadID := "CUSTOMERS"
+	flags := int64(0)
+	actual, err := g2engine.ReplaceRecordWithInfo(ctx, dataSourceCode, recordID, jsonData, loadID, flags)
+	testError(test, ctx, g2engine, err)
+	printActual(test, actual)
+	record := truthset.CustomerRecords["1001"]
+	err = g2engine.ReplaceRecord(ctx, record.DataSource, record.Id, record.Json, loadID)
+	testError(test, ctx, g2engine, err)
+}
 
 func TestG2engine_SearchByAttributes(test *testing.T) {
 	ctx := context.TODO()
@@ -908,21 +993,19 @@ func TestG2engine_WhyRecords_V2(test *testing.T) {
 func TestG2engine_Init(test *testing.T) {
 	ctx := context.TODO()
 	g2engine := getTestObject(ctx, test)
-	moduleName := "Test module name"
-	iniParams := "{}"
-	verboseLogging := int64(0) // 0 for no Senzing logging; 1 for logging
-	err := g2engine.Init(ctx, moduleName, iniParams, verboseLogging)
+	iniParams, err := getIniParams()
+	testError(test, ctx, g2engine, err)
+	err = g2engine.Init(ctx, moduleName, iniParams, verboseLogging)
 	testError(test, ctx, g2engine, err)
 }
 
 func TestG2engine_InitWithConfigID(test *testing.T) {
 	ctx := context.TODO()
 	g2engine := getTestObject(ctx, test)
-	moduleName := "Test module name"
-	iniParams := "{}"
-	var initConfigID int64 = 1
-	verboseLogging := int64(0) // 0 for no Senzing logging; 1 for logging
-	err := g2engine.InitWithConfigID(ctx, moduleName, iniParams, initConfigID, verboseLogging)
+	var initConfigID int64 = senzingConfigId
+	iniParams, err := getIniParams()
+	testError(test, ctx, g2engine, err)
+	err = g2engine.InitWithConfigID(ctx, moduleName, iniParams, initConfigID, verboseLogging)
 	testError(test, ctx, g2engine, err)
 }
 
@@ -939,15 +1022,31 @@ func TestG2engine_Reinit(test *testing.T) {
 func TestG2engine_DeleteRecord(test *testing.T) {
 	ctx := context.TODO()
 	g2engine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1003"]
-	err := g2engine.DeleteRecord(ctx, record.DataSource, record.Id, loadId)
+
+	// first create and add the record to be deleted
+	record, err := record.NewRecord(`{"DATA_SOURCE": "TEST", "RECORD_ID": "DELETE_TEST", "NAME_FULL": "GONNA B. DELETED"}`)
+	testError(test, ctx, g2engine, err)
+
+	err = g2engine.AddRecord(ctx, record.DataSource, record.Id, record.Json, loadId)
+	testError(test, ctx, g2engine, err)
+
+	// now delete the record
+	err = g2engine.DeleteRecord(ctx, record.DataSource, record.Id, loadId)
 	testError(test, ctx, g2engine, err)
 }
 
 func TestG2engine_DeleteRecordWithInfo(test *testing.T) {
 	ctx := context.TODO()
 	g2engine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1003"]
+
+	// first create and add the record to be deleted
+	record, err := record.NewRecord(`{"DATA_SOURCE": "TEST", "RECORD_ID": "DELETE_TEST", "NAME_FULL": "DELETE W. INFO"}`)
+	testError(test, ctx, g2engine, err)
+
+	err = g2engine.AddRecord(ctx, record.DataSource, record.Id, record.Json, loadId)
+	testError(test, ctx, g2engine, err)
+
+	// now delete the record
 	flags := int64(0)
 	actual, err := g2engine.DeleteRecordWithInfo(ctx, record.DataSource, record.Id, record.Json, flags)
 	testError(test, ctx, g2engine, err)
@@ -959,5 +1058,4 @@ func TestG2engine_Destroy(test *testing.T) {
 	g2engine := getTestObject(ctx, test)
 	err := g2engine.Destroy(ctx)
 	testError(test, ctx, g2engine, err)
-	g2engineSingleton = nil
 }

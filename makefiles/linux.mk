@@ -1,4 +1,4 @@
-# Makefile extensions for darwin.
+# Makefile extensions for linux.
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -6,12 +6,8 @@
 
 
 # -----------------------------------------------------------------------------
-# OS-ARCH specific targets
+# OS specific targets
 # -----------------------------------------------------------------------------
-
-.PHONY: build-osarch-specific
-build-osarch-specific: darwin/amd64
-
 
 .PHONY: clean-osarch-specific
 clean-osarch-specific:
@@ -21,7 +17,7 @@ clean-osarch-specific:
 
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
-	@echo "Hello World, from darwin."
+	@echo "Hello World, from linux."
 
 
 .PHONY: run-osarch-specific
@@ -31,7 +27,7 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
+	@echo "No setup required."
 
 
 .PHONY: test-osarch-specific
@@ -42,6 +38,6 @@ test-osarch-specific:
 # Makefile targets supported only by this platform.
 # -----------------------------------------------------------------------------
 
-.PHONY: only-darwin
-only-darwin:
-	@echo "Only darwin has this Makefile target."
+.PHONY: only-linux
+only-linux:
+	@echo "Only linux has this Makefile target."

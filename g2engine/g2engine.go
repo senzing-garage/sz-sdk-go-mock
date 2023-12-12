@@ -7,9 +7,11 @@ package g2engine
 
 import (
 	"context"
+	"runtime"
 	"strconv"
 	"time"
 
+	"github.com/senzing/g2-sdk-go/g2api"
 	g2engineapi "github.com/senzing/g2-sdk-go/g2engine"
 	"github.com/senzing/go-logging/logging"
 	"github.com/senzing/go-observing/notifier"
@@ -210,27 +212,27 @@ Output
   - The record identifier.
     Example: `2D4DABB3FAEAFBD452E9487D06FABC22DC69C846`
 */
-func (client *G2engine) AddRecordWithInfoWithReturnedRecordID(ctx context.Context, dataSourceCode string, jsonData string, loadID string, flags int64) (string, string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(5, dataSourceCode, jsonData, loadID, flags)
-		defer func() {
-			client.traceExit(6, dataSourceCode, jsonData, loadID, flags, client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       client.AddRecordWithInfoWithReturnedRecordIDResultRecordID,
-				"loadID":         loadID,
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8003, err, details)
-		}()
-	}
-	return client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err
-}
+// func (client *G2engine) AddRecordWithInfoWithReturnedRecordID(ctx context.Context, dataSourceCode string, jsonData string, loadID string, flags int64) (string, string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(5, dataSourceCode, jsonData, loadID, flags)
+// 		defer func() {
+// 			client.traceExit(6, dataSourceCode, jsonData, loadID, flags, client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err, time.Since(entryTime))
+// 		}()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{
+// 				"dataSourceCode": dataSourceCode,
+// 				"recordID":       client.AddRecordWithInfoWithReturnedRecordIDResultRecordID,
+// 				"loadID":         loadID,
+// 			}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8003, err, details)
+// 		}()
+// 	}
+// 	return client.AddRecordWithInfoWithReturnedRecordIDResultGetWithInfo, client.AddRecordWithInfoWithReturnedRecordIDResultRecordID, err
+// }
 
 /*
 The AddRecordWithReturnedRecordID method adds a record into the Senzing repository and returns the record identifier.
@@ -245,27 +247,27 @@ Output
   - The record identifier.
     Example: `2D4DABB3FAEAFBD452E9487D06FABC22DC69C846`
 */
-func (client *G2engine) AddRecordWithReturnedRecordID(ctx context.Context, dataSourceCode string, jsonData string, loadID string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(7, dataSourceCode, jsonData, loadID)
-		defer func() {
-			client.traceExit(8, dataSourceCode, jsonData, loadID, client.AddRecordWithReturnedRecordIDResult, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       client.AddRecordWithReturnedRecordIDResult,
-				"loadID":         loadID,
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8004, err, details)
-		}()
-	}
-	return client.AddRecordWithReturnedRecordIDResult, err
-}
+// func (client *G2engine) AddRecordWithReturnedRecordID(ctx context.Context, dataSourceCode string, jsonData string, loadID string) (string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(7, dataSourceCode, jsonData, loadID)
+// 		defer func() {
+// 			client.traceExit(8, dataSourceCode, jsonData, loadID, client.AddRecordWithReturnedRecordIDResult, err, time.Since(entryTime))
+// 		}()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{
+// 				"dataSourceCode": dataSourceCode,
+// 				"recordID":       client.AddRecordWithReturnedRecordIDResult,
+// 				"loadID":         loadID,
+// 			}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8004, err, details)
+// 		}()
+// 	}
+// 	return client.AddRecordWithReturnedRecordIDResult, err
+// }
 
 /*
 The CheckRecord method FIXME:.
@@ -280,23 +282,23 @@ Output
   - A JSON document that FIXME:
     See the example output.
 */
-func (client *G2engine) CheckRecord(ctx context.Context, record string, recordQueryList string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(9, record, recordQueryList)
-		defer func() {
-			client.traceExit(10, record, recordQueryList, client.CheckRecordResult, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8005, err, details)
-		}()
-	}
-	return client.CheckRecordResult, err
-}
+// func (client *G2engine) CheckRecord(ctx context.Context, record string, recordQueryList string) (string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(9, record, recordQueryList)
+// 		defer func() {
+// 			client.traceExit(10, record, recordQueryList, client.CheckRecordResult, err, time.Since(entryTime))
+// 		}()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8005, err, details)
+// 		}()
+// 	}
+// 	return client.CheckRecordResult, err
+// }
 
 /*
 The CloseExport method closes the exported document created by ExportJSONEntityReport().
@@ -525,6 +527,42 @@ func (client *G2engine) ExportCSVEntityReport(ctx context.Context, csvColumnList
 }
 
 /*
+The ExportCSVEntityReportIterator method creates an Iterator that can be used in a for-loop
+to scroll through a document of exported entities.
+It is a convenience method for the ExportCSVEntityReport(), FetchNext(), CloseExport()
+lifecycle of a list of entities to export.
+
+Input
+  - ctx: A context to control lifecycle.
+  - csvColumnList: A comma-separated list of column names for the CSV export.
+  - flags: Flags used to control information returned.
+
+Output
+  - A channel of strings that can be iterated over.
+*/
+func (client *G2engine) ExportCSVEntityReportIterator(ctx context.Context, csvColumnList string, flags int64) chan g2api.StringFragment {
+	stringFragmentChannel := make(chan g2api.StringFragment)
+	go func() {
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+		defer close(stringFragmentChannel)
+		var err error = nil
+		if client.isTrace {
+			entryTime := time.Now()
+			client.traceEntry(163, csvColumnList, flags)
+			defer func() { client.traceExit(164, csvColumnList, flags, err, time.Since(entryTime)) }()
+		}
+		if client.observers != nil {
+			go func() {
+				details := map[string]string{}
+				notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8079, err, details)
+			}()
+		}
+	}()
+	return stringFragmentChannel
+}
+
+/*
 The ExportJSONEntityReport method initializes a cursor over a document of exported entities.
 It is part of the ExportJSONEntityReport(), FetchNext(), CloseExport()
 lifecycle of a list of entities to export.
@@ -550,6 +588,42 @@ func (client *G2engine) ExportJSONEntityReport(ctx context.Context, flags int64)
 		}()
 	}
 	return client.ExportJSONEntityReportResult, err
+}
+
+/*
+The ExportJSONEntityReportIterator method creates an Iterator that can be used in a for-loop
+to scroll through a document of exported entities.
+It is a convenience method for the ExportJSONEntityReport(), FetchNext(), CloseExport()
+lifecycle of a list of entities to export.
+
+Input
+  - ctx: A context to control lifecycle.
+  - flags: Flags used to control information returned.
+
+Output
+  - A channel of strings that can be iterated over.
+*/
+func (client *G2engine) ExportJSONEntityReportIterator(ctx context.Context, flags int64) chan g2api.StringFragment {
+	stringFragmentChannel := make(chan g2api.StringFragment)
+	go func() {
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+		defer close(stringFragmentChannel)
+		var err error = nil
+		var resultExportHandle uintptr
+		if client.isTrace {
+			entryTime := time.Now()
+			client.traceEntry(165, flags)
+			defer func() { client.traceExit(166, flags, resultExportHandle, err, time.Since(entryTime)) }()
+		}
+		if client.observers != nil {
+			go func() {
+				details := map[string]string{}
+				notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8080, err, details)
+			}()
+		}
+	}()
+	return stringFragmentChannel
 }
 
 /*
@@ -1862,21 +1936,21 @@ Input
 Output
   - A JSON document.
 */
-func (client *G2engine) ProcessRedoRecord(ctx context.Context) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(107)
-		defer func() { client.traceExit(108, client.ProcessRedoRecordResult, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8051, err, details)
-		}()
-	}
-	return client.ProcessRedoRecordResult, err
-}
+// func (client *G2engine) ProcessRedoRecord(ctx context.Context) (string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(107)
+// 		defer func() { client.traceExit(108, client.ProcessRedoRecordResult, err, time.Since(entryTime)) }()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8051, err, details)
+// 		}()
+// 	}
+// 	return client.ProcessRedoRecordResult, err
+// }
 
 /*
 The ProcessRedoRecordWithInfo method processes the next redo record and returns it and affected entities.
@@ -1890,23 +1964,23 @@ Output
   - A JSON document with the record that was re-done.
   - A JSON document with affected entities.
 */
-func (client *G2engine) ProcessRedoRecordWithInfo(ctx context.Context, flags int64) (string, string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(109, flags)
-		defer func() {
-			client.traceExit(110, flags, client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8052, err, details)
-		}()
-	}
-	return client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err
-}
+// func (client *G2engine) ProcessRedoRecordWithInfo(ctx context.Context, flags int64) (string, string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(109, flags)
+// 		defer func() {
+// 			client.traceExit(110, flags, client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err, time.Since(entryTime))
+// 		}()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8052, err, details)
+// 		}()
+// 	}
+// 	return client.ProcessRedoRecordWithInfoResult, client.ProcessRedoRecordWithInfoResultWithInfo, err
+// }
 
 /*
 The ProcessWithInfo method FIXME:
@@ -1947,21 +2021,21 @@ Output
   - A JSON document.
     See the example output.
 */
-func (client *G2engine) ProcessWithResponse(ctx context.Context, record string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(113, record)
-		defer func() { client.traceExit(114, record, client.ProcessWithResponseResult, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8054, err, details)
-		}()
-	}
-	return client.ProcessWithResponseResult, err
-}
+// func (client *G2engine) ProcessWithResponse(ctx context.Context, record string) (string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(113, record)
+// 		defer func() { client.traceExit(114, record, client.ProcessWithResponseResult, err, time.Since(entryTime)) }()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8054, err, details)
+// 		}()
+// 	}
+// 	return client.ProcessWithResponseResult, err
+// }
 
 /*
 The ProcessWithResponseResize method FIXME:
@@ -1974,23 +2048,23 @@ Output
   - A JSON document.
     See the example output.
 */
-func (client *G2engine) ProcessWithResponseResize(ctx context.Context, record string) (string, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(115, record)
-		defer func() {
-			client.traceExit(116, record, client.ProcessWithResponseResizeResult, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8055, err, details)
-		}()
-	}
-	return client.ProcessWithResponseResizeResult, err
-}
+// func (client *G2engine) ProcessWithResponseResize(ctx context.Context, record string) (string, error) {
+// 	var err error = nil
+// 	entryTime := time.Now()
+// 	if client.isTrace {
+// 		client.traceEntry(115, record)
+// 		defer func() {
+// 			client.traceExit(116, record, client.ProcessWithResponseResizeResult, err, time.Since(entryTime))
+// 		}()
+// 	}
+// 	if client.observers != nil {
+// 		go func() {
+// 			details := map[string]string{}
+// 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8055, err, details)
+// 		}()
+// 	}
+// 	return client.ProcessWithResponseResizeResult, err
+// }
 
 /*
 The PurgeRepository method removes every record in the Senzing repository.
