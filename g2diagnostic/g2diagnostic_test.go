@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
-	"github.com/senzing/g2-sdk-go/g2api"
+	"github.com/senzing-garage/g2-sdk-go/g2api"
 	"github.com/stretchr/testify/assert"
 )
 
