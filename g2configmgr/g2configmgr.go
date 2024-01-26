@@ -14,7 +14,7 @@ import (
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
-	g2configmgrapi "github.com/senzing/g2-sdk-go/g2configmgr"
+	g2configmgrapi "github.com/senzing-garage/g2-sdk-go/g2configmgr"
 )
 
 // ----------------------------------------------------------------------------

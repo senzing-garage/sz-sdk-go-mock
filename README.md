@@ -25,8 +25,8 @@ The Senzing `g2-sdk-go-mock` packages provide mock
 objects representing the Software Development Kit that wraps the
 Senzing C SDK APIs.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/senzing/g2-sdk-go-mock.svg)](https://pkg.go.dev/github.com/senzing/g2-sdk-go-mock)
-[![Go Report Card](https://goreportcard.com/badge/github.com/senzing/g2-sdk-go-mock)](https://goreportcard.com/report/github.com/senzing/g2-sdk-go-mock)
+[![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/g2-sdk-go-mock.svg)](https://pkg.go.dev/github.com/senzing-garage/g2-sdk-go-mock)
+[![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/g2-sdk-go-mock)](https://goreportcard.com/report/github.com/senzing-garage/g2-sdk-go-mock)
 [![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/LICENSE)
 
 [![gosec.yaml](https://github.com/senzing-garage/g2-sdk-go-mock/actions/workflows/gosec.yaml/badge.svg)](https://github.com/senzing-garage/g2-sdk-go-mock/actions/workflows/gosec.yaml)
@@ -62,4 +62,4 @@ interface include:
 1. [Development](docs/development.md)
 1. [Errors](docs/errors.md)
 1. [Examples](docs/examples.md)
-1. [Package reference](https://pkg.go.dev/github.com/senzing/g2-sdk-go-mock)
+1. [Package reference](https://pkg.go.dev/github.com/senzing-garage/g2-sdk-go-mock)

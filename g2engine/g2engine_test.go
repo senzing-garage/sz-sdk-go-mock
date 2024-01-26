@@ -13,7 +13,7 @@ import (
 	"github.com/senzing-garage/go-common/record"
 	"github.com/senzing-garage/go-common/testfixtures"
 	"github.com/senzing-garage/go-common/truthset"
-	"github.com/senzing/g2-sdk-go/g2api"
+	"github.com/senzing-garage/g2-sdk-go/g2api"
 	"github.com/stretchr/testify/assert"
 )
 
