@@ -1,27 +1,22 @@
 /*
- *
- */
+Package szconfigmanager implements a client for the service.
+*/
 
-// Package g2configmgrclient implements a client for the service.
-package g2configmgr
+package szconfigmanager
 
 import (
 	"context"
 	"strconv"
 	"time"
 
-	g2configmgrapi "github.com/senzing-garage/g2-sdk-go/g2configmgr"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
+	szconfigmanagerapi "github.com/senzing-garage/sz-sdk-go/szconfigmanager"
 )
 
-// ----------------------------------------------------------------------------
-// Types
-// ----------------------------------------------------------------------------
-
-type G2configmgr struct {
+type Szconfigmanager struct {
 	AddConfigResult          int64
 	GetConfigListResult      string
 	GetConfigResult          string
@@ -33,38 +28,7 @@ type G2configmgr struct {
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
-// ----------------------------------------------------------------------------
-
-// --- Logging ----------------------------------------------------------------
-
-// Get the Logger singleton.
-func (client *G2configmgr) getLogger() logging.LoggingInterface {
-	var err error = nil
-	if client.logger == nil {
-		options := []interface{}{
-			&logging.OptionCallerSkip{Value: 4},
-		}
-		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, g2configmgrapi.IdMessages, options...)
-		if err != nil {
-			panic(err)
-		}
-	}
-	return client.logger
-}
-
-// Trace method entry.
-func (client *G2configmgr) traceEntry(errorNumber int, details ...interface{}) {
-	client.getLogger().Log(errorNumber, details...)
-}
-
-// Trace method exit.
-func (client *G2configmgr) traceExit(errorNumber int, details ...interface{}) {
-	client.getLogger().Log(errorNumber, details...)
-}
-
-// ----------------------------------------------------------------------------
-// Interface methods
+// sz-sdk-go.SzConfigManager interface methods
 // ----------------------------------------------------------------------------
 
 /*
@@ -78,7 +42,7 @@ Input
 Output
   - A configuration identifier.
 */
-func (client *G2configmgr) AddConfig(ctx context.Context, configStr string, configComments string) (int64, error) {
+func (client *Szconfigmanager) AddConfig(ctx context.Context, configStr string, configComments string) (int64, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -105,7 +69,7 @@ It should be called after all other calls are complete.
 Input
   - ctx: A context to control lifecycle.
 */
-func (client *G2configmgr) Destroy(ctx context.Context) error {
+func (client *Szconfigmanager) Destroy(ctx context.Context) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -132,7 +96,7 @@ Output
   - A JSON document containing the Senzing configuration.
     See the example output.
 */
-func (client *G2configmgr) GetConfig(ctx context.Context, configID int64) (string, error) {
+func (client *Szconfigmanager) GetConfig(ctx context.Context, configID int64) (string, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -158,7 +122,7 @@ Output
   - A JSON document containing Senzing configurations.
     See the example output.
 */
-func (client *G2configmgr) GetConfigList(ctx context.Context) (string, error) {
+func (client *Szconfigmanager) GetConfigList(ctx context.Context) (string, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -183,7 +147,7 @@ Input
 Output
   - A configuration identifier which identifies the current configuration in use.
 */
-func (client *G2configmgr) GetDefaultConfigID(ctx context.Context) (int64, error) {
+func (client *Szconfigmanager) GetDefaultConfigId(ctx context.Context) (int64, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -200,6 +164,65 @@ func (client *G2configmgr) GetDefaultConfigID(ctx context.Context) (int64, error
 }
 
 /*
+The ReplaceDefaultConfigID method replaces the old configuration identifier with a new configuration identifier in the Senzing database.
+It is like a "compare-and-swap" instruction to serialize concurrent editing of configuration.
+If oldConfigID is no longer the "old configuration identifier", the operation will fail.
+To simply set the default configuration ID, use SetDefaultConfigID().
+
+Input
+  - ctx: A context to control lifecycle.
+  - oldConfigID: The configuration identifier to replace.
+  - newConfigID: The configuration identifier to use as the default.
+*/
+func (client *Szconfigmanager) ReplaceDefaultConfigID(ctx context.Context, oldConfigID int64, newConfigID int64) error {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(19, oldConfigID, newConfigID)
+		defer func() { client.traceExit(20, oldConfigID, newConfigID, err, time.Since(entryTime)) }()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"newConfigID": strconv.FormatInt(newConfigID, 10),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8007, err, details)
+		}()
+	}
+	return err
+}
+
+/*
+The SetDefaultConfigID method replaces the sets a new configuration identifier in the Senzing database.
+To serialize modifying of the configuration identifier, see ReplaceDefaultConfigID().
+
+Input
+  - ctx: A context to control lifecycle.
+  - configID: The configuration identifier of the Senzing Engine configuration to use as the default.
+*/
+func (client *Szconfigmanager) SetDefaultConfigID(ctx context.Context, configID int64) error {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(21, configID)
+		defer func() { client.traceExit(22, configID, err, time.Since(entryTime)) }()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"configID": strconv.FormatInt(configID, 10),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8008, err, details)
+		}()
+	}
+	return err
+}
+
+// ----------------------------------------------------------------------------
+// Public non-interface methods
+// ----------------------------------------------------------------------------
+
+/*
 The GetObserverOrigin method returns the "origin" value of past Observer messages.
 
 Input
@@ -208,7 +231,7 @@ Input
 Output
   - The value sent in the Observer's "origin" key/value pair.
 */
-func (client *G2configmgr) GetObserverOrigin(ctx context.Context) string {
+func (client *Szconfigmanager) GetObserverOrigin(ctx context.Context) string {
 	return client.observerOrigin
 }
 
@@ -220,7 +243,7 @@ For this implementation, "mock" is returned.
 Input
   - ctx: A context to control lifecycle.
 */
-func (client *G2configmgr) GetSdkId(ctx context.Context) string {
+func (client *Szconfigmanager) GetSdkId(ctx context.Context) string {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -246,7 +269,7 @@ Input
   - iniParams: A JSON string containing configuration parameters.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *G2configmgr) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
+func (client *Szconfigmanager) Init(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -273,7 +296,7 @@ Input
   - ctx: A context to control lifecycle.
   - observer: The observer to be added.
 */
-func (client *G2configmgr) RegisterObserver(ctx context.Context, observer observer.Observer) error {
+func (client *Szconfigmanager) RegisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -296,68 +319,13 @@ func (client *G2configmgr) RegisterObserver(ctx context.Context, observer observ
 }
 
 /*
-The ReplaceDefaultConfigID method replaces the old configuration identifier with a new configuration identifier in the Senzing database.
-It is like a "compare-and-swap" instruction to serialize concurrent editing of configuration.
-If oldConfigID is no longer the "old configuration identifier", the operation will fail.
-To simply set the default configuration ID, use SetDefaultConfigID().
-
-Input
-  - ctx: A context to control lifecycle.
-  - oldConfigID: The configuration identifier to replace.
-  - newConfigID: The configuration identifier to use as the default.
-*/
-func (client *G2configmgr) ReplaceDefaultConfigID(ctx context.Context, oldConfigID int64, newConfigID int64) error {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(19, oldConfigID, newConfigID)
-		defer func() { client.traceExit(20, oldConfigID, newConfigID, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"newConfigID": strconv.FormatInt(newConfigID, 10),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8007, err, details)
-		}()
-	}
-	return err
-}
-
-/*
-The SetDefaultConfigID method replaces the sets a new configuration identifier in the Senzing database.
-To serialize modifying of the configuration identifier, see ReplaceDefaultConfigID().
-
-Input
-  - ctx: A context to control lifecycle.
-  - configID: The configuration identifier of the Senzing Engine configuration to use as the default.
-*/
-func (client *G2configmgr) SetDefaultConfigID(ctx context.Context, configID int64) error {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(21, configID)
-		defer func() { client.traceExit(22, configID, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configID": strconv.FormatInt(configID, 10),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8008, err, details)
-		}()
-	}
-	return err
-}
-
-/*
 The SetLogLevel method sets the level of logging.
 
 Input
   - ctx: A context to control lifecycle.
   - logLevel: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
 */
-func (client *G2configmgr) SetLogLevel(ctx context.Context, logLevelName string) error {
+func (client *Szconfigmanager) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -384,7 +352,7 @@ Input
   - ctx: A context to control lifecycle.
   - origin: The value sent in the Observer's "origin" key/value pair.
 */
-func (client *G2configmgr) SetObserverOrigin(ctx context.Context, origin string) {
+func (client *Szconfigmanager) SetObserverOrigin(ctx context.Context, origin string) {
 	client.observerOrigin = origin
 }
 
@@ -395,7 +363,7 @@ Input
   - ctx: A context to control lifecycle.
   - observer: The observer to be added.
 */
-func (client *G2configmgr) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
+func (client *Szconfigmanager) UnregisterObserver(ctx context.Context, observer observer.Observer) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
@@ -417,4 +385,35 @@ func (client *G2configmgr) UnregisterObserver(ctx context.Context, observer obse
 		client.observers = nil
 	}
 	return err
+}
+
+// ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+// --- Logging ----------------------------------------------------------------
+
+// Get the Logger singleton.
+func (client *Szconfigmanager) getLogger() logging.LoggingInterface {
+	var err error = nil
+	if client.logger == nil {
+		options := []interface{}{
+			&logging.OptionCallerSkip{Value: 4},
+		}
+		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, szconfigmanagerapi.IdMessages, options...)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return client.logger
+}
+
+// Trace method entry.
+func (client *Szconfigmanager) traceEntry(errorNumber int, details ...interface{}) {
+	client.getLogger().Log(errorNumber, details...)
+}
+
+// Trace method exit.
+func (client *Szconfigmanager) traceExit(errorNumber int, details ...interface{}) {
+	client.getLogger().Log(errorNumber, details...)
 }

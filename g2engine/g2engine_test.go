@@ -11,9 +11,9 @@ import (
 
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/g2-sdk-go/g2api"
-	"github.com/senzing-garage/go-common/record"
-	"github.com/senzing-garage/go-common/testfixtures"
-	"github.com/senzing-garage/go-common/truthset"
+	"github.com/senzing-garage/go-helpers/record"
+	"github.com/senzing-garage/go-helpers/testfixtures"
+	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/stretchr/testify/assert"
 )
 

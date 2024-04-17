@@ -8,13 +8,13 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/senzing-garage/g2-sdk-go-mock/g2config"
-	"github.com/senzing-garage/g2-sdk-go-mock/g2configmgr"
 	"github.com/senzing-garage/g2-sdk-go-mock/g2diagnostic"
 	"github.com/senzing-garage/g2-sdk-go-mock/g2engine"
 	"github.com/senzing-garage/g2-sdk-go-mock/g2product"
+	"github.com/senzing-garage/g2-sdk-go-mock/szconfig"
+	"github.com/senzing-garage/g2-sdk-go-mock/szconfigmanager"
 	"github.com/senzing-garage/g2-sdk-go/g2api"
-	"github.com/senzing-garage/go-common/truthset"
+	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/observer"
 )
@@ -51,7 +51,7 @@ var logger logging.LoggingInterface
 // ----------------------------------------------------------------------------
 
 func getG2config(ctx context.Context) (g2api.G2config, error) {
-	result := g2config.G2config{}
+	result := szconfig.Szconfig{}
 	moduleName := "Test module name"
 	verboseLogging := int64(0) // 0 for no Senzing logging; 1 for logging
 	iniParams := `{}`
@@ -60,7 +60,7 @@ func getG2config(ctx context.Context) (g2api.G2config, error) {
 }
 
 func getG2configmgr(ctx context.Context) (g2api.G2configmgr, error) {
-	result := g2configmgr.G2configmgr{}
+	result := szconfigmanager.Szconfigmanager{}
 	moduleName := "Test module name"
 	verboseLogging := int64(0)
 	iniParams := `{}`

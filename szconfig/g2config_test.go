@@ -1,4 +1,4 @@
-package g2config
+package szconfig
 
 import (
 	"context"
@@ -17,81 +17,8 @@ const (
 )
 
 var (
-	g2configSingleton *G2config
+	g2configSingleton *Szconfig
 )
-
-// ----------------------------------------------------------------------------
-// Internal functions
-// ----------------------------------------------------------------------------
-
-func getTestObject(ctx context.Context, test *testing.T) *G2config {
-	return getG2Config(ctx)
-}
-
-func getG2Config(ctx context.Context) *G2config {
-	if g2configSingleton == nil {
-		g2configSingleton = &G2config{
-			AddDataSourceResult:   `{"DSRC_ID":1001}`,
-			CreateResult:          1,
-			ListDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
-			SaveResult:            `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE",`,
-		}
-	}
-	return g2configSingleton
-}
-
-func truncate(aString string, length int) string {
-	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
-}
-
-func printResult(test *testing.T, title string, result interface{}) {
-	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
-	}
-}
-
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
-}
-
-func testError(test *testing.T, ctx context.Context, g2config g2api.G2config, err error) {
-	if err != nil {
-		test.Log("Error:", err.Error())
-		assert.FailNow(test, err.Error())
-	}
-}
-
-// ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func getIniParams() (string, error) {
-	return "{}", nil
-}
-
-func setup() error {
-	var err error = nil
-	return err
-}
-
-func teardown() error {
-	var err error = nil
-	return err
-}
 
 // ----------------------------------------------------------------------------
 // Test interface functions
@@ -264,4 +191,77 @@ func TestG2config_Destroy(test *testing.T) {
 	g2config := getTestObject(ctx, test)
 	err := g2config.Destroy(ctx)
 	testError(test, ctx, g2config, err)
+}
+
+// ----------------------------------------------------------------------------
+// Internal functions
+// ----------------------------------------------------------------------------
+
+func getTestObject(ctx context.Context, test *testing.T) *Szconfig {
+	return getSzConfig(ctx)
+}
+
+func getSzConfig(ctx context.Context) *Szconfig {
+	if g2configSingleton == nil {
+		g2configSingleton = &Szconfig{
+			AddDataSourceResult:   `{"DSRC_ID":1001}`,
+			CreateResult:          1,
+			ListDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
+			SaveResult:            `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE",`,
+		}
+	}
+	return g2configSingleton
+}
+
+func truncate(aString string, length int) string {
+	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
+}
+
+func printResult(test *testing.T, title string, result interface{}) {
+	if printResults {
+		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+	}
+}
+
+func printActual(test *testing.T, actual interface{}) {
+	printResult(test, "Actual", actual)
+}
+
+func testError(test *testing.T, ctx context.Context, g2config g2api.G2config, err error) {
+	if err != nil {
+		test.Log("Error:", err.Error())
+		assert.FailNow(test, err.Error())
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Test harness
+// ----------------------------------------------------------------------------
+
+func TestMain(m *testing.M) {
+	err := setup()
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+	code := m.Run()
+	err = teardown()
+	if err != nil {
+		fmt.Print(err)
+	}
+	os.Exit(code)
+}
+
+func getIniParams() (string, error) {
+	return "{}", nil
+}
+
+func setup() error {
+	var err error = nil
+	return err
+}
+
+func teardown() error {
+	var err error = nil
+	return err
 }
