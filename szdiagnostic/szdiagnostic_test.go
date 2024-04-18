@@ -8,6 +8,7 @@ import (
 
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/sz-sdk-go/sz"
+	"github.com/senzing-garage/sz-sdk-go/szerror"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +18,7 @@ const (
 )
 
 var (
-	g2diagnosticSingleton *Szdiagnostic
+	szDiagnosticSingleton *Szdiagnostic
 )
 
 // ----------------------------------------------------------------------------
@@ -26,9 +27,9 @@ var (
 
 func TestSzdiagnostic_CheckDatabasePerformance(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
+	szDiagnostic := getTestObject(ctx, test)
 	secondsToRun := 1
-	actual, err := g2diagnostic.CheckDBPerf(ctx, secondsToRun)
+	actual, err := szDiagnostic.CheckDatabasePerformance(ctx, secondsToRun)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -46,17 +47,17 @@ func TestSzdiagnostic_PurgeRepository(test *testing.T) {
 
 func TestSzdiagnostic_SetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
+	szDiagnostic := getTestObject(ctx, test)
 	origin := "Machine: nn; Task: UnitTest"
-	g2diagnostic.SetObserverOrigin(ctx, origin)
+	szDiagnostic.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
+	szDiagnostic := getTestObject(ctx, test)
 	origin := "Machine: nn; Task: UnitTest"
-	g2diagnostic.SetObserverOrigin(ctx, origin)
-	actual := g2diagnostic.GetObserverOrigin(ctx)
+	szDiagnostic.SetObserverOrigin(ctx, origin)
+	actual := szDiagnostic.GetObserverOrigin(ctx)
 	assert.Equal(test, origin, actual)
 }
 
@@ -75,74 +76,83 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 
 func TestSzdiagnostic_Initialize(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := &Szdiagnostic{}
-	moduleName := "Test module name"
-	iniParams := "{}"
-	verboseLogging := int64(0)
-	err := g2diagnostic.Initialize(ctx, moduleName, iniParams, verboseLogging)
+	szDiagnostic := &Szdiagnostic{}
+	instanceName := "Test name"
+	settings, err := getSettings()
+	testError(test, err)
+	verboseLogging := sz.SZ_NO_LOGGING
+	configId := sz.SZ_INITIALIZE_WITH_DEFAULT_CONFIGURATION
+	err = szDiagnostic.Initialize(ctx, instanceName, settings, configId, verboseLogging)
 	testError(test, err)
 }
 
-func TestSzdiagnostic_InitializeWithConfigId(test *testing.T) {
+func TestSzdiagnostic_Initialize_withConfigId(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := &Szdiagnostic{}
-	moduleName := "Test module name"
-	initConfigID := int64(1)
-	iniParams := "{}"
-	verboseLogging := int64(0)
-	err := g2diagnostic.InitializeWithConfigId(ctx, moduleName, iniParams, initConfigID, verboseLogging)
+	szDiagnostic := &Szdiagnostic{}
+	instanceName := "Test name"
+	settings, err := getSettings()
+	testError(test, err)
+	verboseLogging := sz.SZ_NO_LOGGING
+	configId := getDefaultConfigId()
+	err = szDiagnostic.Initialize(ctx, instanceName, settings, configId, verboseLogging)
 	testError(test, err)
 }
 
 func TestSzdiagnostic_Reinitialize(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	initConfigID := int64(1)
-	err := g2diagnostic.Reinitialize(ctx, initConfigID)
-	testErrorNoFail(test, ctx, g2diagnostic, err)
+	szDiagnostic := getTestObject(ctx, test)
+	configId := getDefaultConfigId()
+	err := szDiagnostic.Reinitialize(ctx, configId)
+	testErrorNoFail(test, err)
 }
 
 func TestSzdiagnostic_Destroy(test *testing.T) {
 	ctx := context.TODO()
-	g2diagnostic := getTestObject(ctx, test)
-	err := g2diagnostic.Destroy(ctx)
+	szDiagnostic := getTestObject(ctx, test)
+	err := szDiagnostic.Destroy(ctx)
 	testError(test, err)
-	g2diagnosticSingleton = nil
+	szDiagnosticSingleton = nil
 }
 
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, test *testing.T) *Szdiagnostic {
-	return getSzDiagnostic(ctx)
+func getDefaultConfigId() int64 {
+	return int64(1)
+}
+
+func getSettings() (string, error) {
+	return "{}", nil
 }
 
 func getSzDiagnostic(ctx context.Context) *Szdiagnostic {
-	if g2diagnosticSingleton == nil {
-		g2diagnosticSingleton = &Szdiagnostic{
-			CheckDBPerfResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
+	_ = ctx
+	if szDiagnosticSingleton == nil {
+		szDiagnosticSingleton = &Szdiagnostic{
+			CheckDatabasePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
 		}
 	}
-	return g2diagnosticSingleton
+	return szDiagnosticSingleton
 }
 
 func getSzDiagnosticAsInterface(ctx context.Context) sz.SzDiagnostic {
 	return getSzDiagnostic(ctx)
 }
 
-func truncate(aString string, length int) string {
-	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
+func getTestObject(ctx context.Context, test *testing.T) *Szdiagnostic {
+	_ = test
+	return getSzDiagnostic(ctx)
+}
+
+func printActual(test *testing.T, actual interface{}) {
+	printResult(test, "Actual", actual)
 }
 
 func printResult(test *testing.T, title string, result interface{}) {
 	if printResults {
 		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
-}
-
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
 }
 
 func testError(test *testing.T, err error) {
@@ -158,6 +168,10 @@ func testErrorNoFail(test *testing.T, err error) {
 	}
 }
 
+func truncate(aString string, length int) string {
+	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
+}
+
 // ----------------------------------------------------------------------------
 // Test harness
 // ----------------------------------------------------------------------------
@@ -165,6 +179,15 @@ func testErrorNoFail(test *testing.T, err error) {
 func TestMain(m *testing.M) {
 	err := setup()
 	if err != nil {
+		if szerror.Is(err, szerror.SzUnrecoverable) {
+			fmt.Printf("\nUnrecoverable error detected. \n\n")
+		}
+		if szerror.Is(err, szerror.SzRetryable) {
+			fmt.Printf("\nRetryable error detected. \n\n")
+		}
+		if szerror.Is(err, szerror.SzBadInput) {
+			fmt.Printf("\nBad user input error detected. \n\n")
+		}
 		fmt.Print(err)
 		os.Exit(1)
 	}

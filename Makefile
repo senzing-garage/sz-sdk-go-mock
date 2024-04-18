@@ -1,4 +1,4 @@
-# Makefile for g2-sdk-go-mock.
+# Makefile for sz-sdk-go-mock.
 
 # Detect the operating system and architecture.
 

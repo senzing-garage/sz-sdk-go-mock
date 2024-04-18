@@ -1,10 +1,9 @@
-module github.com/senzing-garage/g2-sdk-go-mock
+module github.com/senzing-garage/sz-sdk-go-mock
 
 go 1.21
 
 require (
 	github.com/aquilax/truncate v1.0.0
-	github.com/senzing-garage/g2-sdk-go v0.10.0
 	github.com/senzing-garage/go-helpers v0.5.0
 	github.com/senzing-garage/go-logging v1.4.0
 	github.com/senzing-garage/go-observing v0.3.0

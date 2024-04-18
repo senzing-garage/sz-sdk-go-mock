@@ -1,5 +1,5 @@
 /*
-Package main implements a client for the service.
+Package szdiagnostic implements a client for the service.
 */
 
 package szdiagnostic
@@ -9,19 +9,19 @@ import (
 	"strconv"
 	"time"
 
-	g2diagnosticapi "github.com/senzing-garage/g2-sdk-go/g2diagnostic"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
+	szdiagnosticapi "github.com/senzing-garage/sz-sdk-go/szdiagnostic"
 )
 
 type Szdiagnostic struct {
-	CheckDBPerfResult string
-	isTrace           bool
-	logger            logging.LoggingInterface
-	observerOrigin    string
-	observers         subject.Subject
+	CheckDatabasePerformanceResult string
+	isTrace                        bool
+	logger                         logging.LoggingInterface
+	observerOrigin                 string
+	observers                      subject.Subject
 }
 
 // ----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ type Szdiagnostic struct {
 // ----------------------------------------------------------------------------
 
 /*
-The CheckDBPerf method performs inserts to determine rate of insertion.
+The CheckDatabasePerformance method performs inserts to determine rate of insertion.
 
 Input
   - ctx: A context to control lifecycle.
@@ -40,12 +40,14 @@ Output
   - A string containing a JSON document.
     Example: `{"numRecordsInserted":0,"insertTime":0}`
 */
-func (client *Szdiagnostic) CheckDBPerf(ctx context.Context, secondsToRun int) (string, error) {
+func (client *Szdiagnostic) CheckDatabasePerformance(ctx context.Context, secondsToRun int) (string, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(1, secondsToRun)
-		defer func() { client.traceExit(2, secondsToRun, client.CheckDBPerfResult, err, time.Since(entryTime)) }()
+		defer func() {
+			client.traceExit(2, secondsToRun, client.CheckDatabasePerformanceResult, err, time.Since(entryTime))
+		}()
 	}
 	if client.observers != nil {
 		go func() {
@@ -53,7 +55,7 @@ func (client *Szdiagnostic) CheckDBPerf(ctx context.Context, secondsToRun int) (
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8001, err, details)
 		}()
 	}
-	return client.CheckDBPerfResult, err
+	return client.CheckDatabasePerformanceResult, err
 }
 
 /*
@@ -104,23 +106,23 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 }
 
 /*
-The Reinit method re-initializes the Senzing G2Diagnosis object.
+The Reinitialize method re-initializes the Senzing G2Diagnostic object.
 
 Input
   - ctx: A context to control lifecycle.
-  - initConfigID: The configuration ID used for the initialization.
+  - configId: The configuration ID used for the initialization.
 */
-func (client *Szdiagnostic) Reinitialize(ctx context.Context, initConfigID int64) error {
+func (client *Szdiagnostic) Reinitialize(ctx context.Context, configId int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(51, initConfigID)
-		defer func() { client.traceExit(52, initConfigID, err, time.Since(entryTime)) }()
+		client.traceEntry(51, configId)
+		defer func() { client.traceExit(52, configId, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"initConfigID": strconv.FormatInt(initConfigID, 10),
+				"configId": strconv.FormatInt(configId, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8023, err, details)
 		}()
@@ -147,7 +149,7 @@ func (client *Szdiagnostic) GetObserverOrigin(ctx context.Context) string {
 
 /*
 The GetSdkId method returns the identifier of this particular Software Development Kit (SDK).
-It is handy when working with multiple implementations of the same G2diagnosticInterface.
+It is handy when working with multiple implementations of the same SzDiagnostic interface.
 For this implementation, "mock" is returned.
 
 Input
@@ -170,64 +172,31 @@ func (client *Szdiagnostic) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing G2Diagnosis object.
+The Initialize method initializes the Senzing G2Diagnostic object.
 It must be called prior to any other calls.
 
 Input
   - ctx: A context to control lifecycle.
-  - moduleName: A name for the auditing node, to help identify it within system logs.
-  - iniParams: A JSON string containing configuration parameters.
+  - instanceName: A name for the auditing node, to help identify it within system logs.
+  - settings: A JSON string containing configuration parameters.
+  - configId: The configuration ID used for the initialization.  0 for current default configuration.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *Szdiagnostic) Initialize(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
+func (client *Szdiagnostic) Initialize(ctx context.Context, instanceName string, settings string, configId int64, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(47, moduleName, iniParams, verboseLogging)
-		defer func() { client.traceExit(48, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
+		client.traceEntry(47, instanceName, settings, verboseLogging)
+		defer func() { client.traceExit(48, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"iniParams":      iniParams,
-				"moduleName":     moduleName,
+				"settings":       settings,
+				"instanceName":   instanceName,
 				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8021, err, details)
-		}()
-	}
-	return err
-}
-
-/*
-The InitializeWithConfigId method initializes the Senzing G2Diagnosis object with a non-default configuration ID.
-It must be called prior to any other calls.
-
-Input
-  - ctx: A context to control lifecycle.
-  - moduleName: A name for the auditing node, to help identify it within system logs.
-  - iniParams: A JSON string containing configuration parameters.
-  - initConfigID: The configuration ID used for the initialization.
-  - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
-*/
-func (client *Szdiagnostic) InitializeWithConfigId(ctx context.Context, moduleName string, iniParams string, initConfigID int64, verboseLogging int64) error {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(49, moduleName, iniParams, initConfigID, verboseLogging)
-		defer func() {
-			client.traceExit(50, moduleName, iniParams, initConfigID, verboseLogging, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"iniParams":      iniParams,
-				"initConfigID":   strconv.FormatInt(initConfigID, 10),
-				"moduleName":     moduleName,
-				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8022, err, details)
 		}()
 	}
 	return err
@@ -254,7 +223,7 @@ func (client *Szdiagnostic) RegisterObserver(ctx context.Context, observer obser
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"observerID": observer.GetObserverId(ctx),
+				"observerId": observer.GetObserverId(ctx),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8025, err, details)
 		}()
@@ -267,7 +236,7 @@ The SetLogLevel method sets the level of logging.
 
 Input
   - ctx: A context to control lifecycle.
-  - logLevel: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
+  - logLevelName: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
 */
 func (client *Szdiagnostic) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
@@ -320,7 +289,7 @@ func (client *Szdiagnostic) UnregisterObserver(ctx context.Context, observer obs
 		// In client.notify, each observer will get notified in a goroutine.
 		// Then client.observers may be set to nil, but observer goroutines will be OK.
 		details := map[string]string{
-			"observerID": observer.GetObserverId(ctx),
+			"observerId": observer.GetObserverId(ctx),
 		}
 		notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8027, err, details)
 	}
@@ -344,7 +313,7 @@ func (client *Szdiagnostic) getLogger() logging.LoggingInterface {
 		options := []interface{}{
 			&logging.OptionCallerSkip{Value: 4},
 		}
-		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, g2diagnosticapi.IdMessages, options...)
+		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, szdiagnosticapi.IdMessages, options...)
 		if err != nil {
 			panic(err)
 		}

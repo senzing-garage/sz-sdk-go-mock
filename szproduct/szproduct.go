@@ -1,5 +1,5 @@
 /*
-Package g2product implements a client for the service.
+Package szproduct implements a client for the service.
 */
 
 package szproduct
@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	g2productapi "github.com/senzing-garage/g2-sdk-go/g2product"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
+	szproductapi "github.com/senzing-garage/sz-sdk-go/szproduct"
 )
 
 type Szproduct struct {
@@ -53,7 +53,7 @@ func (client *Szproduct) Destroy(ctx context.Context) error {
 }
 
 /*
-The License method retrieves information about the currently used license by the Senzing API.
+The GetLicense method retrieves information about the currently used license by the Senzing API.
 
 Input
   - ctx: A context to control lifecycle.
@@ -79,7 +79,7 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 }
 
 /*
-The Version method returns the version of the Senzing API.
+The GetVersion method returns the version of the Senzing API.
 
 Input
   - ctx: A context to control lifecycle.
@@ -123,7 +123,7 @@ func (client *Szproduct) GetObserverOrigin(ctx context.Context) string {
 
 /*
 The GetSdkId method returns the identifier of this particular Software Development Kit (SDK).
-It is handy when working with multiple implementations of the same G2productInterface.
+It is handy when working with multiple implementations of the same SzProduct interface.
 For this implementation, "mock" is returned.
 
 Input
@@ -146,27 +146,27 @@ func (client *Szproduct) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Init method initializes the Senzing G2Product object.
+The Initialize method initializes the Senzing SzProduct object.
 It must be called prior to any other calls.
 
 Input
   - ctx: A context to control lifecycle.
-  - moduleName: A name for the auditing node, to help identify it within system logs.
-  - iniParams: A JSON string containing configuration parameters.
+  - instanceName: A name for the auditing node, to help identify it within system logs.
+  - settings: A JSON string containing configuration parameters.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *Szproduct) Initialize(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
+func (client *Szproduct) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(9, moduleName, iniParams, verboseLogging)
-		defer func() { client.traceExit(10, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
+		client.traceEntry(9, instanceName, settings, verboseLogging)
+		defer func() { client.traceExit(10, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"iniParams":      iniParams,
-				"moduleName":     moduleName,
+				"instanceName":   instanceName,
+				"settings":       settings,
 				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8002, err, details)
@@ -196,7 +196,7 @@ func (client *Szproduct) RegisterObserver(ctx context.Context, observer observer
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"observerID": observer.GetObserverId(ctx),
+				"observerId": observer.GetObserverId(ctx),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8008, err, details)
 		}()
@@ -223,7 +223,7 @@ func (client *Szproduct) SetLogLevel(ctx context.Context, logLevelName string) e
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"logLevel": logLevelName,
+				"logLevelName": logLevelName,
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8009, err, details)
 		}()
@@ -262,7 +262,7 @@ func (client *Szproduct) UnregisterObserver(ctx context.Context, observer observ
 		// In client.notify, each observer will get notified in a goroutine.
 		// Then client.observers may be set to nil, but observer goroutines will be OK.
 		details := map[string]string{
-			"observerID": observer.GetObserverId(ctx),
+			"observerId": observer.GetObserverId(ctx),
 		}
 		notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8010, err, details)
 	}
@@ -286,7 +286,7 @@ func (client *Szproduct) getLogger() logging.LoggingInterface {
 		options := []interface{}{
 			&logging.OptionCallerSkip{Value: 4},
 		}
-		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, g2productapi.IdMessages, options...)
+		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, szproductapi.IdMessages, options...)
 		if err != nil {
 			panic(err)
 		}

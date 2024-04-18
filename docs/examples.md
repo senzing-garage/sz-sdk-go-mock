@@ -1,1 +1,1 @@
-# g2-sdk-go-mock examples
+# sz-sdk-go-mock examples

@@ -1,4 +1,4 @@
-# g2-sdk-go-mock errors
+# sz-sdk-go-mock errors
 
 ## Error prefixes
 

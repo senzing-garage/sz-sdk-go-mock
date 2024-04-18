@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
-	"github.com/senzing-garage/g2-sdk-go/g2api"
 	"github.com/senzing-garage/sz-sdk-go/sz"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +17,7 @@ const (
 )
 
 var (
-	g2productSingleton *Szproduct
+	szProductSingleton *Szproduct
 )
 
 // ----------------------------------------------------------------------------
@@ -27,17 +26,17 @@ var (
 
 func TestSzproduct_GetLicense(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getTestObject(ctx, test)
-	actual, err := g2product.License(ctx)
-	testError(test, ctx, g2product, err)
+	szProduct := getTestObject(ctx, test)
+	actual, err := szProduct.GetLicense(ctx)
+	testError(test, err)
 	printActual(test, actual)
 }
 
 func TestSzproduct_GetVersion(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getTestObject(ctx, test)
-	actual, err := g2product.Version(ctx)
-	testError(test, ctx, g2product, err)
+	szProduct := getTestObject(ctx, test)
+	actual, err := szProduct.GetVersion(ctx)
+	testError(test, err)
 	printActual(test, actual)
 }
 
@@ -47,17 +46,17 @@ func TestSzproduct_GetVersion(test *testing.T) {
 
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getTestObject(ctx, test)
+	szProduct := getTestObject(ctx, test)
 	origin := "Machine: nn; Task: UnitTest"
-	g2product.SetObserverOrigin(ctx, origin)
+	szProduct.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getTestObject(ctx, test)
+	szProduct := getTestObject(ctx, test)
 	origin := "Machine: nn; Task: UnitTest"
-	g2product.SetObserverOrigin(ctx, origin)
-	actual := g2product.GetObserverOrigin(ctx)
+	szProduct.SetObserverOrigin(ctx, origin)
+	actual := szProduct.GetObserverOrigin(ctx)
 	assert.Equal(test, origin, actual)
 }
 
@@ -73,47 +72,54 @@ func TestSzproduct_AsInterface(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzproduct_Init(test *testing.T) {
+func TestSzproduct_Initialize(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getSzProduct(ctx)
-	moduleName := "Test module name"
-	iniParams := "{}"
-	verboseLogging := int64(0)
-	err := g2product.Init(ctx, moduleName, iniParams, verboseLogging)
-	testError(test, ctx, g2product, err)
+	szProduct := &Szproduct{}
+	instanceName := "Test name"
+	settings, err := getSettings()
+	testError(test, err)
+	verboseLogging := sz.SZ_NO_LOGGING
+	err = szProduct.Initialize(ctx, instanceName, settings, verboseLogging)
+	testError(test, err)
 }
 
 func TestSzproduct_Destroy(test *testing.T) {
 	ctx := context.TODO()
-	g2product := getTestObject(ctx, test)
-	err := g2product.Destroy(ctx)
-	testError(test, ctx, g2product, err)
+	szProduct := getTestObject(ctx, test)
+	err := szProduct.Destroy(ctx)
+	testError(test, err)
 }
 
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, test *testing.T) *Szproduct {
-	return getSzProduct(ctx)
+func getSettings() (string, error) {
+	return "{}", nil
 }
 
 func getSzProduct(ctx context.Context) *Szproduct {
-	if g2productSingleton == nil {
-		g2productSingleton = &Szproduct{
+	_ = ctx
+	if szProductSingleton == nil {
+		szProductSingleton = &Szproduct{
 			LicenseResult: `{"customer":"Senzing Public Test License","contract":"EVALUATION - support@senzing.com","issueDate":"2022-11-29","licenseType":"EVAL (Solely for non-productive use)","licenseLevel":"STANDARD","billing":"MONTHLY","expireDate":"2023-11-29","recordLimit":50000}`,
 			VersionResult: `{"PRODUCT_NAME":"Senzing API","VERSION":"3.5.0","BUILD_VERSION":"3.5.0.23041","BUILD_DATE":"2023-02-09","BUILD_NUMBER":"2023_02_09__23_01","COMPATIBILITY_VERSION":{"CONFIG_VERSION":"10"},"SCHEMA_VERSION":{"ENGINE_SCHEMA_VERSION":"3.5","MINIMUM_REQUIRED_SCHEMA_VERSION":"3.0","MAXIMUM_REQUIRED_SCHEMA_VERSION":"3.99"}}`,
 		}
 	}
-	return g2productSingleton
+	return szProductSingleton
 }
 
 func getSzProductAsInterface(ctx context.Context) sz.SzProduct {
 	return getSzProduct(ctx)
 }
 
-func truncate(aString string, length int) string {
-	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
+func getTestObject(ctx context.Context, test *testing.T) *Szproduct {
+	_ = test
+	return getSzProduct(ctx)
+}
+
+func printActual(test *testing.T, actual interface{}) {
+	printResult(test, "Actual", actual)
 }
 
 func printResult(test *testing.T, title string, result interface{}) {
@@ -122,21 +128,15 @@ func printResult(test *testing.T, title string, result interface{}) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
-}
-
-func testError(test *testing.T, ctx context.Context, g2product g2api.G2product, err error) {
+func testError(test *testing.T, err error) {
 	if err != nil {
 		test.Log("Error:", err.Error())
 		assert.FailNow(test, err.Error())
 	}
 }
 
-func testErrorNoFail(test *testing.T, ctx context.Context, g2product g2api.G2product, err error) {
-	if err != nil {
-		test.Log("Error:", err.Error())
-	}
+func truncate(aString string, length int) string {
+	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
 }
 
 // ----------------------------------------------------------------------------

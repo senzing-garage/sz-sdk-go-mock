@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	szConfigSingleton        *szconfig.SzConfig
+	szConfigSingleton        *szconfig.Szconfig
 	szConfigManagerSingleton *Szconfigmanager
 )
 

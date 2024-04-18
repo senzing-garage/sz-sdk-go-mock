@@ -149,7 +149,7 @@ func ExampleSzconfigmanager_SetObserverOrigin() {
 }
 
 func ExampleSzconfigmanager_GetObserverOrigin() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2configmgr_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfigmanager/szconfigmanager_test.go
 	ctx := context.TODO()
 	szConfigManager := getSzConfigManager(ctx)
 	origin := "Machine: nn; Task: UnitTest"
