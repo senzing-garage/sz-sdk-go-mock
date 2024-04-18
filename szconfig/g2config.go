@@ -1,7 +1,6 @@
 /*
 Package szconfig implements a client for the service.
 */
-
 package szconfig
 
 import (
@@ -9,27 +8,23 @@ import (
 	"strconv"
 	"time"
 
-	g2configapi "github.com/senzing-garage/g2-sdk-go/g2config"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
+	"github.com/senzing-garage/sz-sdk-go/szconfig"
 )
 
-// ----------------------------------------------------------------------------
-// Types
-// ----------------------------------------------------------------------------
-
 type Szconfig struct {
-	AddDataSourceResult   string
-	CreateResult          uintptr
-	isTrace               bool
-	ListDataSourcesResult string
-	LoadResult            uintptr
-	logger                logging.LoggingInterface
-	observerOrigin        string
-	observers             subject.Subject
-	SaveResult            string
+	AddDataSourceResult  string
+	CreateResult         uintptr
+	isTrace              bool
+	GetDataSourcesResult string
+	LoadResult           uintptr
+	logger               logging.LoggingInterface
+	observerOrigin       string
+	observers            subject.Subject
+	SaveResult           string
 }
 
 // ----------------------------------------------------------------------------
@@ -43,26 +38,26 @@ The configHandle is created by the Create() method.
 Input
   - ctx: A context to control lifecycle.
   - configHandle: An identifier of an in-memory configuration.
-  - inputJson: A JSON document in the format `{"DSRC_CODE": "NAME_OF_DATASOURCE"}`.
+  - dataSourceCode: A JSON document in the format `{"DSRC_CODE": "NAME_OF_DATASOURCE"}`.
 
 Output
   - A string containing a JSON document listing the newly created data source.
     See the example output.
 */
-func (client *Szconfig) AddDataSource(ctx context.Context, configHandle uintptr, inputJson string) (string, error) {
+func (client *Szconfig) AddDataSource(ctx context.Context, configHandle uintptr, dataSourceCode string) (string, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(1, configHandle, inputJson)
+		client.traceEntry(1, configHandle, dataSourceCode)
 		defer func() {
-			client.traceExit(2, configHandle, inputJson, client.AddDataSourceResult, err, time.Since(entryTime))
+			client.traceExit(2, configHandle, dataSourceCode, client.AddDataSourceResult, err, time.Since(entryTime))
 		}()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"inputJson": inputJson,
-				"return":    client.AddDataSourceResult,
+				"dataSourceCode": dataSourceCode,
+				"return":         client.AddDataSourceResult,
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8001, err, details)
 		}()
@@ -130,19 +125,19 @@ The configHandle is created by the Create() method.
 Input
   - ctx: A context to control lifecycle.
   - configHandle: An identifier of an in-memory configuration.
-  - inputJson: A JSON document in the format `{"DSRC_CODE": "NAME_OF_DATASOURCE"}`.
+  - dataSourceCode: The datasource name (e.g. "TEST_DATASOURCE").
 */
-func (client *Szconfig) DeleteDataSource(ctx context.Context, configHandle uintptr, inputJson string) error {
+func (client *Szconfig) DeleteDataSource(ctx context.Context, configHandle uintptr, dataSourceCode string) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(9, configHandle, inputJson)
-		defer func() { client.traceExit(10, configHandle, inputJson, err, time.Since(entryTime)) }()
+		client.traceEntry(9, configHandle, dataSourceCode)
+		defer func() { client.traceExit(10, configHandle, dataSourceCode, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"inputJson": inputJson,
+				"dataSourceCode": dataSourceCode,
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8004, err, details)
 		}()
@@ -151,7 +146,7 @@ func (client *Szconfig) DeleteDataSource(ctx context.Context, configHandle uintp
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Config object.
+The Destroy method will destroy and perform cleanup for the Senzing Szconfig object.
 It should be called after all other calls are complete.
 
 Input
@@ -174,7 +169,7 @@ func (client *Szconfig) Destroy(ctx context.Context) error {
 }
 
 /*
-The Save method creates a JSON string representation of the Senzing G2Config object.
+The ExportConfig method creates a JSON string representation of the Senzing Szconfig object.
 The configHandle is created by the Create() method.
 
 Input
@@ -182,7 +177,7 @@ Input
   - configHandle: An identifier of an in-memory configuration.
 
 Output
-  - A string containing a JSON Document representation of the Senzing G2Config object.
+  - A string containing a JSON Document representation of the Senzing Szconfig object.
     See the example output.
 */
 func (client *Szconfig) ExportConfig(ctx context.Context, configHandle uintptr) (string, error) {
@@ -202,7 +197,7 @@ func (client *Szconfig) ExportConfig(ctx context.Context, configHandle uintptr) 
 }
 
 /*
-The ListDataSources method returns a JSON document of data sources.
+The GetDataSources method returns a JSON document of data sources.
 The configHandle is created by the Create() method.
 
 Input
@@ -218,7 +213,7 @@ func (client *Szconfig) GetDataSources(ctx context.Context, configHandle uintptr
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(19, configHandle)
-		defer func() { client.traceExit(20, configHandle, client.ListDataSourcesResult, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(20, configHandle, client.GetDataSourcesResult, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -226,25 +221,25 @@ func (client *Szconfig) GetDataSources(ctx context.Context, configHandle uintptr
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8007, err, details)
 		}()
 	}
-	return client.ListDataSourcesResult, err
+	return client.GetDataSourcesResult, err
 }
 
 /*
-The Load method initializes the in-memory Senzing G2Config object from a JSON string.
+The ImportConfig method initializes the in-memory Senzing G2Config object from a JSON string.
 
 Input
   - ctx: A context to control lifecycle.
-  - jsonConfig: A JSON document containing the Senzing configuration.
+  - configDefinition: A JSON document containing the Senzing configuration.
 
 Output
   - An identifier of an in-memory configuration.
 */
-func (client *Szconfig) ImportConfig(ctx context.Context, jsonConfig string) (uintptr, error) {
+func (client *Szconfig) ImportConfig(ctx context.Context, configDefinition string) (uintptr, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(21, jsonConfig)
-		defer func() { client.traceExit(22, jsonConfig, err, time.Since(entryTime)) }()
+		client.traceEntry(21, configDefinition)
+		defer func() { client.traceExit(22, configDefinition, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -274,7 +269,7 @@ func (client *Szconfig) GetObserverOrigin(ctx context.Context) string {
 
 /*
 The GetSdkId method returns the identifier of this particular Software Development Kit (SDK).
-It is handy when working with multiple implementations of the same G2configInterface.
+It is handy when working with multiple implementations of the same SzConfig interface.
 For this implementation, "mock" is returned.
 
 Input
@@ -297,27 +292,27 @@ func (client *Szconfig) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing G2Config object.
+The Initialize method initializes the Senzing Szconfig object.
 It must be called prior to any other calls.
 
 Input
   - ctx: A context to control lifecycle.
-  - moduleName: A name for the auditing node, to help identify it within system logs.
-  - iniParams: A JSON string containing configuration parameters.
+  - instanceName: A name for the auditing node, to help identify it within system logs.
+  - settings: A JSON string containing configuration parameters.
   - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
 */
-func (client *Szconfig) Initialize(ctx context.Context, moduleName string, iniParams string, verboseLogging int64) error {
+func (client *Szconfig) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
-		client.traceEntry(17, moduleName, iniParams, verboseLogging)
-		defer func() { client.traceExit(18, moduleName, iniParams, verboseLogging, err, time.Since(entryTime)) }()
+		client.traceEntry(17, instanceName, settings, verboseLogging)
+		defer func() { client.traceExit(18, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"iniParams":      iniParams,
-				"moduleName":     moduleName,
+				"instancename":   instanceName,
+				"settings":       settings,
 				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8006, err, details)
@@ -347,7 +342,7 @@ func (client *Szconfig) RegisterObserver(ctx context.Context, observer observer.
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"observerID": observer.GetObserverId(ctx),
+				"observerId": observer.GetObserverId(ctx),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8011, err, details)
 		}()
@@ -360,7 +355,7 @@ The SetLogLevel method sets the level of logging.
 
 Input
   - ctx: A context to control lifecycle.
-  - logLevel: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
+  - logLevelName: The desired log level. TRACE, DEBUG, INFO, WARN, ERROR, FATAL or PANIC.
 */
 func (client *Szconfig) SetLogLevel(ctx context.Context, logLevelName string) error {
 	var err error = nil
@@ -413,7 +408,7 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 		// In client.notify, each observer will get notified in a goroutine.
 		// Then client.observers may be set to nil, but observer goroutines will be OK.
 		details := map[string]string{
-			"observerID": observer.GetObserverId(ctx),
+			"observerId": observer.GetObserverId(ctx),
 		}
 		notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8013, err, details)
 	}
@@ -437,7 +432,7 @@ func (client *Szconfig) getLogger() logging.LoggingInterface {
 		options := []interface{}{
 			&logging.OptionCallerSkip{Value: 4},
 		}
-		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, g2configapi.IdMessages, options...)
+		client.logger, err = logging.NewSenzingSdkLogger(ComponentId, szconfig.IdMessages, options...)
 		if err != nil {
 			panic(err)
 		}

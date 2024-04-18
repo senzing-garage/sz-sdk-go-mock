@@ -7,22 +7,23 @@ import (
 	"fmt"
 
 	"github.com/senzing-garage/go-logging/logging"
+	"github.com/senzing-garage/sz-sdk-go/sz"
 )
 
 // ----------------------------------------------------------------------------
-// Examples for godoc documentation
+// Interface functions - Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
 func ExampleSzconfig_AddDataSource() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	inputJson := `{"DSRC_CODE": "GO_TEST"}`
-	result, err := szConfig.AddDataSource(ctx, configHandle, inputJson)
+	dataSourceCode := "GO_TEST"
+	result, err := szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -30,26 +31,26 @@ func ExampleSzconfig_AddDataSource() {
 	// Output: {"DSRC_ID":1001}
 }
 
-func ExampleSzconfig_Close() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+func ExampleSzconfig_CloseConfig() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = szConfig.Close(ctx, configHandle)
+	err = szConfig.CloseConfig(ctx, configHandle)
 	if err != nil {
 		fmt.Println(err)
 	}
 	// Output:
 }
 
-func ExampleSzconfig_Create() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+func ExampleSzconfig_CreateConfig() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,30 +59,46 @@ func ExampleSzconfig_Create() {
 }
 
 func ExampleSzconfig_DeleteDataSource() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	inputJson := `{"DSRC_CODE": "TEST"}`
-	err = szConfig.DeleteDataSource(ctx, configHandle, inputJson)
+	dataSourceCode := "TEST"
+	err = szConfig.DeleteDataSource(ctx, configHandle, dataSourceCode)
 	if err != nil {
 		fmt.Println(err)
 	}
 	// Output:
 }
 
-func ExampleSzconfig_ListDataSources() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+func ExampleSzconfig_ExportConfig() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	result, err := szConfig.ListDataSources(ctx, configHandle)
+	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(truncate(configDefinition, 207))
+	// Output: {"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1003,"...
+}
+
+func ExampleSzconfig_GetDataSources() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
+	ctx := context.TODO()
+	szConfig := getSzConfig(ctx)
+	configHandle, err := szConfig.CreateConfig(ctx)
+	if err != nil {
+		fmt.Println(err)
+	}
+	result, err := szConfig.GetDataSources(ctx, configHandle)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -89,44 +106,32 @@ func ExampleSzconfig_ListDataSources() {
 	// Output: {"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}
 }
 
-func ExampleSzconfig_Load() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+func ExampleSzconfig_ImportConfig() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
-	mockConfigHandle, err := szConfig.Create(ctx)
+	mockConfigHandle, err := szConfig.CreateConfig(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	jsonConfig, err := szConfig.Save(ctx, mockConfigHandle)
+	configDefinition, err := szConfig.ExportConfig(ctx, mockConfigHandle)
 	if err != nil {
 		fmt.Println(err)
 	}
-	configHandle, err := szConfig.Load(ctx, jsonConfig)
+	configHandle, err := szConfig.ImportConfig(ctx, configDefinition)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(configHandle == 0) // Dummy output.
+	fmt.Println(configHandle > 0) // Dummy output.
 	// Output: true
 }
 
-func ExampleSzconfig_Save() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
-	ctx := context.TODO()
-	szConfig := getSzConfig(ctx)
-	configHandle, err := szConfig.Create(ctx)
-	if err != nil {
-		fmt.Println(err)
-	}
-	jsonConfig, err := szConfig.Save(ctx, configHandle)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(truncate(jsonConfig, 207))
-	// Output: {"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},...
-}
+// ----------------------------------------------------------------------------
+// Logging and observing
+// ----------------------------------------------------------------------------
 
 func ExampleSzconfig_SetLogLevel() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
 	err := szConfig.SetLogLevel(ctx, logging.LevelInfoName)
@@ -136,37 +141,8 @@ func ExampleSzconfig_SetLogLevel() {
 	// Output:
 }
 
-func ExampleSzconfig_Init() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
-	ctx := context.TODO()
-	szConfig := getSzConfig(ctx)
-	moduleName := "Test module name"
-	iniParams := "{}"
-	verboseLogging := int64(0)
-	err := szConfig.Init(ctx, moduleName, iniParams, verboseLogging)
-	if err != nil {
-		// This should produce a "senzing-60114002" error.
-	}
-	// Output:
-}
-
-func ExampleSzconfig_Destroy() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
-	ctx := context.TODO()
-	szConfig := getSzConfig(ctx)
-	err := szConfig.Destroy(ctx)
-	if err != nil {
-		// This should produce a "senzing-60114001" error.
-	}
-	// Output:
-}
-
-// ----------------------------------------------------------------------------
-// Logging and observing
-// ----------------------------------------------------------------------------
-
 func ExampleSzconfig_SetObserverOrigin() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
 	origin := "Machine: nn; Task: UnitTest"
@@ -175,7 +151,7 @@ func ExampleSzconfig_SetObserverOrigin() {
 }
 
 func ExampleSzconfig_GetObserverOrigin() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2config/g2config_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
 	ctx := context.TODO()
 	szConfig := getSzConfig(ctx)
 	origin := "Machine: nn; Task: UnitTest"
@@ -188,3 +164,31 @@ func ExampleSzconfig_GetObserverOrigin() {
 // ----------------------------------------------------------------------------
 // Object creation / destruction
 // ----------------------------------------------------------------------------
+
+func ExampleSzconfig_Initialize() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
+	ctx := context.TODO()
+	szConfig := getSzConfig(ctx)
+	instanceName := "Test name"
+	settings, err := getSettings()
+	if err != nil {
+		fmt.Println(err)
+	}
+	verboseLogging := sz.SZ_NO_LOGGING
+	err = szConfig.Initialize(ctx, instanceName, settings, verboseLogging)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Output:
+}
+
+func ExampleSzconfig_Destroy() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szconfig/szconfig_examples_test.go
+	ctx := context.TODO()
+	szConfig := getSzConfig(ctx)
+	err := szConfig.Destroy(ctx)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Output:
+}

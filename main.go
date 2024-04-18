@@ -8,11 +8,11 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/senzing-garage/g2-sdk-go-mock/g2diagnostic"
-	"github.com/senzing-garage/g2-sdk-go-mock/g2engine"
-	"github.com/senzing-garage/g2-sdk-go-mock/g2product"
 	"github.com/senzing-garage/g2-sdk-go-mock/szconfig"
 	"github.com/senzing-garage/g2-sdk-go-mock/szconfigmanager"
+	"github.com/senzing-garage/g2-sdk-go-mock/szdiagnostic"
+	"github.com/senzing-garage/g2-sdk-go-mock/szengine"
+	"github.com/senzing-garage/g2-sdk-go-mock/szproduct"
 	"github.com/senzing-garage/g2-sdk-go/g2api"
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-logging/logging"
@@ -69,7 +69,7 @@ func getG2configmgr(ctx context.Context) (g2api.G2configmgr, error) {
 }
 
 func getG2diagnostic(ctx context.Context) (g2api.G2diagnostic, error) {
-	result := g2diagnostic.G2diagnostic{}
+	result := szdiagnostic.Szdiagnostic{}
 	moduleName := "Test module name"
 	verboseLogging := int64(0)
 	iniParams := `{}`
@@ -78,7 +78,7 @@ func getG2diagnostic(ctx context.Context) (g2api.G2diagnostic, error) {
 }
 
 func getG2engine(ctx context.Context) (g2api.G2engine, error) {
-	result := g2engine.G2engine{}
+	result := szengine.Szengine{}
 	moduleName := "Test module name"
 	verboseLogging := int64(0)
 	iniParams := `{}`
@@ -87,7 +87,7 @@ func getG2engine(ctx context.Context) (g2api.G2engine, error) {
 }
 
 func getG2product(ctx context.Context) (g2api.G2product, error) {
-	result := g2product.G2product{}
+	result := szproduct.Szproduct{}
 	moduleName := "Test module name"
 	verboseLogging := int64(0)
 	iniParams := `{}`
