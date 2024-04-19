@@ -17,14 +17,14 @@ import (
 
 type Szconfig struct {
 	AddDataSourceResult  string
-	CreateResult         uintptr
+	CreateConfigResult   uintptr
 	isTrace              bool
 	GetDataSourcesResult string
-	LoadResult           uintptr
+	ImportConfigResult   uintptr
 	logger               logging.LoggingInterface
 	observerOrigin       string
 	observers            subject.Subject
-	SaveResult           string
+	ExportConfigResult   string
 }
 
 // ----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ func (client *Szconfig) AddDataSource(ctx context.Context, configHandle uintptr,
 }
 
 /*
-The CloseConfig method cleans up the Senzing SzConfig object pointed to by the handle.
+The CloseConfig method cleans up the Senzing G2Config object pointed to by the handle.
 The handle was created by the Create() method.
 
 Input
@@ -107,7 +107,7 @@ func (client *Szconfig) CreateConfig(ctx context.Context) (uintptr, error) {
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(7)
-		defer func() { client.traceExit(8, client.CreateResult, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(8, client.CreateConfigResult, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -115,7 +115,7 @@ func (client *Szconfig) CreateConfig(ctx context.Context) (uintptr, error) {
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8003, err, details)
 		}()
 	}
-	return client.CreateResult, err
+	return client.CreateConfigResult, err
 }
 
 /*
@@ -185,7 +185,7 @@ func (client *Szconfig) ExportConfig(ctx context.Context, configHandle uintptr) 
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(23, configHandle)
-		defer func() { client.traceExit(24, configHandle, client.SaveResult, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(24, configHandle, client.ExportConfigResult, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -193,7 +193,7 @@ func (client *Szconfig) ExportConfig(ctx context.Context, configHandle uintptr) 
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8009, err, details)
 		}()
 	}
-	return client.SaveResult, err
+	return client.ExportConfigResult, err
 }
 
 /*
@@ -225,7 +225,7 @@ func (client *Szconfig) GetDataSources(ctx context.Context, configHandle uintptr
 }
 
 /*
-The ImportConfig method initializes the in-memory Senzing SzConfig object from a JSON string.
+The ImportConfig method initializes the in-memory Senzing G2Config object from a JSON string.
 
 Input
   - ctx: A context to control lifecycle.
@@ -247,7 +247,7 @@ func (client *Szconfig) ImportConfig(ctx context.Context, configDefinition strin
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8008, err, details)
 		}()
 	}
-	return client.LoadResult, err
+	return client.ImportConfigResult, err
 }
 
 // ----------------------------------------------------------------------------

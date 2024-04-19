@@ -48,22 +48,6 @@ func ExampleSzengine_AddRecord_secondRecord() {
 	// Output: {}
 }
 
-func ExampleSzengine_AddRecord_withInfo() {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
-	ctx := context.TODO()
-	szEngine := getSzEngine(ctx)
-	dataSourceCode := "CUSTOMERS"
-	recordId := "1003"
-	recordDefinition := `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1003", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Bob", "PRIMARY_NAME_MIDDLE": "J", "DATE_OF_BIRTH": "12/11/1978", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "4/9/16", "STATUS": "Inactive", "AMOUNT": "300"}`
-	flags := sz.SZ_WITH_INFO
-	result, err := szEngine.AddRecord(ctx, dataSourceCode, recordId, recordDefinition, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1003","AFFECTED_ENTITIES":[],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
-}
-
 func ExampleSzengine_CloseExport() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
@@ -104,21 +88,6 @@ func ExampleSzengine_DeleteRecord() {
 	// Output: {}
 }
 
-func ExampleSzengine_DeleteRecord_withInfo() {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
-	ctx := context.TODO()
-	szEngine := getSzEngine(ctx)
-	dataSourceCode := "CUSTOMERS"
-	recordId := "1003"
-	flags := sz.SZ_WITH_INFO
-	result, err := szEngine.DeleteRecord(ctx, dataSourceCode, recordId, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1003","AFFECTED_ENTITIES":[],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
-}
-
 func ExampleSzengine_ExportCsvEntityReport() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
@@ -146,10 +115,9 @@ func ExampleSzengine_ExportCsvEntityReportIterator() {
 		}
 		fmt.Println(result.Value)
 	}
-	// Output: RESOLVED_ENTITY_ID,RELATED_ENTITY_ID,MATCH_LEVEL_CODE,MATCH_KEY,DATA_SOURCE,RECORD_ID
 }
 
-func ExampleSzEngine_ExportJsonEntityReport() {
+func ExampleSzengine_ExportJsonEntityReport() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
@@ -162,7 +130,7 @@ func ExampleSzEngine_ExportJsonEntityReport() {
 	// Output: true
 }
 
-func ExampleSzEngine_ExportJsonEntityReportIterator() {
+func ExampleSzengine_ExportJsonEntityReportIterator() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
@@ -513,24 +481,6 @@ func ExampleSzEngine_ProcessRedoRecord() {
 	// // Output: {}
 }
 
-func ExampleSzEngine_ProcessRedoRecord_withInfo() {
-	// TODO: Uncomment after it has been implemented.
-	// // For more information, visit https://github.com/senzing-garage/sz-sdk-go-core/blob/main/szengine/szengine_examples_test.go
-	// ctx := context.TODO()
-	// szEngine := getSzEngine(ctx)
-	// redoRecord, err := szEngine.GetRedoRecord(ctx)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// flags := sz.SZ_WITH_INFO
-	// result, err := szEngine.ProcessRedoRecord(ctx, redoRecord, flags)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(result)
-	// // Output: {}
-}
-
 func ExampleSzengine_ReevaluateEntity() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
@@ -543,20 +493,6 @@ func ExampleSzengine_ReevaluateEntity() {
 	}
 	fmt.Println(result)
 	// Output: {}
-}
-
-func ExampleSzengine_ReevaluateEntity_withInfo() {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
-	ctx := context.TODO()
-	szEngine := getSzEngine(ctx)
-	entityId := getEntityIdForRecord("CUSTOMERS", "1001")
-	flags := sz.SZ_WITH_INFO
-	result, err := szEngine.ReevaluateEntity(ctx, entityId, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","AFFECTED_ENTITIES":[{"ENTITY_ID":1}],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
 }
 
 func ExampleSzengine_ReevaluateRecord() {
@@ -572,21 +508,6 @@ func ExampleSzengine_ReevaluateRecord() {
 	}
 	fmt.Println(result)
 	// Output: {}
-}
-
-func ExampleSzengine_ReevaluateRecord_withInfo() {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
-	ctx := context.TODO()
-	szEngine := getSzEngine(ctx)
-	dataSourceCode := "CUSTOMERS"
-	recordId := "1001"
-	flags := sz.SZ_WITH_INFO
-	result, err := szEngine.ReevaluateRecord(ctx, dataSourceCode, recordId, flags)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","AFFECTED_ENTITIES":[{"ENTITY_ID":1}],"INTERESTING_ENTITIES":{"ENTITIES":[]}}
 }
 
 func ExampleSzengine_SearchByAttributes() {
@@ -611,7 +532,7 @@ func ExampleSzEngine_SearchByAttributes_searchProfile() {
 func ExampleSzengine_WhyEntities() {
 	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
-	szEngine := &Szengine{}
+	szEngine := getSzEngine(ctx)
 	entityId1 := getEntityId(truthset.CustomerRecords["1001"])
 	entityId2 := getEntityId(truthset.CustomerRecords["1002"])
 	flags := sz.SZ_NO_FLAGS
@@ -624,7 +545,7 @@ func ExampleSzengine_WhyEntities() {
 }
 
 func ExampleSzengine_WhyRecordInEntity() {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-core/blob/main/szengine/szengine_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
 	dataSourceCode := "CUSTOMERS"

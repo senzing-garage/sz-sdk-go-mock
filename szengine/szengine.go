@@ -165,7 +165,7 @@ func (client *Szengine) DeleteRecord(ctx context.Context, dataSourceCode string,
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing SzEngine object.
+The Destroy method will destroy and perform cleanup for the Senzing G2 object.
 It should be called after all other calls are complete.
 
 Input
@@ -986,7 +986,7 @@ Output
 */
 func (client *Szengine) WhyRecordInEntity(ctx context.Context, dataSourceCode string, recordId string, flags int64) (string, error) {
 	// TODO:  Implement WhyRecordInEntity
-	return "", nil
+	return client.WhyRecordInEntityResult, nil
 }
 
 /*

@@ -19,7 +19,7 @@ type Szconfigmanager struct {
 	AddConfigResult          int64
 	GetConfigListResult      string
 	GetConfigResult          string
-	GetDefaultConfigIDResult int64
+	GetDefaultConfigIdResult int64
 	isTrace                  bool
 	logger                   logging.LoggingInterface
 	observerOrigin           string
@@ -62,7 +62,7 @@ func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition s
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing SzConfigManager object.
+The Destroy method will destroy and perform cleanup for the Senzing G2ConfigMgr object.
 It should be called after all other calls are complete.
 
 Input
@@ -151,7 +151,7 @@ func (client *Szconfigmanager) GetDefaultConfigId(ctx context.Context) (int64, e
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(11)
-		defer func() { client.traceExit(12, client.GetDefaultConfigIDResult, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(12, client.GetDefaultConfigIdResult, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
@@ -159,7 +159,7 @@ func (client *Szconfigmanager) GetDefaultConfigId(ctx context.Context) (int64, e
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8005, err, details)
 		}()
 	}
-	return client.GetDefaultConfigIDResult, err
+	return client.GetDefaultConfigIdResult, err
 }
 
 /*
@@ -259,7 +259,7 @@ func (client *Szconfigmanager) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing SzConfigManager object.
+The Initialize method initializes the Senzing G2ConfigMgr object.
 It must be called prior to any other calls.
 
 Input
