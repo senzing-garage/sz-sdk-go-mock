@@ -59,7 +59,7 @@ func (client *Szdiagnostic) CheckDatabasePerformance(ctx context.Context, second
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Diagnostic object.
+The Destroy method will destroy and perform cleanup for the Senzing SzDiagnostic object.
 It should be called after all other calls are complete.
 
 Input
@@ -106,7 +106,7 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 }
 
 /*
-The Reinitialize method re-initializes the Senzing G2Diagnostic object.
+The Reinitialize method re-initializes the Senzing SzDiagnostic object.
 
 Input
   - ctx: A context to control lifecycle.
@@ -172,7 +172,7 @@ func (client *Szdiagnostic) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing G2Diagnostic object.
+The Initialize method initializes the Senzing SzDiagnostic object.
 It must be called prior to any other calls.
 
 Input

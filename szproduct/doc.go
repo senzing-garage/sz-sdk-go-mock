@@ -1,4 +1,4 @@
 /*
-The szproduct package is used make G2Product requests to a mock object.
+The szproduct package is used make SzProduct requests to a mock object.
 */
 package szproduct

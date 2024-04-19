@@ -165,7 +165,7 @@ func (client *Szengine) DeleteRecord(ctx context.Context, dataSourceCode string,
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2 object.
+The Destroy method will destroy and perform cleanup for the Senzing SzEngine object.
 It should be called after all other calls are complete.
 
 Input
@@ -878,7 +878,7 @@ func (client *Szengine) ReevaluateRecord(ctx context.Context, dataSourceCode str
 }
 
 /*
-The Reinitialize method re-initializes the Senzing G2Engine object using a specified configuration identifier.
+The Reinitialize method re-initializes the Senzing SzEngine object using a specified configuration identifier.
 
 Input
   - ctx: A context to control lifecycle.

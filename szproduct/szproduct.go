@@ -30,7 +30,7 @@ type Szproduct struct {
 // ----------------------------------------------------------------------------
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Product object.
+The Destroy method will destroy and perform cleanup for the Senzing SzProduct object.
 It should be called after all other calls are complete.
 
 Input

@@ -1,4 +1,4 @@
 /*
-The szengine package is used make G2Engine requests to a mock object.
+The szengine package is used make SzEngine requests to a mock object.
 */
 package szengine

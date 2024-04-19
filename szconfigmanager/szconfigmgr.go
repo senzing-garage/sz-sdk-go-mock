@@ -62,7 +62,7 @@ func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition s
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2ConfigMgr object.
+The Destroy method will destroy and perform cleanup for the Senzing SzConfigManager object.
 It should be called after all other calls are complete.
 
 Input
@@ -236,7 +236,7 @@ func (client *Szconfigmanager) GetObserverOrigin(ctx context.Context) string {
 
 /*
 The GetSdkId method returns the identifier of this particular Software Development Kit (SDK).
-It is handy when working with multiple implementations of the same G2configmgrInterface.
+It is handy when working with multiple implementations of the same SzConfigManager interface.
 For this implementation, "mock" is returned.
 
 Input
@@ -259,7 +259,7 @@ func (client *Szconfigmanager) GetSdkId(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing G2ConfigMgr object.
+The Initialize method initializes the Senzing SzConfigManager object.
 It must be called prior to any other calls.
 
 Input
