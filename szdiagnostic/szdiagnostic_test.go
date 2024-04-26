@@ -25,11 +25,19 @@ var (
 // Interface functions - test
 // ----------------------------------------------------------------------------
 
-func TestSzdiagnostic_CheckDatabasePerformance(test *testing.T) {
+func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
 	ctx := context.TODO()
 	szDiagnostic := getTestObject(ctx, test)
 	secondsToRun := 1
-	actual, err := szDiagnostic.CheckDatabasePerformance(ctx, secondsToRun)
+	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
+	testError(test, err)
+	printActual(test, actual)
+}
+
+func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
+	ctx := context.TODO()
+	szDiagnostic := getTestObject(ctx, test)
+	actual, err := szDiagnostic.GetDatastoreInfo(ctx)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -69,7 +77,7 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 	ctx := context.TODO()
 	szDiagnostic := getSzDiagnosticAsInterface(ctx)
 	secondsToRun := 1
-	actual, err := szDiagnostic.CheckDatabasePerformance(ctx, secondsToRun)
+	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -130,7 +138,7 @@ func getSzDiagnostic(ctx context.Context) *Szdiagnostic {
 	_ = ctx
 	if szDiagnosticSingleton == nil {
 		szDiagnosticSingleton = &Szdiagnostic{
-			CheckDatabasePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
+			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
 		}
 	}
 	return szDiagnosticSingleton

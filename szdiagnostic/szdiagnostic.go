@@ -17,11 +17,12 @@ import (
 )
 
 type Szdiagnostic struct {
-	CheckDatabasePerformanceResult string
-	isTrace                        bool
-	logger                         logging.LoggingInterface
-	observerOrigin                 string
-	observers                      subject.Subject
+	CheckDatastorePerformanceResult string
+	GetDatastoreInfoResult          string
+	isTrace                         bool
+	logger                          logging.LoggingInterface
+	observerOrigin                  string
+	observers                       subject.Subject
 }
 
 // ----------------------------------------------------------------------------
@@ -29,7 +30,7 @@ type Szdiagnostic struct {
 // ----------------------------------------------------------------------------
 
 /*
-The CheckDatabasePerformance method performs inserts to determine rate of insertion.
+The CheckDatastorePerformance method performs inserts to determine rate of insertion.
 
 Input
   - ctx: A context to control lifecycle.
@@ -40,13 +41,13 @@ Output
   - A string containing a JSON document.
     Example: `{"numRecordsInserted":0,"insertTime":0}`
 */
-func (client *Szdiagnostic) CheckDatabasePerformance(ctx context.Context, secondsToRun int) (string, error) {
+func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secondsToRun int) (string, error) {
 	var err error = nil
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(1, secondsToRun)
 		defer func() {
-			client.traceExit(2, secondsToRun, client.CheckDatabasePerformanceResult, err, time.Since(entryTime))
+			client.traceExit(2, secondsToRun, client.CheckDatastorePerformanceResult, err, time.Since(entryTime))
 		}()
 	}
 	if client.observers != nil {
@@ -55,7 +56,7 @@ func (client *Szdiagnostic) CheckDatabasePerformance(ctx context.Context, second
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8001, err, details)
 		}()
 	}
-	return client.CheckDatabasePerformanceResult, err
+	return client.CheckDatastorePerformanceResult, err
 }
 
 /*
@@ -79,6 +80,34 @@ func (client *Szdiagnostic) Destroy(ctx context.Context) error {
 		}()
 	}
 	return err
+}
+
+/*
+The GetDatastoreInfo method performs inserts to determine rate of insertion.
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+
+  - A string containing a JSON document.
+*/
+func (client *Szdiagnostic) GetDatastoreInfo(ctx context.Context) (string, error) {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(1)
+		defer func() {
+			client.traceExit(2, client.GetDatastoreInfoResult, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8001, err, details)
+		}()
+	}
+	return client.GetDatastoreInfoResult, err
 }
 
 /*
