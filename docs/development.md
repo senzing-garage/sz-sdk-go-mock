@@ -1,4 +1,4 @@
-# g2-sdk-go-mock development
+# sz-sdk-go-mock development
 
 ## Install Go
 
@@ -13,7 +13,7 @@ The following instructions build the example `main.go` program.
 
     ```console
     export GIT_ACCOUNT=senzing
-    export GIT_REPOSITORY=g2-sdk-go-mock
+    export GIT_REPOSITORY=sz-sdk-go-mock
     export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
     export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
 
