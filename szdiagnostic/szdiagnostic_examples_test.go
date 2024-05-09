@@ -36,7 +36,20 @@ func ExampleSzdiagnostic_GetDatastoreInfo() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output:
+	// Output: {}
+}
+
+func ExampleSzdiagnostic_GetFeature() {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szdiagnostic/szdiagnostic_examples_test.go
+	ctx := context.TODO()
+	szDiagnostic := getSzDiagnostic(ctx)
+	featureId := int64(1)
+	result, err := szDiagnostic.GetFeature(ctx, featureId)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(result)
+	// Output: {}
 }
 
 func ExampleSzdiagnostic_PurgeRepository() {

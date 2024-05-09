@@ -348,11 +348,12 @@ func (client *Szengine) FetchNext(ctx context.Context, exportHandle uintptr) (st
 }
 
 /*
-The FindInterestingEntitiesByEntityID method FIXME:
+TODO: Document FindInterestingEntitiesByEntityId()
+The FindInterestingEntitiesByEntityId method...
 
 Input
   - ctx: A context to control lifecycle.
-  - entityID: The unique identifier of an entity.
+  - entityId: The unique identifier of an entity.
   - flags: Flags used to control information returned.
 
 Output
@@ -380,12 +381,13 @@ func (client *Szengine) FindInterestingEntitiesByEntityId(ctx context.Context, e
 }
 
 /*
-The FindInterestingEntitiesByRecordID method FIXME:
+TODO: Document FindInterestingEntitiesByRecordId()
+The FindInterestingEntitiesByRecordId method...
 
 Input
   - ctx: A context to control lifecycle.
   - dataSourceCode: Identifies the provenance of the data.
-  - recordID: The unique identifier within the records of the same data source.
+  - recordId: The unique identifier within the records of the same data source.
   - flags: Flags used to control information returned.
 
 Output

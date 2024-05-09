@@ -173,11 +173,11 @@ func ExampleSzengine_FetchNext() {
 }
 
 func ExampleSzengine_FindInterestingEntitiesByEntityId() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
 	entityId := getEntityIdForRecord("CUSTOMERS", "1001")
-	flags := int64(0)
+	flags := sz.SZ_NO_FLAGS
 	result, err := szEngine.FindInterestingEntitiesByEntityId(ctx, entityId, flags)
 	if err != nil {
 		fmt.Println(err)
@@ -187,12 +187,12 @@ func ExampleSzengine_FindInterestingEntitiesByEntityId() {
 }
 
 func ExampleSzengine_FindInterestingEntitiesByRecordId() {
-	// For more information, visit https://github.com/senzing-garage/g2-sdk-go-mock/blob/main/g2engine/g2engine_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
 	dataSourceCode := "CUSTOMERS"
 	recordId := "1001"
-	flags := int64(0)
+	flags := sz.SZ_NO_FLAGS
 	result, err := szEngine.FindInterestingEntitiesByRecordId(ctx, dataSourceCode, recordId, flags)
 	if err != nil {
 		fmt.Println(err)
