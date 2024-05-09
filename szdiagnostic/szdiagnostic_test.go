@@ -42,6 +42,15 @@ func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 	printActual(test, actual)
 }
 
+func TestSzdiagnostic_GetFeature(test *testing.T) {
+	ctx := context.TODO()
+	szDiagnostic := getTestObject(ctx, test)
+	featureId := int64(1)
+	actual, err := szDiagnostic.GetFeature(ctx, featureId)
+	testError(test, err)
+	printActual(test, actual)
+}
+
 func TestSzdiagnostic_PurgeRepository(test *testing.T) {
 	ctx := context.TODO()
 	szDiagnostic := getTestObject(ctx, test)
@@ -139,6 +148,8 @@ func getSzDiagnostic(ctx context.Context) *Szdiagnostic {
 	if szDiagnosticSingleton == nil {
 		szDiagnosticSingleton = &Szdiagnostic{
 			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
+			GetFeatureResult:                `{}`,
+			GetDatastoreInfoResult:          `{}`,
 		}
 	}
 	return szDiagnosticSingleton
