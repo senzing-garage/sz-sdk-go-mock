@@ -198,6 +198,26 @@ func TestSzengine_FetchNext(test *testing.T) {
 	//  - TestSzengine_ExportJsonEntityReport
 }
 
+func TestSzengine_FindInterestingEntitiesByEntityId(test *testing.T) {
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	entityId := getEntityId(truthset.CustomerRecords["1001"])
+	flags := int64(0)
+	actual, err := szEngine.FindInterestingEntitiesByEntityId(ctx, entityId, flags)
+	testError(test, err)
+	printActual(test, actual)
+}
+
+func TestSzengine_FindInterestingEntitiesByRecordId(test *testing.T) {
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	record := truthset.CustomerRecords["1001"]
+	flags := int64(0)
+	actual, err := szEngine.FindInterestingEntitiesByRecordId(ctx, record.DataSource, record.Id, flags)
+	testError(test, err)
+	printActual(test, actual)
+}
+
 func TestSzengine_FindNetworkByEntityId(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
@@ -386,14 +406,6 @@ func TestSzengine_GetRedoRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	actual, err := szEngine.GetRedoRecord(ctx)
-	testError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzengine_GetRepositoryLastModifiedTime(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	actual, err := szEngine.GetRepositoryLastModifiedTime(ctx)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -641,32 +653,33 @@ func getSzEngine(ctx context.Context) *Szengine {
 	_ = ctx
 	if szEngineSingleton == nil {
 		szEngineSingleton = &Szengine{
-			AddRecordResult:                     "{}",
-			CountRedoRecordsResult:              int64(0),
-			DeleteRecordResult:                  "{}",
-			ExportConfigResult:                  `{"G2_CONFIG":{"CFG_ETYPE":[{"ETYPE_ID":...`,
-			ExportCsvEntityReportResult:         1,
-			ExportJsonEntityReportResult:        1,
-			FetchNextResult:                     ``,
-			FindNetworkByEntityIdResult:         `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindNetworkByRecordIdResult:         `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindPathByEntityIdResult:            `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`,
-			FindPathByRecordIdResult:            `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`,
-			GetActiveConfigIdResult:             int64(1),
-			GetEntityByEntityIdResult:           `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			GetEntityByRecordIdResult:           `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			GetRecordResult:                     `{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}`,
-			GetRedoRecordResult:                 `{"REASON":"deferred delete","DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","DSRC_ACTION":"X"}`,
-			GetRepositoryLastModifiedTimeResult: int64(1),
-			GetStatsResult:                      `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`,
-			GetVirtualEntityByRecordIdResult:    `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			HowEntityByEntityIdResult:           `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
-			ProcessRedoRecordResult:             ``,
-			ReevaluateEntityResult:              "{}",
-			ReevaluateRecordResult:              "{}",
-			SearchByAttributesResult:            `{"RESOLVED_ENTITIES":[{"ENTITY":{"RESOLVED_ENTITY":{"ENTITY_ID":1}},"MATCH_INFO":{"ERRULE_CODE":"SF1","MATCH_KEY":"+PNAME+EMAIL","MATCH_LEVEL_CODE":"POSSIBLY_RELATED"}}]}`,
-			WhyEntitiesResult:                   `{"WHY_RESULTS":[{"ENTITY_ID":1,"ENTITY_ID_2":1,"MATCH_INFO":{"WHY_KEY":...`,
-			WhyRecordsResult:                    `{"WHY_RESULTS":[{"INTERNAL_ID":1,"ENTITY_ID":1,"FOCUS_RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}],"INTERNAL_ID_2":2,"ENTITY_ID_2":1,"FOCUS_RECORDS_2":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1002"}],"MATCH_INFO":{"WHY_KEY":"+NAME+DOB+PHONE","WHY_ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_LEVEL_CODE":"RESOLVED"}}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
+			AddRecordResult:                         "{}",
+			CountRedoRecordsResult:                  int64(0),
+			DeleteRecordResult:                      "{}",
+			ExportConfigResult:                      `{"G2_CONFIG":{"CFG_ETYPE":[{"ETYPE_ID":...`,
+			ExportCsvEntityReportResult:             1,
+			ExportJsonEntityReportResult:            1,
+			FetchNextResult:                         ``,
+			FindInterestingEntitiesByEntityIdResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
+			FindInterestingEntitiesByRecordIdResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
+			FindNetworkByEntityIdResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
+			FindNetworkByRecordIdResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
+			FindPathByEntityIdResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`,
+			FindPathByRecordIdResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`,
+			GetActiveConfigIdResult:                 int64(1),
+			GetEntityByEntityIdResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			GetEntityByRecordIdResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			GetRecordResult:                         `{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}`,
+			GetRedoRecordResult:                     `{"REASON":"deferred delete","DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","DSRC_ACTION":"X"}`,
+			GetStatsResult:                          `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`,
+			GetVirtualEntityByRecordIdResult:        `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			HowEntityByEntityIdResult:               `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
+			ProcessRedoRecordResult:                 ``,
+			ReevaluateEntityResult:                  "{}",
+			ReevaluateRecordResult:                  "{}",
+			SearchByAttributesResult:                `{"RESOLVED_ENTITIES":[{"ENTITY":{"RESOLVED_ENTITY":{"ENTITY_ID":1}},"MATCH_INFO":{"ERRULE_CODE":"SF1","MATCH_KEY":"+PNAME+EMAIL","MATCH_LEVEL_CODE":"POSSIBLY_RELATED"}}]}`,
+			WhyEntitiesResult:                       `{"WHY_RESULTS":[{"ENTITY_ID":1,"ENTITY_ID_2":1,"MATCH_INFO":{"WHY_KEY":...`,
+			WhyRecordsResult:                        `{"WHY_RESULTS":[{"INTERNAL_ID":1,"ENTITY_ID":1,"FOCUS_RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}],"INTERNAL_ID_2":2,"ENTITY_ID_2":1,"FOCUS_RECORDS_2":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1002"}],"MATCH_INFO":{"WHY_KEY":"+NAME+DOB+PHONE","WHY_ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_LEVEL_CODE":"RESOLVED"}}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
 		}
 	}
 	return szEngineSingleton

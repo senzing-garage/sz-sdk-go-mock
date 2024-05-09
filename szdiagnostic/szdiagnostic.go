@@ -19,6 +19,7 @@ import (
 type Szdiagnostic struct {
 	CheckDatastorePerformanceResult string
 	GetDatastoreInfoResult          string
+	GetFeatureResult                string
 	isTrace                         bool
 	logger                          logging.LoggingInterface
 	observerOrigin                  string
@@ -108,6 +109,36 @@ func (client *Szdiagnostic) GetDatastoreInfo(ctx context.Context) (string, error
 		}()
 	}
 	return client.GetDatastoreInfoResult, err
+}
+
+/*
+TODO: Document GetFeature()
+The GetFeature method...
+
+Input
+  - ctx: A context to control lifecycle.
+  - featureId: Identify the feature to be described.
+
+Output
+
+  - A string containing a JSON document.
+*/
+func (client *Szdiagnostic) GetFeature(ctx context.Context, featureId int64) (string, error) {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(99, featureId)
+		defer func() {
+			client.traceExit(999, featureId, client.GetFeatureResult, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8999, err, details)
+		}()
+	}
+	return client.GetFeatureResult, err
 }
 
 /*
