@@ -18,37 +18,38 @@ import (
 )
 
 type Szengine struct {
-	AddRecordResult                     string
-	CountRedoRecordsResult              int64
-	DeleteRecordResult                  string
-	ExportConfigResult                  string
-	ExportCsvEntityReportResult         uintptr
-	ExportJsonEntityReportResult        uintptr
-	FetchNextResult                     string
-	FindNetworkByEntityIdResult         string
-	FindNetworkByRecordIdResult         string
-	FindPathByEntityIdResult            string
-	FindPathByRecordIdResult            string
-	GetActiveConfigIdResult             int64
-	GetEntityByEntityIdResult           string
-	GetEntityByRecordIdResult           string
-	GetRecordResult                     string
-	GetRedoRecordResult                 string
-	GetRepositoryLastModifiedTimeResult int64
-	GetStatsResult                      string
-	GetVirtualEntityByRecordIdResult    string
-	HowEntityByEntityIdResult           string
-	isTrace                             bool
-	logger                              logging.LoggingInterface
-	observerOrigin                      string
-	observers                           subject.Subject
-	ProcessRedoRecordResult             string
-	ReevaluateEntityResult              string
-	ReevaluateRecordResult              string
-	SearchByAttributesResult            string
-	WhyEntitiesResult                   string
-	WhyRecordInEntityResult             string
-	WhyRecordsResult                    string
+	AddRecordResult                         string
+	CountRedoRecordsResult                  int64
+	DeleteRecordResult                      string
+	ExportConfigResult                      string
+	ExportCsvEntityReportResult             uintptr
+	ExportJsonEntityReportResult            uintptr
+	FetchNextResult                         string
+	FindInterestingEntitiesByEntityIdResult string
+	FindInterestingEntitiesByRecordIdResult string
+	FindNetworkByEntityIdResult             string
+	FindNetworkByRecordIdResult             string
+	FindPathByEntityIdResult                string
+	FindPathByRecordIdResult                string
+	GetActiveConfigIdResult                 int64
+	GetEntityByEntityIdResult               string
+	GetEntityByRecordIdResult               string
+	GetRecordResult                         string
+	GetRedoRecordResult                     string
+	GetStatsResult                          string
+	GetVirtualEntityByRecordIdResult        string
+	HowEntityByEntityIdResult               string
+	isTrace                                 bool
+	logger                                  logging.LoggingInterface
+	observerOrigin                          string
+	observers                               subject.Subject
+	ProcessRedoRecordResult                 string
+	ReevaluateEntityResult                  string
+	ReevaluateRecordResult                  string
+	SearchByAttributesResult                string
+	WhyEntitiesResult                       string
+	WhyRecordInEntityResult                 string
+	WhyRecordsResult                        string
 }
 
 // ----------------------------------------------------------------------------
@@ -344,6 +345,72 @@ func (client *Szengine) FetchNext(ctx context.Context, exportHandle uintptr) (st
 		}()
 	}
 	return client.FetchNextResult, err
+}
+
+/*
+The FindInterestingEntitiesByEntityID method FIXME:
+
+Input
+  - ctx: A context to control lifecycle.
+  - entityID: The unique identifier of an entity.
+  - flags: Flags used to control information returned.
+
+Output
+  - A JSON document.
+    See the example output.
+*/
+func (client *Szengine) FindInterestingEntitiesByEntityId(ctx context.Context, entityId int64, flags int64) (string, error) {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(33, entityId, flags)
+		defer func() {
+			client.traceExit(34, entityId, flags, client.FindInterestingEntitiesByEntityIdResult, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"entityID": strconv.FormatInt(entityId, 10),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8016, err, details)
+		}()
+	}
+	return client.FindInterestingEntitiesByEntityIdResult, err
+}
+
+/*
+The FindInterestingEntitiesByRecordID method FIXME:
+
+Input
+  - ctx: A context to control lifecycle.
+  - dataSourceCode: Identifies the provenance of the data.
+  - recordID: The unique identifier within the records of the same data source.
+  - flags: Flags used to control information returned.
+
+Output
+  - A JSON document.
+    See the example output.
+*/
+func (client *Szengine) FindInterestingEntitiesByRecordId(ctx context.Context, dataSourceCode string, recordId string, flags int64) (string, error) {
+	var err error = nil
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(35, dataSourceCode, recordId, flags)
+		defer func() {
+			client.traceExit(36, dataSourceCode, recordId, flags, client.FindInterestingEntitiesByRecordIdResult, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"dataSourceCode": dataSourceCode,
+				"recordId":       recordId,
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8017, err, details)
+		}()
+	}
+	return client.FindInterestingEntitiesByRecordIdResult, err
 }
 
 /*
@@ -651,32 +718,6 @@ func (client *Szengine) GetRedoRecord(ctx context.Context) (string, error) {
 		}()
 	}
 	return client.GetRedoRecordResult, err
-}
-
-/*
-The GetRepositoryLastModifiedTime method retrieves the last modified time of the Senzing repository,
-measured in the number of seconds between the last modified time and January 1, 1970 12:00am GMT (epoch time).
-
-Input
-  - ctx: A context to control lifecycle.
-
-Output
-  - A Unix Timestamp.
-*/
-func (client *Szengine) GetRepositoryLastModifiedTime(ctx context.Context) (int64, error) {
-	var err error = nil
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(89)
-		defer func() { client.traceExit(90, client.GetRepositoryLastModifiedTimeResult, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentId, 8042, err, details)
-		}()
-	}
-	return client.GetRepositoryLastModifiedTimeResult, err
 }
 
 /*
