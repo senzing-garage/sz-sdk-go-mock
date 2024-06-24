@@ -135,7 +135,6 @@ func getSettings() (string, error) {
 
 func getSzProduct(ctx context.Context) (*Szproduct, error) {
 	var err error
-	_ = ctx
 	if szProductSingleton == nil {
 		szProductSingleton = &Szproduct{
 			LicenseResult: `{"customer":"Senzing Public Test License","contract":"Senzing Public Test - 50K records test","issueDate":"2023-11-02","licenseType":"EVAL (Solely for non-productive use)","licenseLevel":"STANDARD","billing":"YEARLY","expireDate":"2024-11-02","recordLimit":50000}`,

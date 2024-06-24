@@ -905,7 +905,7 @@ func (client *Szengine) ReevaluateEntity(ctx context.Context, entityID int64, fl
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(61, entityID, flags)
-		defer func() { client.traceExit(62, entityID, flags, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(62, entityID, flags, result, err, time.Since(entryTime)) }()
 	}
 	if client.observers != nil {
 		go func() {
