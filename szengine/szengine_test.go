@@ -3,6 +3,7 @@ package szengine
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,7 +14,7 @@ import (
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/testfixtures"
 	"github.com/senzing-garage/go-helpers/truthset"
-	"github.com/senzing-garage/sz-sdk-go/sz"
+	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/senzing-garage/sz-sdk-go/szerror"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,12 +23,12 @@ const (
 	defaultTruncation = 76
 	instanceName      = "Engine Test"
 	printResults      = false
-	verboseLogging    = sz.SZ_NO_LOGGING
+	verboseLogging    = senzing.SzNoLogging
 )
 
-type GetEntityByRecordIdResponse struct {
+type GetEntityByRecordIDResponse struct {
 	ResolvedEntity struct {
-		EntityId int64 `json:"ENTITY_ID"`
+		EntityID int64 `json:"ENTITY_ID"`
 	} `json:"RESOLVED_ENTITY"`
 }
 
@@ -42,7 +43,7 @@ var (
 func TestSzengine_AddRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	flags := sz.SZ_WITHOUT_INFO
+	flags := senzing.SzWithInfo
 	records := []record.Record{
 		truthset.CustomerRecords["1004"],
 		truthset.CustomerRecords["1005"],
@@ -58,7 +59,7 @@ func TestSzengine_AddRecord(test *testing.T) {
 func TestSzengine_AddRecord_withInfo(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	flags := sz.SZ_WITH_INFO
+	flags := senzing.SzWithInfo
 	records := []record.Record{
 		truthset.CustomerRecords["1004"],
 		truthset.CustomerRecords["1005"],
@@ -74,7 +75,7 @@ func TestSzengine_AddRecord_withInfo(test *testing.T) {
 func TestSzengine_CloseExport(test *testing.T) {
 	// Tested in:
 	//  - TestSzengine_ExportCsvEntityReport
-	//  - TestSzengine_ExportJsonEntityReport
+	//  - TestSzengine_ExportJSONEntityReport
 }
 
 func TestSzengine_CountRedoRecords(test *testing.T) {
@@ -91,7 +92,7 @@ func TestSzengine_DeleteRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1009"]
-	flags := sz.SZ_WITHOUT_INFO
+	flags := senzing.SzWithInfo
 	actual, err := szEngine.AddRecord(ctx, record.DataSource, record.Id, record.Json, flags)
 	printActual(test, actual)
 	testError(test, err)
@@ -104,7 +105,7 @@ func TestSzengine_DeleteRecord_withInfo(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1010"]
-	flags := sz.SZ_WITH_INFO
+	flags := senzing.SzWithInfo
 	actual, err := szEngine.AddRecord(ctx, record.DataSource, record.Id, record.Json, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -118,7 +119,7 @@ func TestSzengine_ExportCsvEntityReport(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	csvColumnList := ""
-	flags := sz.SZ_EXPORT_INCLUDE_ALL_ENTITIES
+	flags := senzing.SzExportIncludeAllEntities
 	aHandle, err := szEngine.ExportCsvEntityReport(ctx, csvColumnList, flags)
 	defer func() {
 		err := szEngine.CloseExport(ctx, aHandle)
@@ -138,7 +139,7 @@ func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	csvColumnList := ""
-	flags := sz.SZ_EXPORT_INCLUDE_ALL_ENTITIES
+	flags := senzing.SzExportIncludeAllEntities
 	actualCount := 0
 	for actual := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
 		testError(test, actual.Error)
@@ -148,19 +149,19 @@ func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
 	assert.Equal(test, len(expected), actualCount)
 }
 
-func TestSzengine_ExportJsonEntityReport(test *testing.T) {
+func TestSzengine_ExportJSONEntityReport(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	aRecord := testfixtures.FixtureRecords["65536-periods"]
-	flags := sz.SZ_WITH_INFO
+	flags := senzing.SzWithInfo
 	actual, err := szEngine.AddRecord(ctx, aRecord.DataSource, aRecord.Id, aRecord.Json, flags)
 	testError(test, err)
 	printActual(test, actual)
-	defer szEngine.DeleteRecord(ctx, aRecord.DataSource, aRecord.Id, sz.SZ_WITHOUT_INFO)
+	defer szEngine.DeleteRecord(ctx, aRecord.DataSource, aRecord.Id, senzing.SzWithInfo)
 	// TODO: Figure out correct flags.
-	// flags := sz.Flags(sz.SZ_EXPORT_DEFAULT_FLAGS, sz.SZ_EXPORT_INCLUDE_ALL_HAVING_RELATIONSHIPS, sz.SZ_EXPORT_INCLUDE_ALL_HAVING_RELATIONSHIPS)
+	// flags := senzing.Flags(senzing.SZ_EXPORT_DEFAULT_FLAGS, senzing.SZ_EXPORT_INCLUDE_ALL_HAVING_RELATIONSHIPS, senzing.SZ_EXPORT_INCLUDE_ALL_HAVING_RELATIONSHIPS)
 	flags = int64(-1)
-	aHandle, err := szEngine.ExportJsonEntityReport(ctx, flags)
+	aHandle, err := szEngine.ExportJSONEntityReport(ctx, flags)
 	defer func() {
 		err := szEngine.CloseExport(ctx, aHandle)
 		testError(test, err)
@@ -179,13 +180,13 @@ func TestSzengine_ExportJsonEntityReport(test *testing.T) {
 	assert.True(test, true)
 }
 
-func TestSzengine_ExportJsonEntityReportIterator(test *testing.T) {
+func TestSzengine_ExportJSONEntityReportIterator(test *testing.T) {
 	expected := 0
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	flags := sz.SZ_EXPORT_INCLUDE_ALL_ENTITIES
+	flags := senzing.SzExportIncludeAllEntities
 	actualCount := 0
-	for actual := range szEngine.ExportJsonEntityReportIterator(ctx, flags) {
+	for actual := range szEngine.ExportJSONEntityReportIterator(ctx, flags) {
 		testError(test, actual.Error)
 		printActual(test, actual.Value)
 		actualCount += 1
@@ -195,45 +196,45 @@ func TestSzengine_ExportJsonEntityReportIterator(test *testing.T) {
 
 func TestSzengine_FetchNext(test *testing.T) {
 	// Tested in:
-	//  - TestSzengine_ExportJsonEntityReport
+	//  - TestSzengine_ExportJSONEntityReport
 }
 
-func TestSzengine_FindInterestingEntitiesByEntityId(test *testing.T) {
+func TestSzengine_FindInterestingEntitiesByEntityID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId := getEntityId(truthset.CustomerRecords["1001"])
+	entityID := getEntityID(truthset.CustomerRecords["1001"])
 	flags := int64(0)
-	actual, err := szEngine.FindInterestingEntitiesByEntityId(ctx, entityId, flags)
+	actual, err := szEngine.FindInterestingEntitiesByEntityID(ctx, entityID, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindInterestingEntitiesByRecordId(test *testing.T) {
+func TestSzengine_FindInterestingEntitiesByRecordID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
 	flags := int64(0)
-	actual, err := szEngine.FindInterestingEntitiesByRecordId(ctx, record.DataSource, record.Id, flags)
+	actual, err := szEngine.FindInterestingEntitiesByRecordID(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindNetworkByEntityId(test *testing.T) {
+func TestSzengine_FindNetworkByEntityID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
-	entityList := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIdString(record1) + `}, {"ENTITY_ID": ` + getEntityIdString(record2) + `}]}`
+	entityList := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIDString(record1) + `}, {"ENTITY_ID": ` + getEntityIDString(record2) + `}]}`
 	maxDegrees := int64(2)
 	buildOutDegree := int64(1)
 	maxEntities := int64(10)
-	flags := sz.SZ_FIND_NETWORK_DEFAULT_FLAGS
-	actual, err := szEngine.FindNetworkByEntityId(ctx, entityList, maxDegrees, buildOutDegree, maxEntities, flags)
+	flags := senzing.SzFindNetworkDefaultFlags
+	actual, err := szEngine.FindNetworkByEntityID(ctx, entityList, maxDegrees, buildOutDegree, maxEntities, flags)
 	testErrorNoFail(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindNetworkByRecordId(test *testing.T) {
+func TestSzengine_FindNetworkByRecordID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
@@ -243,100 +244,100 @@ func TestSzengine_FindNetworkByRecordId(test *testing.T) {
 	maxDegrees := int64(1)
 	buildOutDegree := int64(2)
 	maxEntities := int64(10)
-	flags := sz.SZ_FIND_NETWORK_DEFAULT_FLAGS
-	actual, err := szEngine.FindNetworkByRecordId(ctx, recordList, maxDegrees, buildOutDegree, maxEntities, flags)
+	flags := senzing.SzFindNetworkDefaultFlags
+	actual, err := szEngine.FindNetworkByRecordID(ctx, recordList, maxDegrees, buildOutDegree, maxEntities, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByEntityId(test *testing.T) {
+func TestSzengine_FindPathByEntityID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	startEntityId := getEntityId(truthset.CustomerRecords["1001"])
-	endEntityId := getEntityId(truthset.CustomerRecords["1002"])
+	startEntityID := getEntityID(truthset.CustomerRecords["1001"])
+	endEntityID := getEntityID(truthset.CustomerRecords["1002"])
 	maxDegrees := int64(1)
-	exclusions := sz.SZ_NO_EXCLUSIONS
-	requiredDataSources := sz.SZ_NO_REQUIRED_DATASOURCES
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByEntityId(ctx, startEntityId, endEntityId, maxDegrees, exclusions, requiredDataSources, flags)
+	exclusions := senzing.SzNoExclusions
+	requiredDataSources := senzing.SzNoRequiredDatasources
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, maxDegrees, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByEntityId_excluding(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	startRecord := truthset.CustomerRecords["1001"]
-	startEntityId := getEntityId(startRecord)
-	endEntityId := getEntityId(truthset.CustomerRecords["1002"])
-	maxDegrees := int64(1)
-	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIdString(startRecord) + `}]}`
-	requiredDataSources := sz.SZ_NO_REQUIRED_DATASOURCES
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByEntityId(ctx, startEntityId, endEntityId, maxDegrees, exclusions, requiredDataSources, flags)
-	testError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzengine_FindPathByEntityId_excludingAndIncluding(test *testing.T) {
+func TestSzengine_FindPathByEntityID_excluding(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	startRecord := truthset.CustomerRecords["1001"]
-	startEntityId := getEntityId(startRecord)
-	endEntityId := getEntityId(truthset.CustomerRecords["1002"])
+	startEntityID := getEntityID(startRecord)
+	endEntityID := getEntityID(truthset.CustomerRecords["1002"])
 	maxDegrees := int64(1)
-	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIdString(startRecord) + `}]}`
+	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIDString(startRecord) + `}]}`
+	requiredDataSources := senzing.SzNoRequiredDatasources
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, maxDegrees, exclusions, requiredDataSources, flags)
+	testError(test, err)
+	printActual(test, actual)
+}
+
+func TestSzengine_FindPathByEntityID_excludingAndIncluding(test *testing.T) {
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	startRecord := truthset.CustomerRecords["1001"]
+	startEntityID := getEntityID(startRecord)
+	endEntityID := getEntityID(truthset.CustomerRecords["1002"])
+	maxDegrees := int64(1)
+	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIDString(startRecord) + `}]}`
 	requiredDataSources := `{"DATA_SOURCES": ["` + startRecord.DataSource + `"]}`
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByEntityId(ctx, startEntityId, endEntityId, maxDegrees, exclusions, requiredDataSources, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, maxDegrees, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByEntityId_including(test *testing.T) {
+func TestSzengine_FindPathByEntityID_including(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	startRecord := truthset.CustomerRecords["1001"]
-	startEntityId := getEntityId(startRecord)
-	endEntityId := getEntityId(truthset.CustomerRecords["1002"])
+	startEntityID := getEntityID(startRecord)
+	endEntityID := getEntityID(truthset.CustomerRecords["1002"])
 	maxDegrees := int64(1)
-	exclusions := sz.SZ_NO_EXCLUSIONS
+	exclusions := senzing.SzNoExclusions
 	requiredDataSources := `{"DATA_SOURCES": ["` + startRecord.DataSource + `"]}`
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByEntityId(ctx, startEntityId, endEntityId, maxDegrees, exclusions, requiredDataSources, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, maxDegrees, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByRecordId(test *testing.T) {
+func TestSzengine_FindPathByRecordID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
 	maxDegree := int64(1)
-	exclusions := sz.SZ_NO_EXCLUSIONS
-	requiredDataSources := sz.SZ_NO_REQUIRED_DATASOURCES
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByRecordId(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
+	exclusions := senzing.SzNoExclusions
+	requiredDataSources := senzing.SzNoRequiredDatasources
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByRecordID(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByRecordId_excluding(test *testing.T) {
+func TestSzengine_FindPathByRecordID_excluding(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
 	maxDegree := int64(1)
 	exclusions := `{"RECORDS": [{ "DATA_SOURCE": "` + record1.DataSource + `", "RECORD_ID": "` + record1.Id + `"}]}`
-	requiredDataSources := sz.SZ_NO_REQUIRED_DATASOURCES
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByRecordId(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
+	requiredDataSources := senzing.SzNoRequiredDatasources
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByRecordID(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByRecordId_excludingAndIncluding(test *testing.T) {
+func TestSzengine_FindPathByRecordID_excludingAndIncluding(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
@@ -344,50 +345,50 @@ func TestSzengine_FindPathByRecordId_excludingAndIncluding(test *testing.T) {
 	maxDegree := int64(1)
 	exclusions := `{"RECORDS": [{ "DATA_SOURCE": "` + record1.DataSource + `", "RECORD_ID": "` + record1.Id + `"}]}`
 	requiredDataSources := `{"DATA_SOURCES": ["` + record1.DataSource + `"]}`
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByRecordId(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByRecordID(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_FindPathByRecordId_including(test *testing.T) {
+func TestSzengine_FindPathByRecordID_including(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
 	maxDegree := int64(1)
-	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIdString(record1) + `}]}`
+	exclusions := `{"ENTITIES": [{"ENTITY_ID": ` + getEntityIDString(record1) + `}]}`
 	requiredDataSources := `{"DATA_SOURCES": ["` + record1.DataSource + `"]}`
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.FindPathByRecordId(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.FindPathByRecordID(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, maxDegree, exclusions, requiredDataSources, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_GetActiveConfigId(test *testing.T) {
+func TestSzengine_GetActiveConfigID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	actual, err := szEngine.GetActiveConfigId(ctx)
+	actual, err := szEngine.GetActiveConfigID(ctx)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_GetEntityByEntityId(test *testing.T) {
+func TestSzengine_GetEntityByEntityID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId := getEntityId(truthset.CustomerRecords["1001"])
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.GetEntityByEntityId(ctx, entityId, flags)
+	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.GetEntityByEntityID(ctx, entityID, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_GetEntityByRecordId(test *testing.T) {
+func TestSzengine_GetEntityByRecordID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.GetEntityByRecordId(ctx, record.DataSource, record.Id, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.GetEntityByRecordID(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -396,7 +397,7 @@ func TestSzengine_GetRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
-	flags := sz.SZ_NO_FLAGS
+	flags := senzing.SzNoFlags
 	actual, err := szEngine.GetRecord(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -418,24 +419,24 @@ func TestSzengine_GetStats(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzengine_GetVirtualEntityByRecordId(test *testing.T) {
+func TestSzengine_GetVirtualEntityByRecordID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
 	recordList := `{"RECORDS": [{"DATA_SOURCE": "` + record1.DataSource + `", "RECORD_ID": "` + record1.Id + `"}, {"DATA_SOURCE": "` + record2.DataSource + `", "RECORD_ID": "` + record2.Id + `"}]}`
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.GetVirtualEntityByRecordId(ctx, recordList, flags)
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.GetVirtualEntityByRecordID(ctx, recordList, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzengine_HowEntityByEntityId(test *testing.T) {
+func TestSzengine_HowEntityByEntityID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId := getEntityId(truthset.CustomerRecords["1001"])
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.HowEntityByEntityId(ctx, entityId, flags)
+	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.HowEntityByEntityID(ctx, entityID, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -451,7 +452,7 @@ func TestSzengine_ProcessRedoRecord(test *testing.T) {
 	// TODO: Implement TestSzengine_ProcessRedoRecord
 	// ctx := context.TODO()
 	// szEngine := getTestObject(ctx, test)
-	// flags := sz.SZ_WITHOUT_INFO
+	// flags := senzing.SzWithInfo
 	// actual, err := szEngine.ProcessRedoRecord(ctx, redoRecord, flags)
 	// testError(test, err)
 	// printActual(test, actual)
@@ -461,7 +462,7 @@ func TestSzengine_ProcessRedoRecord_withInfo(test *testing.T) {
 	// TODO: Implement TestSzengine_ProcessRedoRecord_withInfo
 	// ctx := context.TODO()
 	// szEngine := getTestObject(ctx, test)
-	// flags := sz.SZ_WITH_INFO
+	// flags := senzing.SzWithInfo
 	// actual, err := szEngine.ProcessRedoRecord(ctx, redoRecord, flags)
 	// testError(test, err)
 	// printActual(test, actual)
@@ -470,9 +471,9 @@ func TestSzengine_ProcessRedoRecord_withInfo(test *testing.T) {
 func TestSzengine_ReevaluateEntity(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId := getEntityId(truthset.CustomerRecords["1001"])
-	flags := sz.SZ_WITHOUT_INFO
-	actual, err := szEngine.ReevaluateEntity(ctx, entityId, flags)
+	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	flags := senzing.SzWithInfo
+	actual, err := szEngine.ReevaluateEntity(ctx, entityID, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -480,9 +481,9 @@ func TestSzengine_ReevaluateEntity(test *testing.T) {
 func TestSzengine_ReevaluateEntity_withInfo(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId := getEntityId(truthset.CustomerRecords["1001"])
-	flags := sz.SZ_WITH_INFO
-	actual, err := szEngine.ReevaluateEntity(ctx, entityId, flags)
+	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	flags := senzing.SzWithInfo
+	actual, err := szEngine.ReevaluateEntity(ctx, entityID, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -491,7 +492,7 @@ func TestSzengine_ReevaluateRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
-	flags := sz.SZ_WITHOUT_INFO
+	flags := senzing.SzWithInfo
 	actual, err := szEngine.ReevaluateRecord(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -501,7 +502,7 @@ func TestSzengine_ReevaluateRecord_withInfo(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
-	flags := sz.SZ_WITH_INFO
+	flags := senzing.SzWithInfo
 	actual, err := szEngine.ReevaluateRecord(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -511,8 +512,8 @@ func TestSzengine_SearchByAttributes(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	attributes := `{"NAMES": [{"NAME_TYPE": "PRIMARY", "NAME_LAST": "JOHNSON"}], "SSN_NUMBER": "053-39-3251"}`
-	searchProfile := sz.SZ_NO_SEARCH_PROFILE
-	flags := sz.SZ_NO_FLAGS
+	searchProfile := senzing.SzNoSearchProfile
+	flags := senzing.SzNoFlags
 	actual, err := szEngine.SearchByAttributes(ctx, attributes, searchProfile, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -522,16 +523,16 @@ func TestSzengine_StreamExportCsvEntityReport(test *testing.T) {
 	// TODO: Write TestSzengine_StreamExportCsvEntityReport
 }
 
-func TestSzengine_StreamExportJsonEntityReport(test *testing.T) {
-	// TODO: Write TestSzengine_StreamExportJsonEntityReport
+func TestSzengine_StreamExportJSONEntityReport(test *testing.T) {
+	// TODO: Write TestSzengine_StreamExportJSONEntityReport
 }
 
 func TestSzengine_SearchByAttributes_searchProfile(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	attributes := `{"NAMES": [{"NAME_TYPE": "PRIMARY", "NAME_LAST": "JOHNSON"}], "SSN_NUMBER": "053-39-3251"}`
-	searchProfile := sz.SZ_NO_SEARCH_PROFILE // TODO: Figure out the search profile
-	flags := sz.SZ_NO_FLAGS
+	searchProfile := senzing.SzNoSearchProfile // TODO: Figure out the search profile
+	flags := senzing.SzNoFlags
 	actual, err := szEngine.SearchByAttributes(ctx, attributes, searchProfile, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -540,10 +541,10 @@ func TestSzengine_SearchByAttributes_searchProfile(test *testing.T) {
 func TestSzengine_WhyEntities(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	entityId1 := getEntityId(truthset.CustomerRecords["1001"])
-	entityId2 := getEntityId(truthset.CustomerRecords["1002"])
-	flags := sz.SZ_NO_FLAGS
-	actual, err := szEngine.WhyEntities(ctx, entityId1, entityId2, flags)
+	entityID1 := getEntityID(truthset.CustomerRecords["1001"])
+	entityID2 := getEntityID(truthset.CustomerRecords["1002"])
+	flags := senzing.SzNoFlags
+	actual, err := szEngine.WhyEntities(ctx, entityID1, entityID2, flags)
 	testError(test, err)
 	printActual(test, actual)
 }
@@ -552,7 +553,7 @@ func TestSzengine_WhyRecordInEntity(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	record := truthset.CustomerRecords["1001"]
-	flags := sz.SZ_NO_FLAGS
+	flags := senzing.SzNoFlags
 	actual, err := szEngine.WhyRecordInEntity(ctx, record.DataSource, record.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -563,7 +564,7 @@ func TestSzengine_WhyRecords(test *testing.T) {
 	szEngine := getTestObject(ctx, test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
-	flags := sz.SZ_NO_FLAGS
+	flags := senzing.SzNoFlags
 	actual, err := szEngine.WhyRecords(ctx, record1.DataSource, record1.Id, record2.DataSource, record2.Id, flags)
 	testError(test, err)
 	printActual(test, actual)
@@ -609,29 +610,29 @@ func TestSzengine_Initialize(test *testing.T) {
 	szEngine := getTestObject(ctx, test)
 	settings, err := getSettings()
 	testError(test, err)
-	configId := sz.SZ_INITIALIZE_WITH_DEFAULT_CONFIGURATION
-	err = szEngine.Initialize(ctx, instanceName, settings, configId, verboseLogging)
+	configID := senzing.SzInitializeWithDefaultConfiguration
+	err = szEngine.Initialize(ctx, instanceName, settings, configID, verboseLogging)
 	testError(test, err)
 }
 
-func TestSzengine_Initialize_withConfigId(test *testing.T) {
+func TestSzengine_Initialize_withConfigID(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	settings, err := getSettings()
 	testError(test, err)
-	configId := getDefaultConfigId()
-	err = szEngine.Initialize(ctx, instanceName, settings, configId, verboseLogging)
+	configID := getDefaultConfigID()
+	err = szEngine.Initialize(ctx, instanceName, settings, configID, verboseLogging)
 	testError(test, err)
 }
 
 func TestSzengine_Reinitialize(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	configId, err := szEngine.GetActiveConfigId(ctx)
+	configID, err := szEngine.GetActiveConfigID(ctx)
 	testError(test, err)
-	err = szEngine.Reinitialize(ctx, configId)
+	err = szEngine.Reinitialize(ctx, configID)
 	testError(test, err)
-	printActual(test, configId)
+	printActual(test, configID)
 }
 
 func TestSzengine_Destroy(test *testing.T) {
@@ -645,7 +646,7 @@ func TestSzengine_Destroy(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getDefaultConfigId() int64 {
+func getDefaultConfigID() int64 {
 	return int64(1)
 }
 
@@ -658,22 +659,22 @@ func getSzEngine(ctx context.Context) *Szengine {
 			DeleteRecordResult:                      "{}",
 			ExportConfigResult:                      `{"G2_CONFIG":{"CFG_ETYPE":[{"ETYPE_ID":...`,
 			ExportCsvEntityReportResult:             1,
-			ExportJsonEntityReportResult:            1,
+			ExportJSONEntityReportResult:            1,
 			FetchNextResult:                         ``,
-			FindInterestingEntitiesByEntityIdResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
-			FindInterestingEntitiesByRecordIdResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
-			FindNetworkByEntityIdResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindNetworkByRecordIdResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindPathByEntityIdResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`,
-			FindPathByRecordIdResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`,
-			GetActiveConfigIdResult:                 int64(1),
-			GetEntityByEntityIdResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			GetEntityByRecordIdResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			FindInterestingEntitiesByEntityIDResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
+			FindInterestingEntitiesByRecordIDResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
+			FindNetworkByEntityIDResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
+			FindNetworkByRecordIDResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
+			FindPathByEntityIDResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`,
+			FindPathByRecordIDResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`,
+			GetActiveConfigIDResult:                 int64(1),
+			GetEntityByEntityIDResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			GetEntityByRecordIDResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
 			GetRecordResult:                         `{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}`,
 			GetRedoRecordResult:                     `{"REASON":"deferred delete","DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","DSRC_ACTION":"X"}`,
 			GetStatsResult:                          `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`,
-			GetVirtualEntityByRecordIdResult:        `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			HowEntityByEntityIdResult:               `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
+			GetVirtualEntityByRecordIDResult:        `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
+			HowEntityByEntityIDResult:               `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
 			ProcessRedoRecordResult:                 ``,
 			ReevaluateEntityResult:                  "{}",
 			ReevaluateRecordResult:                  "{}",
@@ -685,38 +686,38 @@ func getSzEngine(ctx context.Context) *Szengine {
 	return szEngineSingleton
 }
 
-func getSzEngineAsInterface(ctx context.Context) sz.SzEngine {
+func getSzEngineAsInterface(ctx context.Context) senzing.SzEngine {
 	return getSzEngine(ctx)
 }
 
-func getEntityId(record record.Record) int64 {
-	return getEntityIdForRecord(record.DataSource, record.Id)
+func getEntityID(record record.Record) int64 {
+	return getEntityIDForRecord(record.DataSource, record.Id)
 }
 
-func getEntityIdForRecord(datasource string, id string) int64 {
+func getEntityIDForRecord(datasource string, id string) int64 {
 	ctx := context.TODO()
 	var result int64 = 0
 	szEngine := getSzEngine(ctx)
-	response, err := szEngine.GetEntityByRecordId(ctx, datasource, id, sz.SZ_WITHOUT_INFO)
+	response, err := szEngine.GetEntityByRecordID(ctx, datasource, id, senzing.SzWithInfo)
 	if err != nil {
 		return result
 	}
-	getEntityByRecordIdResponse := &GetEntityByRecordIdResponse{}
-	err = json.Unmarshal([]byte(response), &getEntityByRecordIdResponse)
+	getEntityByRecordIDResponse := &GetEntityByRecordIDResponse{}
+	err = json.Unmarshal([]byte(response), &getEntityByRecordIDResponse)
 	if err != nil {
 		return result
 	}
-	return getEntityByRecordIdResponse.ResolvedEntity.EntityId
+	return getEntityByRecordIDResponse.ResolvedEntity.EntityID
 }
 
-func getEntityIdString(record record.Record) string {
-	entityId := getEntityId(record)
-	return strconv.FormatInt(entityId, 10)
+func getEntityIDString(record record.Record) string {
+	entityID := getEntityID(record)
+	return strconv.FormatInt(entityID, 10)
 }
 
-func getEntityIdStringForRecord(datasource string, id string) string {
-	entityId := getEntityIdForRecord(datasource, id)
-	return strconv.FormatInt(entityId, 10)
+func getEntityIDStringForRecord(datasource string, id string) string {
+	entityID := getEntityIDForRecord(datasource, id)
+	return strconv.FormatInt(entityID, 10)
 }
 
 func getSettings() (string, error) {
@@ -762,13 +763,13 @@ func truncate(aString string, length int) string {
 func TestMain(m *testing.M) {
 	err := setup()
 	if err != nil {
-		if szerror.Is(err, szerror.SzUnrecoverable) {
+		if errors.Is(err, szerror.ErrSzUnrecoverable) {
 			fmt.Printf("\nUnrecoverable error detected. \n\n")
 		}
-		if szerror.Is(err, szerror.SzRetryable) {
+		if errors.Is(err, szerror.ErrSzRetryable) {
 			fmt.Printf("\nRetryable error detected. \n\n")
 		}
-		if szerror.Is(err, szerror.SzBadInput) {
+		if errors.Is(err, szerror.ErrSzBadInput) {
 			fmt.Printf("\nBad user input error detected. \n\n")
 		}
 		fmt.Print(err)

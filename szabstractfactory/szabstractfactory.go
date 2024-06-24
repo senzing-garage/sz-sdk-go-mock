@@ -8,15 +8,15 @@ import (
 	"github.com/senzing-garage/sz-sdk-go-mock/szdiagnostic"
 	"github.com/senzing-garage/sz-sdk-go-mock/szengine"
 	"github.com/senzing-garage/sz-sdk-go-mock/szproduct"
-	"github.com/senzing-garage/sz-sdk-go/sz"
+	"github.com/senzing-garage/sz-sdk-go/senzing"
 )
 
-// Szconfig is the default implementation of the Szconfig interface.
+// Szabstractfactory is an implementation of the senzing.SzAbstractFactory interface.
 type Szabstractfactory struct {
 }
 
 // ----------------------------------------------------------------------------
-// Interface methods
+// senzing.SzAbstractFactory interface methods
 // ----------------------------------------------------------------------------
 
 /*
@@ -27,10 +27,10 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - An sz.SzConfig object.
+  - An senzing.SzConfig object.
     See the example output.
 */
-func (factory *Szabstractfactory) CreateSzConfig(ctx context.Context) (sz.SzConfig, error) {
+func (factory *Szabstractfactory) CreateSzConfig(ctx context.Context) (senzing.SzConfig, error) {
 	result := &szconfig.Szconfig{}
 	return result, nil
 }
@@ -43,10 +43,10 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - An sz.CreateConfigManager object.
+  - An senzing.CreateConfigManager object.
     See the example output.
 */
-func (factory *Szabstractfactory) CreateSzConfigManager(ctx context.Context) (sz.SzConfigManager, error) {
+func (factory *Szabstractfactory) CreateSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	result := &szconfigmanager.Szconfigmanager{}
 	return result, nil
 }
@@ -59,10 +59,10 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - An sz.SzDiagnostic object.
+  - An senzing.SzDiagnostic object.
     See the example output.
 */
-func (factory *Szabstractfactory) CreateSzDiagnostic(ctx context.Context) (sz.SzDiagnostic, error) {
+func (factory *Szabstractfactory) CreateSzDiagnostic(ctx context.Context) (senzing.SzDiagnostic, error) {
 	result := &szdiagnostic.Szdiagnostic{}
 	return result, nil
 }
@@ -75,10 +75,10 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - An sz.SzEngine object.
+  - An senzing.SzEngine object.
     See the example output.
 */
-func (factory *Szabstractfactory) CreateSzEngine(ctx context.Context) (sz.SzEngine, error) {
+func (factory *Szabstractfactory) CreateSzEngine(ctx context.Context) (senzing.SzEngine, error) {
 	result := &szengine.Szengine{}
 	return result, nil
 }
@@ -91,10 +91,10 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - An sz.SzProduct object.
+  - An senzing.SzProduct object.
     See the example output.
 */
-func (factory *Szabstractfactory) CreateSzProduct(ctx context.Context) (sz.SzProduct, error) {
+func (factory *Szabstractfactory) CreateSzProduct(ctx context.Context) (senzing.SzProduct, error) {
 	result := &szproduct.Szproduct{}
 	return result, nil
 }

@@ -5,4 +5,4 @@ package szengine
 // ----------------------------------------------------------------------------
 
 // Identfier of the szengine package found messages having the format "senzing-6034xxxx".
-const ComponentId = 6034
+const ComponentID = 6034
