@@ -3,11 +3,9 @@ package szabstractfactory
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
-	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/require"
 )
@@ -18,10 +16,6 @@ const (
 	instanceName      = "SzAbstractFactory Test"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
-)
-
-var (
-	logger logging.Logging
 )
 
 // ----------------------------------------------------------------------------
@@ -120,31 +114,4 @@ func printResult(test *testing.T, title string, result interface{}) {
 
 func truncate(aString string, length int) string {
 	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
-}
-
-// ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	var err error = nil
-	return err
-}
-
-func teardown() error {
-	return nil
 }

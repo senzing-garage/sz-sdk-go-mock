@@ -10,7 +10,6 @@ import (
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/truthset"
-	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -47,7 +46,6 @@ type GetEntityByRecordIDResponse struct {
 
 var (
 	defaultConfigID   int64
-	logger            logging.Logging
 	logLevel          = "INFO"
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
@@ -1146,11 +1144,6 @@ func handleError(err error) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func handleErrorWithString(aString string, err error) {
-	_ = aString
-	handleError(err)
 }
 
 func printActual(test *testing.T, actual interface{}) {

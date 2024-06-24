@@ -21,7 +21,7 @@ type Szconfigmanager struct {
 	AddConfigResult          int64
 	GetConfigResult          string
 	GetConfigsResult         string
-	GetDefaultConfigIdResult int64
+	GetDefaultConfigIDResult int64
 	isTrace                  bool
 	logger                   logging.Logging
 	observerOrigin           string
@@ -160,7 +160,7 @@ Output
 */
 func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, error) {
 	var err error
-	result := client.GetDefaultConfigIdResult
+	result := client.GetDefaultConfigIDResult
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(11)

@@ -31,6 +31,7 @@ Output
     See the example output.
 */
 func (factory *Szabstractfactory) CreateSzConfig(ctx context.Context) (senzing.SzConfig, error) {
+	_ = ctx
 	result := &szconfig.Szconfig{}
 	return result, nil
 }
@@ -47,6 +48,7 @@ Output
     See the example output.
 */
 func (factory *Szabstractfactory) CreateSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
+	_ = ctx
 	result := &szconfigmanager.Szconfigmanager{}
 	return result, nil
 }
@@ -63,6 +65,7 @@ Output
     See the example output.
 */
 func (factory *Szabstractfactory) CreateSzDiagnostic(ctx context.Context) (senzing.SzDiagnostic, error) {
+	_ = ctx
 	result := &szdiagnostic.Szdiagnostic{}
 	return result, nil
 }
@@ -79,6 +82,7 @@ Output
     See the example output.
 */
 func (factory *Szabstractfactory) CreateSzEngine(ctx context.Context) (senzing.SzEngine, error) {
+	_ = ctx
 	result := &szengine.Szengine{}
 	return result, nil
 }
@@ -95,6 +99,7 @@ Output
     See the example output.
 */
 func (factory *Szabstractfactory) CreateSzProduct(ctx context.Context) (senzing.SzProduct, error) {
+	_ = ctx
 	result := &szproduct.Szproduct{}
 	return result, nil
 }
