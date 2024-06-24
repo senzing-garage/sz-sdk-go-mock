@@ -11,6 +11,7 @@ import (
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-observing/observer"
+	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -45,8 +46,9 @@ type GetEntityByRecordIDResponse struct {
 }
 
 var (
-	defaultConfigID   int64
-	logLevel          = "INFO"
+	defaultConfigID int64
+	logLevel        = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -165,10 +167,27 @@ func TestSzengine_DeleteRecord_withInfo_badDataSourceCode_fix(test *testing.T) {
 	handleError(deleteRecords(ctx, records))
 }
 
+func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
+	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	csvColumnList := ""
+	flags := senzing.SzNoFlags
+	for result := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
+		if result.Error != nil {
+			fmt.Println(result.Error)
+			break
+		}
+		fmt.Println(result.Value)
+	}
+}
+
 func TestSzengine_FetchNext(test *testing.T) {
-	_ = test
-	// Tested in:
-	//  - TestSzengine_ExportJSONEntityReport
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	actual, err := szEngine.FetchNext(ctx, 0)
+	require.NoError(test, err)
+	printActual(test, actual)
 }
 
 func TestSzengine_FindInterestingEntitiesByEntityID(test *testing.T) {

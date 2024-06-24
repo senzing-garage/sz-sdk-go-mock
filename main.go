@@ -56,7 +56,7 @@ func main() {
 
 	log.SetFlags(0)
 	logger, err = getLogger(ctx)
-	failOnError(5000, err)
+	failOnError(5001, err)
 
 	// Test logger.
 
@@ -72,32 +72,32 @@ func main() {
 	// Get Senzing objects for installing a Senzing Engine configuration.
 
 	szConfig, err := getSzConfig(ctx)
-	failOnError(5001, err)
+	failOnError(5002, err)
 	defer func() { handleError(szConfig.Destroy(ctx)) }()
 
 	szConfigManager, err := getSzConfigManager(ctx)
-	failOnError(5005, err)
+	failOnError(5003, err)
 	defer func() { handleError(szConfigManager.Destroy(ctx)) }()
 
 	// Persist the Senzing configuration to the Senzing repository.
 
 	err = demonstrateConfigFunctions(ctx, szConfig, szConfigManager)
-	failOnError(5008, err)
+	failOnError(5004, err)
 
 	// Now that a Senzing configuration is installed, get the remainder of the Senzing objects.
 
 	szEngine, err := getSzEngine(ctx)
-	failOnError(5010, err)
+	failOnError(5005, err)
 	defer func() { handleError(szEngine.Destroy(ctx)) }()
 
 	szProduct, err := getSzProduct(ctx)
-	failOnError(5011, err)
+	failOnError(5006, err)
 	defer func() { handleError(szProduct.Destroy(ctx)) }()
 
 	// Demonstrate tests.
 
 	err = demonstrateAdditionalFunctions(ctx, szEngine, szProduct)
-	failOnError(5015, err)
+	failOnError(5007, err)
 
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
 }
@@ -111,14 +111,14 @@ func demonstrateAdditionalFunctions(ctx context.Context, szEngine senzing.SzEngi
 	// Using SzEngine: Add records with information returned.
 
 	withInfo, err := demonstrateAddRecord(ctx, szEngine)
-	failOnError(5302, err)
-	logger.Log(2003, withInfo)
+	failOnError(5101, err)
+	logger.Log(2101, withInfo)
 
 	// Using SzProduct: Show license metadata.
 
 	license, err := szProduct.GetLicense(ctx)
-	failOnError(5303, err)
-	logger.Log(2004, license)
+	failOnError(5102, err)
+	logger.Log(2102, license)
 
 	return err
 }
@@ -126,9 +126,7 @@ func demonstrateAdditionalFunctions(ctx context.Context, szEngine senzing.SzEngi
 func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (string, error) {
 	dataSourceCode := "TEST"
 	randomNumber, err := rand.Int(rand.Reader, big.NewInt(1000000000))
-	if err != nil {
-		panic(err)
-	}
+	failOnError(5201, err)
 	recordID := randomNumber.String()
 	recordDefinition := fmt.Sprintf(
 		"%s%s%s",
@@ -148,40 +146,30 @@ func demonstrateConfigFunctions(ctx context.Context, szConfig senzing.SzConfig, 
 	// Using SzConfig: Create a default configuration in memory.
 
 	configHandle, err := szConfig.CreateConfig(ctx)
-	if err != nil {
-		return logger.NewError(5100, err)
-	}
+	failOnError(5301, err)
 
 	// Using SzConfig: Add data source to in-memory configuration.
 
 	for _, testDataSource := range truthset.TruthsetDataSources {
 		_, err := szConfig.AddDataSource(ctx, configHandle, testDataSource.JSON)
-		if err != nil {
-			return logger.NewError(5101, err)
-		}
+		failOnError(5302, err)
 	}
 
 	// Using SzConfig: Persist configuration to a string.
 
 	configStr, err := szConfig.ExportConfig(ctx, configHandle)
-	if err != nil {
-		return logger.NewError(5102, err)
-	}
+	failOnError(5303, err)
 
 	// Using SzConfigManager: Persist configuration string to database.
 
 	configComments := fmt.Sprintf("Created by main at %s", now.UTC())
 	configID, err := szConfigManager.AddConfig(ctx, configStr, configComments)
-	if err != nil {
-		return logger.NewError(5103, err)
-	}
+	failOnError(5304, err)
 
 	// Using SzConfigManager: Set new configuration as the default.
 
 	err = szConfigManager.SetDefaultConfigID(ctx, configID)
-	if err != nil {
-		return logger.NewError(5104, err)
-	}
+	failOnError(5305, err)
 
 	return err
 }
@@ -196,9 +184,7 @@ func failOnError(msgID int, err error) {
 func getLogger(ctx context.Context) (logging.Logging, error) {
 	_ = ctx
 	logger, err := logging.NewSenzingLogger(9999, Messages)
-	if err != nil {
-		fmt.Println(err)
-	}
+	failOnError(5401, err)
 	return logger, err
 }
 

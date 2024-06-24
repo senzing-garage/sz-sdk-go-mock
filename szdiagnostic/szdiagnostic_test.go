@@ -9,6 +9,7 @@ import (
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-observing/observer"
+	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -27,7 +28,7 @@ const (
 
 var (
 	defaultConfigID   int64
-	logLevel          = "INFO"
+	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -139,7 +140,7 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 
 func TestSzdiagnostic_Initialize(test *testing.T) {
 	ctx := context.TODO()
-	szDiagnostic := &Szdiagnostic{}
+	szDiagnostic := getTestObject(ctx, test)
 	settings, err := getSettings()
 	require.NoError(test, err)
 	configID := senzing.SzInitializeWithDefaultConfiguration
@@ -152,7 +153,7 @@ func TestSzdiagnostic_Initialize(test *testing.T) {
 
 func TestSzdiagnostic_Initialize_withConfigId(test *testing.T) {
 	ctx := context.TODO()
-	szDiagnostic := &Szdiagnostic{}
+	szDiagnostic := getTestObject(ctx, test)
 	settings, err := getSettings()
 	require.NoError(test, err)
 	configID := getDefaultConfigID()
