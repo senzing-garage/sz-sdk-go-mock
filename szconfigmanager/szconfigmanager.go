@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/senzing-garage/go-logging/logging"
-	"github.com/senzing-garage/go-messaging/messenger"
 	"github.com/senzing-garage/go-observing/notifier"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
@@ -25,7 +24,6 @@ type Szconfigmanager struct {
 	GetDefaultConfigIdResult int64
 	isTrace                  bool
 	logger                   logging.Logging
-	messenger                messenger.Messenger
 	observerOrigin           string
 	observers                subject.Subject
 }
@@ -394,14 +392,6 @@ func (client *Szconfigmanager) getLogger() logging.Logging {
 		client.logger = helper.GetLogger(ComponentID, szconfigmanager.IDMessages, baseCallerSkip)
 	}
 	return client.logger
-}
-
-// Get the Messenger singleton.
-func (client *Szconfigmanager) getMessenger() messenger.Messenger {
-	if client.messenger == nil {
-		client.messenger = helper.GetMessenger(ComponentID, szconfigmanager.IDMessages, baseCallerSkip)
-	}
-	return client.messenger
 }
 
 // Trace method entry.

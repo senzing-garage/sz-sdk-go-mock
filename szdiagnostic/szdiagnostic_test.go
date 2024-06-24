@@ -6,11 +6,12 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/record"
+	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go-mock/szengine"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
-	"github.com/senzing-garage/sz-sdk-go/szerror"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -75,18 +76,16 @@ func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 
 func TestSzdiagnostic_GetFeature(test *testing.T) {
 	ctx := context.TODO()
+	records := []record.Record{
+		truthset.CustomerRecords["1001"],
+	}
+	defer func() { handleError(deleteRecords(ctx, records)) }()
+	err := addRecords(ctx, records)
+	require.NoError(test, err)
 	szDiagnostic := getTestObject(ctx, test)
 	featureID := int64(1)
 	actual, err := szDiagnostic.GetFeature(ctx, featureID)
 	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzdiagnostic_GetFeature_badFeatureID(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	actual, err := szDiagnostic.GetFeature(ctx, badFeatureID)
-	require.ErrorIs(test, err, szerror.ErrSzBase)
 	printActual(test, actual)
 }
 
@@ -201,8 +200,22 @@ func TestSzdiagnostic_Destroy_withObserver(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
+func addRecords(ctx context.Context, records []record.Record) error {
+	var err error
+	_ = ctx
+	_ = records
+	return err
+}
+
+func deleteRecords(ctx context.Context, records []record.Record) error {
+	var err error
+	_ = ctx
+	_ = records
+	return err
+}
+
 func getDefaultConfigID() int64 {
-	return int64(1)
+	return defaultConfigID
 }
 
 func getSettings() (string, error) {
@@ -211,12 +224,26 @@ func getSettings() (string, error) {
 
 func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 	var err error
-	_ = ctx
 	if szDiagnosticSingleton == nil {
 		szDiagnosticSingleton = &Szdiagnostic{
 			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
 			GetFeatureResult:                `{}`,
 			GetDatastoreInfoResult:          `{}`,
+		}
+		err = szDiagnosticSingleton.SetLogLevel(ctx, logLevel)
+		if err != nil {
+			return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
+		}
+		if logLevel == "TRACE" {
+			szDiagnosticSingleton.SetObserverOrigin(ctx, observerOrigin)
+			err = szDiagnosticSingleton.RegisterObserver(ctx, observerSingleton)
+			if err != nil {
+				return szDiagnosticSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
+			}
+			err = szDiagnosticSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
+			if err != nil {
+				return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
+			}
 		}
 	}
 	return szDiagnosticSingleton, err

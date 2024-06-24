@@ -42,7 +42,7 @@ var Messages = map[int]string{
 var programName string = "unknown"
 var buildVersion string = "0.0.0"
 var buildIteration string = "0"
-var logger logging.LoggingInterface
+var logger logging.Logging
 
 // ----------------------------------------------------------------------------
 // Internal methods
@@ -85,9 +85,9 @@ func getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
 	return &result, err
 }
 
-func getLogger(ctx context.Context) (logging.LoggingInterface, error) {
+func getLogger(ctx context.Context) (logging.Logging, error) {
 	_ = ctx
-	logger, err := logging.NewSenzingLogger("my-unique-%04d", Messages)
+	logger, err := logging.NewSenzingLogger(9999, Messages)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -107,7 +107,7 @@ func demonstrateConfigFunctions(ctx context.Context, szConfig senzing.SzConfig, 
 	// Using SzConfig: Add data source to in-memory configuration.
 
 	for _, testDataSource := range truthset.TruthsetDataSources {
-		_, err := szConfig.AddDataSource(ctx, configHandle, testDataSource.Json)
+		_, err := szConfig.AddDataSource(ctx, configHandle, testDataSource.JSON)
 		if err != nil {
 			return logger.NewError(5101, err)
 		}
@@ -130,7 +130,7 @@ func demonstrateConfigFunctions(ctx context.Context, szConfig senzing.SzConfig, 
 
 	// Using SzConfigManager: Set new configuration as the default.
 
-	err = szConfigManager.SetDefaultConfigId(ctx, configID)
+	err = szConfigManager.SetDefaultConfigID(ctx, configID)
 	if err != nil {
 		return logger.NewError(5104, err)
 	}

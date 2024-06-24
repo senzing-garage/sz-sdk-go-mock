@@ -7,15 +7,21 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
+	baseCallerSkip    = 4
 	defaultTruncation = 76
 	instanceName      = "SzAbstractFactory Test"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
+)
+
+var (
+	logger logging.Logging
 )
 
 // ----------------------------------------------------------------------------
@@ -83,15 +89,23 @@ func TestSzAbstractFactory_CreateSzProduct(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
+func getSzAbstractFactory(ctx context.Context) (senzing.SzAbstractFactory, error) {
+	var err error
 	_ = ctx
 	result := &Szabstractfactory{}
-	return result
+	return result, err
 }
 
 func getTestObject(ctx context.Context, test *testing.T) senzing.SzAbstractFactory {
-	_ = test
-	return getSzAbstractFactory(ctx)
+	result, err := getSzAbstractFactory(ctx)
+	require.NoError(test, err)
+	return result
+}
+
+func handleError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

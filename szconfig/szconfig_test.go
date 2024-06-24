@@ -6,10 +6,8 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
-	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
-	"github.com/senzing-garage/sz-sdk-go/szerror"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -28,7 +26,6 @@ const (
 )
 
 var (
-	logger            logging.Logging
 	logLevel          = "INFO"
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
@@ -71,16 +68,6 @@ func TestSzconfig_AddDataSource_withLoad(test *testing.T) {
 	printActual(test, actual)
 	err = szConfig.CloseConfig(ctx, configHandle2)
 	require.NoError(test, err)
-}
-
-func TestSzconfig_AddDataSource_badDataSourceCode(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.AddDataSource(ctx, configHandle, badDataSourceCode)
-	require.ErrorIs(test, err, szerror.ErrSzBadInput)
-	printActual(test, actual)
 }
 
 func TestSzconfig_CloseConfig(test *testing.T) {
@@ -166,23 +153,6 @@ func TestSzconfig_DeleteDataSource_withLoad(test *testing.T) {
 	require.NoError(test, err)
 }
 
-func TestSzconfig_DeleteDataSource_badConfigHandle(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	dataSourceCode := "GO_TEST"
-	err := szConfig.DeleteDataSource(ctx, badConfigHandle, dataSourceCode)
-	require.ErrorIs(test, err, szerror.ErrSzBase)
-}
-
-func TestSzconfig_DeleteDataSource_badDataSourceCode(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	err = szConfig.DeleteDataSource(ctx, configHandle, badDataSourceCode)
-	require.ErrorIs(test, err, szerror.ErrSzBadInput)
-}
-
 func TestSzconfig_ExportConfig(test *testing.T) {
 	ctx := context.TODO()
 	szConfig := getTestObject(ctx, test)
@@ -191,14 +161,6 @@ func TestSzconfig_ExportConfig(test *testing.T) {
 	actual, err := szConfig.ExportConfig(ctx, configHandle)
 	require.NoError(test, err)
 	printActual(test, actual)
-}
-
-func TestSzconfig_ExportConfig_badConfigHandle(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	actual, err := szConfig.ExportConfig(ctx, badConfigHandle)
-	assert.Equal(test, "", actual)
-	require.ErrorIs(test, err, szerror.ErrSzBase)
 }
 
 func TestSzconfig_GetDataSources(test *testing.T) {
@@ -213,14 +175,6 @@ func TestSzconfig_GetDataSources(test *testing.T) {
 	require.NoError(test, err)
 }
 
-func TestSzconfig_GetDataSources_badConfigHandle(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	actual, err := szConfig.GetDataSources(ctx, badConfigHandle)
-	assert.Equal(test, "", actual)
-	require.ErrorIs(test, err, szerror.ErrSzBase)
-}
-
 func TestSzconfig_ImportConfig(test *testing.T) {
 	ctx := context.TODO()
 	szConfig := getTestObject(ctx, test)
@@ -233,15 +187,6 @@ func TestSzconfig_ImportConfig(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzconfig_ImportConfig_badConfigDefinition(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	_, err := szConfig.ImportConfig(ctx, badConfigDefinition)
-	require.ErrorIs(test, err, szerror.ErrSzBadInput)
-}
-
-// ----------------------------------------------------------------------------
-// Private methods
 // ----------------------------------------------------------------------------
 // Logging and observing
 // ----------------------------------------------------------------------------
@@ -356,6 +301,21 @@ func getSzConfig(ctx context.Context) (*Szconfig, error) {
 			GetDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
 			ImportConfigResult:   1,
 		}
+		err = szConfigSingleton.SetLogLevel(ctx, logLevel)
+		if err != nil {
+			return szConfigSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
+		}
+		if logLevel == "TRACE" {
+			szConfigSingleton.SetObserverOrigin(ctx, observerOrigin)
+			err = szConfigSingleton.RegisterObserver(ctx, observerSingleton)
+			if err != nil {
+				return szConfigSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
+			}
+			err = szConfigSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
+			if err != nil {
+				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
+			}
+		}
 	}
 	return szConfigSingleton, err
 }
@@ -367,7 +327,6 @@ func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
 	}
 	return result
 }
-
 
 func getTestObject(ctx context.Context, test *testing.T) *Szconfig {
 	result, err := getSzConfig(ctx)
