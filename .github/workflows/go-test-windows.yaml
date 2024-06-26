@@ -2,6 +2,9 @@ name: go test windows
 
 on: [pull_request, workflow_dispatch]
 
+env:
+  SENZING_LOG_LEVEL: TRACE
+
 permissions:
   contents: read
 
@@ -32,7 +35,7 @@ jobs:
 
       - name: run go test
         run: |
-          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
 
       - name: Store coverage file
@@ -46,7 +49,7 @@ jobs:
         if: always()
         with:
           name: test-log
-          path: /tmp/gotest.log
+          path: "C:\\Temp\\gotest.log"
           if-no-files-found: error
 
   coverage:
