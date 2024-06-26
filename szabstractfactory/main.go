@@ -5,4 +5,4 @@ package szabstractfactory
 // ----------------------------------------------------------------------------
 
 // Identfier of the szabstractfactory package found messages having the format "senzing-6030xxxx".
-const ComponentId = 6030
+const ComponentID = 6030
