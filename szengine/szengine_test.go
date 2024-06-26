@@ -1063,7 +1063,10 @@ func getEntityID(record record.Record) int64 {
 func getEntityIDForRecord(datasource string, id string) int64 {
 	ctx := context.TODO()
 	var result int64
-	szEngine := getSzEngineExample(ctx)
+	szEngine, err := getSzEngine(ctx)
+	if err != nil {
+		return result
+	}
 	response, err := szEngine.GetEntityByRecordID(ctx, datasource, id, senzing.SzWithoutInfo)
 	if err != nil {
 		return result
@@ -1078,12 +1081,12 @@ func getEntityIDForRecord(datasource string, id string) int64 {
 
 func getEntityIDString(record record.Record) string {
 	entityID := getEntityID(record)
-	return strconv.FormatInt(entityID, 10)
+	return strconv.FormatInt(entityID, baseTen)
 }
 
 func getEntityIDStringForRecord(datasource string, id string) string {
 	entityID := getEntityIDForRecord(datasource, id)
-	return strconv.FormatInt(entityID, 10)
+	return strconv.FormatInt(entityID, baseTen)
 }
 
 func getSettings() (string, error) {

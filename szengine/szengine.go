@@ -6,7 +6,6 @@ package szengine
 import (
 	"context"
 	"fmt"
-	"runtime"
 	"strconv"
 	"time"
 
@@ -247,8 +246,6 @@ Output
 func (client *Szengine) ExportCsvEntityReportIterator(ctx context.Context, csvColumnList string, flags int64) chan senzing.StringFragment {
 	stringFragmentChannel := make(chan senzing.StringFragment)
 	go func() {
-		runtime.LockOSThread()
-		defer runtime.UnlockOSThread()
 		defer close(stringFragmentChannel)
 		var err error
 		if client.isTrace {
@@ -311,8 +308,6 @@ Output
 func (client *Szengine) ExportJSONEntityReportIterator(ctx context.Context, flags int64) chan senzing.StringFragment {
 	stringFragmentChannel := make(chan senzing.StringFragment)
 	go func() {
-		runtime.LockOSThread()
-		defer runtime.UnlockOSThread()
 		defer close(stringFragmentChannel)
 		var err error
 		if client.isTrace {
@@ -1295,5 +1290,5 @@ func (client *Szengine) traceExit(errorNumber int, details ...interface{}) {
 }
 
 func formatEntityID(entityID int64) string {
-	return strconv.FormatInt(entityID, 10)
+	return strconv.FormatInt(entityID, baseTen)
 }
