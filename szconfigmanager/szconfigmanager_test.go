@@ -228,6 +228,10 @@ func getSettings() (string, error) {
 func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
 	var err error
 	if szConfigSingleton == nil {
+		settings, err := getSettings()
+		if err != nil {
+			return szConfigSingleton, fmt.Errorf("getSettings() Error: %w", err)
+		}
 		szConfigSingleton = &szconfig.Szconfig{
 			AddDataSourceResult:  `{"DSRC_ID":1001}`,
 			CreateConfigResult:   1,
@@ -249,6 +253,10 @@ func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
 				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
 		}
+		err = szConfigSingleton.Initialize(ctx, instanceName, settings, verboseLogging)
+		if err != nil {
+			return szConfigSingleton, fmt.Errorf("Initialize() Error: %w", err)
+		}
 	}
 	return szConfigSingleton, err
 }
@@ -256,6 +264,10 @@ func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
 func getSzConfigManager(ctx context.Context) (*Szconfigmanager, error) {
 	var err error
 	if szConfigManagerSingleton == nil {
+		settings, err := getSettings()
+		if err != nil {
+			return szConfigManagerSingleton, fmt.Errorf("getSettings() Error: %w", err)
+		}
 		szConfigManagerSingleton = &Szconfigmanager{
 			AddConfigResult:          1,
 			GetConfigResult:          `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1003,"ATTR_CODE":"RECORD_ID","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"No","INTERNAL":"No"},{"ATTR_ID":1004,"ATTR_CODE":"ENTITY_TYPE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,`,
@@ -276,6 +288,10 @@ func getSzConfigManager(ctx context.Context) (*Szconfigmanager, error) {
 			if err != nil {
 				return szConfigManagerSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
+		}
+		err = szConfigManagerSingleton.Initialize(ctx, instanceName, settings, verboseLogging)
+		if err != nil {
+			return szConfigManagerSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szConfigManagerSingleton, err

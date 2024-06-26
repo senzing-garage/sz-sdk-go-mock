@@ -293,8 +293,11 @@ func getSettings() (string, error) {
 
 func getSzConfig(ctx context.Context) (*Szconfig, error) {
 	var err error
-	_ = ctx
 	if szConfigSingleton == nil {
+		settings, err := getSettings()
+		if err != nil {
+			return szConfigSingleton, fmt.Errorf("getSettings() Error: %w", err)
+		}
 		szConfigSingleton = &Szconfig{
 			AddDataSourceResult:  `{"DSRC_ID":1001}`,
 			CreateConfigResult:   1,
@@ -316,6 +319,10 @@ func getSzConfig(ctx context.Context) (*Szconfig, error) {
 			if err != nil {
 				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
+		}
+		err = szConfigSingleton.Initialize(ctx, instanceName, settings, verboseLogging)
+		if err != nil {
+			return szConfigSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szConfigSingleton, err

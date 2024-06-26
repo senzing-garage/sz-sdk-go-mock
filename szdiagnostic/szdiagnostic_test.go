@@ -222,6 +222,10 @@ func getSettings() (string, error) {
 func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 	var err error
 	if szDiagnosticSingleton == nil {
+		settings, err := getSettings()
+		if err != nil {
+			return szDiagnosticSingleton, fmt.Errorf("getSettings() Error: %w", err)
+		}
 		szDiagnosticSingleton = &Szdiagnostic{
 			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
 			GetFeatureResult:                `{}`,
@@ -241,6 +245,10 @@ func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 			if err != nil {
 				return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
+		}
+		err = szDiagnosticSingleton.Initialize(ctx, instanceName, settings, getDefaultConfigID(), verboseLogging)
+		if err != nil {
+			return szDiagnosticSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szDiagnosticSingleton, err

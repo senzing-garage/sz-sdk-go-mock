@@ -14,7 +14,7 @@ import (
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
-	szproductapi "github.com/senzing-garage/sz-sdk-go/szproduct"
+	"github.com/senzing-garage/sz-sdk-go/szproduct"
 )
 
 type Szproduct struct {
@@ -154,7 +154,7 @@ func (client *Szproduct) Initialize(ctx context.Context, instanceName string, se
 			details := map[string]string{
 				"instanceName":   instanceName,
 				"settings":       settings,
-				"verboseLogging": strconv.FormatInt(verboseLogging, 10),
+				"verboseLogging": strconv.FormatInt(verboseLogging, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8002, err, details)
 		}()
@@ -273,7 +273,7 @@ func (client *Szproduct) UnregisterObserver(ctx context.Context, observer observ
 // Get the Logger singleton.
 func (client *Szproduct) getLogger() logging.Logging {
 	if client.logger == nil {
-		client.logger = helper.GetLogger(ComponentID, szproductapi.IDMessages, baseCallerSkip)
+		client.logger = helper.GetLogger(ComponentID, szproduct.IDMessages, baseCallerSkip)
 	}
 	return client.logger
 }

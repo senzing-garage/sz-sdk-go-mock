@@ -16,7 +16,7 @@ import (
 	"github.com/senzing-garage/go-observing/subject"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
-	szengineapi "github.com/senzing-garage/sz-sdk-go/szengine"
+	"github.com/senzing-garage/sz-sdk-go/szengine"
 )
 
 type Szengine struct {
@@ -1279,7 +1279,7 @@ func (client *Szengine) UnregisterObserver(ctx context.Context, observer observe
 // Get the Logger singleton.
 func (client *Szengine) getLogger() logging.Logging {
 	if client.logger == nil {
-		client.logger = helper.GetLogger(ComponentID, szengineapi.IDMessages, baseCallerSkip)
+		client.logger = helper.GetLogger(ComponentID, szengine.IDMessages, baseCallerSkip)
 	}
 	return client.logger
 }

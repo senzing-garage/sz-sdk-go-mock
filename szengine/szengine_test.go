@@ -168,7 +168,6 @@ func TestSzengine_DeleteRecord_withInfo_badDataSourceCode_fix(test *testing.T) {
 }
 
 func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
-	// For more information, visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
 	csvColumnList := ""
@@ -1093,8 +1092,11 @@ func getSettings() (string, error) {
 
 func getSzEngine(ctx context.Context) (*Szengine, error) {
 	var err error
-	_ = ctx
 	if szEngineSingleton == nil {
+		settings, err := getSettings()
+		if err != nil {
+			return szEngineSingleton, fmt.Errorf("getSettings() Error: %w", err)
+		}
 		szEngineSingleton = &Szengine{
 			AddRecordResult:                         "{}",
 			CountRedoRecordsResult:                  int64(0),
@@ -1138,6 +1140,10 @@ func getSzEngine(ctx context.Context) (*Szengine, error) {
 			if err != nil {
 				return szEngineSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
+		}
+		err = szEngineSingleton.Initialize(ctx, instanceName, settings, getDefaultConfigID(), verboseLogging)
+		if err != nil {
+			return szEngineSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szEngineSingleton, err
