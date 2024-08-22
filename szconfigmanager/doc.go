@@ -1,4 +1,4 @@
 /*
-The szconfigmanager package is used make G2Configmgr requests to a mock object.
+Package szconfigmanager is used to modify Senzing configuration JSON documents in the Senzing datastore.
 */
 package szconfigmanager

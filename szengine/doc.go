@@ -1,4 +1,4 @@
 /*
-The szengine package is used make SzEngine requests to a mock object.
+Package szengine is used to add, modify, delete, and query records/entities in the Senzing engine.
 */
 package szengine

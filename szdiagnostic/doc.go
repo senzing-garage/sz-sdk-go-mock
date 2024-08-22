@@ -1,4 +1,4 @@
 /*
-The szdiagnostic package is used make SzDiagnostic requests to a mock object.
+Package szdiagnostic is used to inspect the Senzing environment.
 */
 package szdiagnostic

@@ -1,5 +1,6 @@
 /*
-Package szdiagnostic implements a client for the service.
+The [Szdiagnostic] implementation of the [senzing.SzDiagnostic] interface
+communicates with the Senzing native C binary, libSz.so.
 */
 package szdiagnostic
 
@@ -39,7 +40,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-The CheckDatastorePerformance method performs inserts to determine rate of insertion.
+The CheckDatastorePerformance method runs performance tests on the Senzing datastore.
 
 Input
   - ctx: A context to control lifecycle.
@@ -47,7 +48,7 @@ Input
 
 Output
 
-  - A string containing a JSON document.
+  - A JSON document containing performance results.
     Example: `{"numRecordsInserted":0,"insertTime":0}`
 */
 func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secondsToRun int) (string, error) {
@@ -68,7 +69,7 @@ func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secon
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Diagnostic object.
+The Destroy method will destroy and perform cleanup for the Senzing SzDiagnostic object.
 It should be called after all other calls are complete.
 
 Input
@@ -91,14 +92,14 @@ func (client *Szdiagnostic) Destroy(ctx context.Context) error {
 }
 
 /*
-The GetDatastoreInfo method returns information about the state of the datastore.
+The GetDatastoreInfo method returns information about the Senzing datastore.
 
 Input
   - ctx: A context to control lifecycle.
 
 Output
 
-  - A string containing a JSON document.
+  - A JSON document containing Senzing datastore metadata.
 */
 func (client *Szdiagnostic) GetDatastoreInfo(ctx context.Context) (string, error) {
 	var err error
@@ -118,8 +119,7 @@ func (client *Szdiagnostic) GetDatastoreInfo(ctx context.Context) (string, error
 }
 
 /*
-TODO: Document GetFeature()
-The GetFeature method...
+The GetFeature method is an experimental method that returns diagnostic information of a feature.
 
 Input
   - ctx: A context to control lifecycle.
@@ -127,7 +127,7 @@ Input
 
 Output
 
-  - A string containing a JSON document.
+  - A JSON document containing feature metadata.
 */
 func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (string, error) {
 	var err error
@@ -149,10 +149,10 @@ func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (st
 }
 
 /*
-The PurgeRepository method removes every record in the Senzing repository.
-Before calling purgeRepository() all other instances of the Senzing API
-(whether in custom code, REST API, stream-loader, redoer, G2Loader, etc)
-MUST be destroyed or shutdown.
+WARNING: The PurgeRepository method removes every record in the Senzing datastore.
+This is a destructive method that cannot be undone.
+Before calling purgeRepository(), all programs using Senzing MUST be terminated.
+
 Input
   - ctx: A context to control lifecycle.
 */
@@ -173,11 +173,11 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 }
 
 /*
-The Reinitialize method re-initializes the Senzing G2Diagnostic object.
+The Reinitialize method re-initializes the Senzing SzDiagnostic object.
 
 Input
   - ctx: A context to control lifecycle.
-  - configID: The configuration ID used for the initialization.
+  - configID: The Senzing configuration JSON document identifier used for the initialization.
 */
 func (client *Szdiagnostic) Reinitialize(ctx context.Context, configID int64) error {
 	var err error
@@ -224,7 +224,7 @@ Input
   - instanceName: A name for the auditing node, to help identify it within system logs.
   - settings: A JSON string containing configuration parameters.
   - configID: The configuration ID used for the initialization.  0 for current default configuration.
-  - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
+  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *Szdiagnostic) Initialize(ctx context.Context, instanceName string, settings string, configID int64, verboseLogging int64) error {
 	var err error

@@ -1,4 +1,4 @@
 /*
-The szconfig package is used make SzConfig requests to a mock object.
+Package szconfig is used to modify the in-memory representation of a Senzing configuration.
 */
 package szconfig

@@ -1,4 +1,4 @@
 /*
-The szproduct package is used make SzProduct requests to a mock object.
+Package szproduct is used to inspect the Senzing product.
 */
 package szproduct
