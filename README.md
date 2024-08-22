@@ -57,6 +57,7 @@ Other implementations of the [sz-sdk-go] interface include:
 [Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/sz-sdk-go-mock.svg
 [Go Report Card Badge]: https://goreportcard.com/badge/github.com/senzing-garage/sz-sdk-go-mock
 [Go Report Card]: https://goreportcard.com/report/github.com/senzing-garage/sz-sdk-go-mock
+[go-sdk-abstract-factory]: https://github.com/senzing-garage/go-sdk-abstract-factory
 [go-test-darwin.yaml Badge]: https://github.com/senzing-garage/sz-sdk-go-mock/actions/workflows/go-test-darwin.yaml/badge.svg
 [go-test-darwin.yaml]: https://github.com/senzing-garage/sz-sdk-go-mock/actions/workflows/go-test-darwin.yaml
 [go-test-linux.yaml Badge]: https://github.com/senzing-garage/sz-sdk-go-mock/actions/workflows/go-test-linux.yaml/badge.svg
@@ -71,3 +72,5 @@ Other implementations of the [sz-sdk-go] interface include:
 [Senzing Garage]: https://github.com/senzing-garage
 [Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
 [Senzing]: https://senzing.com/
+[sz-sdk-go-core]: https://github.com/senzing-garage/sz-sdk-go-core
+[sz-sdk-go-grpc]: https://github.com/senzing-garage/sz-sdk-go-grpc
