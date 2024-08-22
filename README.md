@@ -51,6 +51,7 @@ Other implementations of the [sz-sdk-go] interface include:
 1. [Examples]
 1. [Package reference]
 
+[abstract factory pattern]: https://en.wikipedia.org/wiki/Abstract_factory_pattern
 [Development]: docs/development.md
 [Errors]: docs/errors.md
 [Examples]: docs/examples.md
@@ -74,4 +75,3 @@ Other implementations of the [sz-sdk-go] interface include:
 [Senzing]: https://senzing.com/
 [sz-sdk-go-core]: https://github.com/senzing-garage/sz-sdk-go-core
 [sz-sdk-go-grpc]: https://github.com/senzing-garage/sz-sdk-go-grpc
-[sz-sdk-go]: https://github.com/senzing-garage/sz-sdk-go
