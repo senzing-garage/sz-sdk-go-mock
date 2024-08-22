@@ -38,7 +38,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Product object.
+The Destroy method will destroy and perform cleanup for the Senzing SzProduct object.
 It should be called after all other calls are complete.
 
 Input
@@ -140,7 +140,7 @@ Input
   - ctx: A context to control lifecycle.
   - instanceName: A name for the auditing node, to help identify it within system logs.
   - settings: A JSON string containing configuration parameters.
-  - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
+  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *Szproduct) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
 	var err error

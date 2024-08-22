@@ -72,7 +72,7 @@ func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition s
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2ConfigMgr object.
+The Destroy method will destroy and perform cleanup for the Senzing SzConfigMgr object.
 It should be called after all other calls are complete.
 
 Input
@@ -249,14 +249,14 @@ func (client *Szconfigmanager) GetObserverOrigin(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing G2ConfigMgr object.
+The Initialize method initializes the Senzing SzConfigMgr object.
 It must be called prior to any other calls.
 
 Input
   - ctx: A context to control lifecycle.
   - instanceName: A name for the auditing node, to help identify it within system logs.
   - settings: A JSON string containing configuration parameters.
-  - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
+  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *Szconfigmanager) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
 	var err error

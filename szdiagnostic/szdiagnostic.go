@@ -68,7 +68,7 @@ func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secon
 }
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing G2Diagnostic object.
+The Destroy method will destroy and perform cleanup for the Senzing SzDiagnostic object.
 It should be called after all other calls are complete.
 
 Input
@@ -151,7 +151,7 @@ func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (st
 /*
 The PurgeRepository method removes every record in the Senzing repository.
 Before calling purgeRepository() all other instances of the Senzing API
-(whether in custom code, REST API, stream-loader, redoer, G2Loader, etc)
+(whether in custom code, REST API, stream-loader, redoer, etc)
 MUST be destroyed or shutdown.
 Input
   - ctx: A context to control lifecycle.
@@ -173,7 +173,7 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 }
 
 /*
-The Reinitialize method re-initializes the Senzing G2Diagnostic object.
+The Reinitialize method re-initializes the Senzing SzDiagnostic object.
 
 Input
   - ctx: A context to control lifecycle.
@@ -224,7 +224,7 @@ Input
   - instanceName: A name for the auditing node, to help identify it within system logs.
   - settings: A JSON string containing configuration parameters.
   - configID: The configuration ID used for the initialization.  0 for current default configuration.
-  - verboseLogging: A flag to enable deeper logging of the G2 processing. 0 for no Senzing logging; 1 for logging.
+  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
 */
 func (client *Szdiagnostic) Initialize(ctx context.Context, instanceName string, settings string, configID int64, verboseLogging int64) error {
 	var err error

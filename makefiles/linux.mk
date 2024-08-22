@@ -12,9 +12,13 @@
 .PHONY: clean-osarch-specific
 clean-osarch-specific:
 	@rm -f  $(GOPATH)/bin/$(PROGRAM_NAME) || true
+	@rm -f  $(MAKEFILE_DIRECTORY)/.coverage || true
 	@rm -f  $(MAKEFILE_DIRECTORY)/coverage.html || true
 	@rm -f  $(MAKEFILE_DIRECTORY)/coverage.out || true
+	@rm -f  $(MAKEFILE_DIRECTORY)/cover.out || true
 	@rm -fr $(TARGET_DIRECTORY) || true
+	@rm -fr /tmp/sqlite || true
+	@pkill godoc || true
 
 
 .PHONY: coverage-osarch-specific
@@ -25,9 +29,15 @@ coverage-osarch-specific:
 	@xdg-open $(MAKEFILE_DIRECTORY)/coverage.html
 
 
+.PHONY: documentation-osarch-specific
+documentation-osarch-specific:
+	@godoc &
+	@xdg-open http://localhost:6060
+
+
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
-	@echo "Hello World, from linux."
+	$(info Hello World, from linux.)
 
 
 .PHONY: run-osarch-specific
@@ -37,13 +47,12 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@echo "No setup required."
+	$(info No setup required.)
 
 
 .PHONY: test-osarch-specific
 test-osarch-specific:
 	@go test -json -v -p 1 ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
-
 
 # -----------------------------------------------------------------------------
 # Makefile targets supported only by this platform.
@@ -51,4 +60,4 @@ test-osarch-specific:
 
 .PHONY: only-linux
 only-linux:
-	@echo "Only linux has this Makefile target."
+	$(info Only linux has this Makefile target.)
