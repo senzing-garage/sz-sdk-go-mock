@@ -29,7 +29,6 @@ coverage-osarch-specific:
 	@open file://$(MAKEFILE_DIRECTORY)/coverage.html
 
 
-
 .PHONY: documentation-osarch-specific
 documentation-osarch-specific:
 	@godoc &

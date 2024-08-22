@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   go-test-darwin:
-    name: "go test with OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
+    name: "Go test with OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

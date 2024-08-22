@@ -4,5 +4,9 @@ package szconfigmanager
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identfier of the szconfigmanager package found messages having the format "senzing-6032xxxx".
-const ComponentID = 6032
+/*
+ComponentID is the identifier of the szconfigmanager package.
+szconfigmanager package messages will have the format "SZSDK60302eeee" where "eeee" is the error identifier.
+
+ExceptionCodeTemplate is a template for the error code returned by the Senzing C binary.
+*/const ComponentID = 6032

@@ -42,7 +42,7 @@ Other implementations of the [sz-sdk-go] interface include:
 
 ## Use
 
-(TODO:)
+See [main.go] for an example of use.
 
 ## References
 
@@ -70,6 +70,7 @@ Other implementations of the [sz-sdk-go] interface include:
 [golangci-lint.yaml]: https://github.com/senzing-garage/sz-sdk-go-mock/actions/workflows/golangci-lint.yaml
 [License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
 [License]: https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/LICENSE
+[main.go]: main.go
 [Package reference]: https://pkg.go.dev/github.com/senzing-garage/sz-sdk-go-mock
 [Senzing Garage]: https://github.com/senzing-garage
 [Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
