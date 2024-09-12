@@ -12,21 +12,32 @@ import (
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+const (
+	defaultTruncation = 76
+	instanceName      = "SzConfigManager Test"
+	observerOrigin    = "SzConfigManager observer"
+	printResults      = false
+	verboseLogging    = senzing.SzNoLogging
+)
+
+// Bad parameters
 
 const (
 	badConfigDefinition       = "\n\t"
 	badConfigID               = int64(0)
 	badCurrentDefaultConfigID = int64(0)
 	badLogLevelName           = "BadLogLevelName"
-	defaultTruncation         = 76
-	instanceName              = "SzConfigManager Test"
-	observerOrigin            = "SzConfigManager observer"
-	printResults              = false
-	verboseLogging            = senzing.SzNoLogging
+	badNewDefaultConfigID     = int64(0)
+)
+
+// Nil/empty parameters
+
+var (
+	nilConfigComment string
 )
 
 var (
@@ -71,8 +82,23 @@ func TestSzconfigmanager_AddConfig_badConfigDefinition(test *testing.T) {
 	require.NoError(test, err) // TODO: TestSzconfigmanager_AddConfig_badConfigDefinition should fail.
 }
 
-// TODO: Implement TestSzconfigmanager_AddConfig_error
-// func TestSzconfigmanager_AddConfig_error(test *testing.T) {}
+func TestSzconfigmanager_AddConfig_nilConfigComment(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	now := time.Now()
+	szConfig, err := getSzConfig(ctx)
+	require.NoError(test, err)
+	configHandle, err := szConfig.CreateConfig(ctx)
+	require.NoError(test, err)
+	dataSourceCode := "GO_TEST_" + strconv.FormatInt(now.Unix(), baseTen)
+	_, err = szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
+	require.NoError(test, err)
+	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
+	require.NoError(test, err)
+	actual, err := szConfigManager.AddConfig(ctx, configDefinition, nilConfigComment)
+	require.NoError(test, err)
+	printActual(test, actual)
+}
 
 func TestSzconfigmanager_GetConfig(test *testing.T) {
 	ctx := context.TODO()
@@ -95,9 +121,6 @@ func TestSzconfigmanager_GetConfigs(test *testing.T) {
 	printActual(test, actual)
 }
 
-// TODO: Implement TestSzconfigmanager_GetConfigs_error
-// func TestSzconfigmanager_GetConfigs_error(test *testing.T) {}
-
 func TestSzconfigmanager_GetDefaultConfigID(test *testing.T) {
 	ctx := context.TODO()
 	szConfigManager := getTestObject(ctx, test)
@@ -105,9 +128,6 @@ func TestSzconfigmanager_GetDefaultConfigID(test *testing.T) {
 	require.NoError(test, err)
 	printActual(test, actual)
 }
-
-// TODO: Implement TestSzconfigmanager_GetDefaultConfigID_error
-// func TestSzconfigmanager_GetDefaultConfigID_error(test *testing.T) {}
 
 func TestSzconfigmanager_ReplaceDefaultConfigID(test *testing.T) {
 	ctx := context.TODO()
