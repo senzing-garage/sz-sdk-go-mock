@@ -16,14 +16,25 @@ import (
 )
 
 const (
-	badFeatureID      = int64(-1)
-	badLogLevelName   = "BadLogLevelName"
-	badSecondsToRun   = -1
 	defaultTruncation = 76
 	instanceName      = "SzDiagnostic Test"
 	observerOrigin    = "SzDiagnostic observer"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
+)
+
+// Bad parameters
+
+const (
+	badFeatureID    = int64(-1)
+	badLogLevelName = "BadLogLevelName"
+	badSecondsToRun = -1
+)
+
+// Nil/empty parameters
+
+var (
+	nilSecondsToRun int
 )
 
 var (
@@ -53,12 +64,17 @@ func TestSzdiagnostic_CheckDatastorePerformance_badSecondsToRun(test *testing.T)
 	ctx := context.TODO()
 	szDiagnostic := getTestObject(ctx, test)
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, badSecondsToRun)
-	require.NoError(test, err) // TODO: TestSzdiagnostic_CheckDatastorePerformance_badSecondsToRun should fail.
+	require.NoError(test, err)
 	printActual(test, actual)
 }
 
-// TODO: Implement TestSzdiagnostic_CheckDatastorePerformance_error
-// func TestSzdiagnostic_CheckDatastorePerformance_error(test *testing.T) {}
+func TestSzdiagnostic_CheckDatastorePerformance_nilSecondsToRun(test *testing.T) {
+	ctx := context.TODO()
+	szDiagnostic := getTestObject(ctx, test)
+	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, nilSecondsToRun)
+	require.NoError(test, err)
+	printActual(test, actual)
+}
 
 func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 	ctx := context.TODO()
@@ -67,9 +83,6 @@ func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 	require.NoError(test, err)
 	printActual(test, actual)
 }
-
-// TODO: Implement TestSzdiagnostic_GetDatastoreInfo_error
-// func TestSzdiagnostic_GetDatastoreInfo_error(test *testing.T) {}
 
 func TestSzdiagnostic_GetFeature(test *testing.T) {
 	ctx := context.TODO()
@@ -88,9 +101,6 @@ func TestSzdiagnostic_GetFeature(test *testing.T) {
 
 // PurgeRepository is tested in szdiagnostic_examples_test.go
 // func TestSzdiagnostic_PurgeRepository(test *testing.T) {}
-
-// TODO: Implement TestSzdiagnostic_PurgeRepository_error
-// func TestSzdiagnostic_PurgeRepository_error(test *testing.T) {}
 
 // ----------------------------------------------------------------------------
 // Logging and observing
@@ -147,9 +157,6 @@ func TestSzdiagnostic_Initialize(test *testing.T) {
 	err = szDiagnostic.Initialize(ctx, instanceName, settings, configID, verboseLogging)
 	require.NoError(test, err)
 }
-
-// TODO: Implement TestSzdiagnostic_Initialize_error
-// func TestSzdiagnostic_Initialize_error(test *testing.T) {}
 
 func TestSzdiagnostic_Initialize_withConfigId(test *testing.T) {
 	ctx := context.TODO()

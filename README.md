@@ -46,12 +46,14 @@ See [main.go] for an example of use.
 
 ## References
 
+1. [API documentation]
 1. [Development]
 1. [Errors]
 1. [Examples]
 1. [Package reference]
 
 [abstract factory pattern]: https://en.wikipedia.org/wiki/Abstract_factory_pattern
+[API documentation]: https://pkg.go.dev/github.com/senzing-garage/sz-sdk-go-mock
 [Development]: docs/development.md
 [Errors]: docs/errors.md
 [Examples]: docs/examples.md

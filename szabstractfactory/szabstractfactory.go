@@ -24,7 +24,7 @@ type Szabstractfactory struct {
 // ----------------------------------------------------------------------------
 
 /*
-The CreateSzConfig method returns an SzConfig object
+Method CreateSzConfig returns an SzConfig object
 implemented to use the Senzing native C binary, libSz.so.
 
 Input
@@ -40,7 +40,7 @@ func (factory *Szabstractfactory) CreateSzConfig(ctx context.Context) (senzing.S
 }
 
 /*
-The CreateSzConfigManager method returns an SzConfigManager object
+Method CreateSzConfigManager returns an SzConfigManager object
 implemented to use the Senzing native C binary, libSz.so.
 
 Input
@@ -56,7 +56,7 @@ func (factory *Szabstractfactory) CreateSzConfigManager(ctx context.Context) (se
 }
 
 /*
-The CreateSzDiagnostic method returns an SzDiagnostic object
+Method CreateSzDiagnostic returns an SzDiagnostic object
 implemented to use the Senzing native C binary, libSz.so.
 
 Input
@@ -72,7 +72,7 @@ func (factory *Szabstractfactory) CreateSzDiagnostic(ctx context.Context) (senzi
 }
 
 /*
-The CreateSzEngine method returns an SzEngine object
+Method CreateSzEngine returns an SzEngine object
 implemented to use the Senzing native C binary, libSz.so.
 
 Input
@@ -88,7 +88,7 @@ func (factory *Szabstractfactory) CreateSzEngine(ctx context.Context) (senzing.S
 }
 
 /*
-The CreateSzProduct method returns an SzProduct object
+Method CreateSzProduct returns an SzProduct object
 implemented to use the Senzing native C binary, libSz.so.
 
 Input

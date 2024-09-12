@@ -38,7 +38,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-The Destroy method will destroy and perform cleanup for the Senzing SzProduct object.
+Method Destroy will destroy and perform cleanup for the Senzing SzProduct object.
 It should be called after all other calls are complete.
 
 Input
@@ -61,7 +61,7 @@ func (client *Szproduct) Destroy(ctx context.Context) error {
 }
 
 /*
-The GetLicense method retrieves information about the license used by the Senzing API.
+Method GetLicense retrieves information about the license used by the Senzing API.
 
 Input
   - ctx: A context to control lifecycle.
@@ -87,7 +87,7 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 }
 
 /*
-The GetVersion method returns the Senzing API version information.
+Method GetVersion returns the Senzing API version information.
 
 Input
   - ctx: A context to control lifecycle.
@@ -117,7 +117,7 @@ func (client *Szproduct) GetVersion(ctx context.Context) (string, error) {
 // ----------------------------------------------------------------------------
 
 /*
-The GetObserverOrigin method returns the "origin" value of past Observer messages.
+Method GetObserverOrigin returns the "origin" value of past Observer messages.
 
 Input
   - ctx: A context to control lifecycle.
@@ -131,7 +131,7 @@ func (client *Szproduct) GetObserverOrigin(ctx context.Context) string {
 }
 
 /*
-The Initialize method initializes the Senzing SzProduct object.
+Method Initialize initializes the Senzing SzProduct object.
 It must be called prior to any other calls.
 
 Input
@@ -161,7 +161,7 @@ func (client *Szproduct) Initialize(ctx context.Context, instanceName string, se
 }
 
 /*
-The RegisterObserver method adds the observer to the list of observers notified.
+Method RegisterObserver adds the observer to the list of observers notified.
 
 Input
   - ctx: A context to control lifecycle.
@@ -190,7 +190,7 @@ func (client *Szproduct) RegisterObserver(ctx context.Context, observer observer
 }
 
 /*
-The SetLogLevel method sets the level of logging.
+Method SetLogLevel sets the level of logging.
 
 Input
   - ctx: A context to control lifecycle.
@@ -220,7 +220,7 @@ func (client *Szproduct) SetLogLevel(ctx context.Context, logLevelName string) e
 }
 
 /*
-The SetObserverOrigin method sets the "origin" value in future Observer messages.
+Method SetObserverOrigin sets the "origin" value in future Observer messages.
 
 Input
   - ctx: A context to control lifecycle.
@@ -232,7 +232,7 @@ func (client *Szproduct) SetObserverOrigin(ctx context.Context, origin string) {
 }
 
 /*
-The UnregisterObserver method removes the observer to the list of observers notified.
+Method UnregisterObserver removes the observer to the list of observers notified.
 
 Input
   - ctx: A context to control lifecycle.
