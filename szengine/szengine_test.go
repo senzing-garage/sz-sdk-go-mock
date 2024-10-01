@@ -906,6 +906,21 @@ func TestSzengine_HowEntityByEntityID(test *testing.T) {
 	printActual(test, actual)
 }
 
+func TestSzengine_PreprocessRecord(test *testing.T) {
+	ctx := context.TODO()
+	szEngine := getTestObject(ctx, test)
+	flags := senzing.SzWithoutInfo
+	records := []record.Record{
+		truthset.CustomerRecords["1001"],
+		truthset.CustomerRecords["1002"],
+	}
+	for _, record := range records {
+		actual, err := szEngine.PreprocessRecord(ctx, record.JSON, flags)
+		require.NoError(test, err)
+		printActual(test, actual)
+	}
+}
+
 func TestSzengine_PrimeEngine(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
@@ -1426,6 +1441,7 @@ func getSzEngine(ctx context.Context) (*Szengine, error) {
 			GetStatsResult:                          `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`,
 			GetVirtualEntityByRecordIDResult:        `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
 			HowEntityByEntityIDResult:               `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
+			PreprocessRecordResult:                  "{}",
 			ProcessRedoRecordResult:                 ``,
 			ReevaluateEntityResult:                  "{}",
 			ReevaluateRecordResult:                  "{}",
