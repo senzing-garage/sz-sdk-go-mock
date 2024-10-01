@@ -45,6 +45,7 @@ type Szengine struct {
 	logger                                  logging.Logging
 	observerOrigin                          string
 	observers                               subject.Subject
+	PreprocessRecordResult                  string
 	ProcessRedoRecordResult                 string
 	ReevaluateEntityResult                  string
 	ReevaluateRecordResult                  string
@@ -856,6 +857,36 @@ func (client *Szengine) HowEntityByEntityID(ctx context.Context, entityID int64,
 				"entityID": formatEntityID(entityID),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8024, err, details)
+		}()
+	}
+	return result, err
+}
+
+/*
+Method PreprocessRecord tests adding a record into the Senzing datastore.
+
+Input
+  - ctx: A context to control lifecycle.
+  - recordDefinition: A JSON document containing the record to be tested against the Senzing datastore.
+  - flags: Flags used to control information returned.
+
+Output
+  - A JSON document containing metadata as specified by the flags.
+*/
+func (client *Szengine) PreprocessRecord(ctx context.Context, recordDefinition string, flags int64) (string, error) {
+	var err error
+	result := client.PreprocessRecordResult
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(77, recordDefinition, flags)
+		defer func() {
+			client.traceExit(78, recordDefinition, flags, result, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8035, err, details)
 		}()
 	}
 	return result, err
