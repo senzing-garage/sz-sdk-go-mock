@@ -69,7 +69,6 @@ var (
 )
 
 var (
-	defaultConfigID   int64
 	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
@@ -1296,32 +1295,6 @@ func TestSzengine_AsInterface(test *testing.T) {
 	assert.Equal(test, expected, actual)
 }
 
-func TestSzengine_Initialize(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	configID := senzing.SzInitializeWithDefaultConfiguration
-	err = szEngine.Initialize(ctx, instanceName, settings, configID, verboseLogging)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzengine_Initialize_error
-// func TestSzengine_Initialize_error(test *testing.T) {}
-
-func TestSzengine_Initialize_withConfigID(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	configID := getDefaultConfigID()
-	err = szEngine.Initialize(ctx, instanceName, settings, configID, verboseLogging)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzengine_Initialize_withConfigID_error
-// func TestSzengine_Initialize_withConfigID_error(test *testing.T) {}
-
 func TestSzengine_Reinitialize(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
@@ -1330,27 +1303,6 @@ func TestSzengine_Reinitialize(test *testing.T) {
 	err = szEngine.Reinitialize(ctx, configID)
 	require.NoError(test, err)
 	printActual(test, configID)
-}
-
-// TODO: Implement TestSzengine_Reinitialize_badConfigID
-// func TestSzengine_Reinitialize_badConfigID(test *testing.T) {}
-
-func TestSzengine_Destroy(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	err := szEngine.Destroy(ctx)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzengine_Destroy_error
-// func TestSzengine_Destroy_error(test *testing.T) {}
-
-func TestSzengine_Destroy_withObserver(test *testing.T) {
-	ctx := context.TODO()
-	szEngineSingleton = nil
-	szEngine := getTestObject(ctx, test)
-	err := szEngine.Destroy(ctx)
-	require.NoError(test, err)
 }
 
 // ----------------------------------------------------------------------------
@@ -1369,10 +1321,6 @@ func deleteRecords(ctx context.Context, records []record.Record) error {
 	_ = ctx
 	_ = records
 	return err
-}
-
-func getDefaultConfigID() int64 {
-	return defaultConfigID
 }
 
 func getEntityID(record record.Record) (int64, error) {
@@ -1408,17 +1356,9 @@ func getEntityIDStringForRecord(datasource string, id string) (string, error) {
 	return strconv.FormatInt(entityID, baseTen), err
 }
 
-func getSettings() (string, error) {
-	return "{}", nil
-}
-
 func getSzEngine(ctx context.Context) (*Szengine, error) {
 	var err error
 	if szEngineSingleton == nil {
-		settings, err := getSettings()
-		if err != nil {
-			return szEngineSingleton, fmt.Errorf("getSettings() Error: %w", err)
-		}
 		szEngineSingleton = &Szengine{
 			AddRecordResult:                         "{}",
 			CountRedoRecordsResult:                  int64(0),
@@ -1463,10 +1403,6 @@ func getSzEngine(ctx context.Context) (*Szengine, error) {
 			if err != nil {
 				return szEngineSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
-		}
-		err = szEngineSingleton.Initialize(ctx, instanceName, settings, getDefaultConfigID(), verboseLogging)
-		if err != nil {
-			return szEngineSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szEngineSingleton, err

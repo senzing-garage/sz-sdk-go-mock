@@ -73,11 +73,9 @@ func main() {
 
 	szConfig, err := getSzConfig(ctx)
 	failOnError(5002, err)
-	defer func() { handleError(szConfig.Destroy(ctx)) }()
 
 	szConfigManager, err := getSzConfigManager(ctx)
 	failOnError(5003, err)
-	defer func() { handleError(szConfigManager.Destroy(ctx)) }()
 
 	// Persist the Senzing configuration to the Senzing repository.
 
@@ -88,11 +86,9 @@ func main() {
 
 	szEngine, err := getSzEngine(ctx)
 	failOnError(5005, err)
-	defer func() { handleError(szEngine.Destroy(ctx)) }()
 
 	szProduct, err := getSzProduct(ctx)
 	failOnError(5006, err)
-	defer func() { handleError(szProduct.Destroy(ctx)) }()
 
 	// Demonstrate tests.
 
@@ -189,44 +185,29 @@ func getLogger(ctx context.Context) (logging.Logging, error) {
 }
 
 func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
+	var err error
+	_ = ctx
 	result := szconfig.Szconfig{}
-	instanceName := "Test name"
-	settings := "{}"
-	verboseLogging := senzing.SzNoLogging
-	err := result.Initialize(ctx, instanceName, settings, verboseLogging)
 	return &result, err
 }
 
 func getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
+	var err error
+	_ = ctx
 	result := szconfigmanager.Szconfigmanager{}
-	instanceName := "Test name"
-	settings := "{}"
-	verboseLogging := senzing.SzNoLogging
-	err := result.Initialize(ctx, instanceName, settings, verboseLogging)
 	return &result, err
 }
 
 func getSzEngine(ctx context.Context) (senzing.SzEngine, error) {
+	var err error
+	_ = ctx
 	result := szengine.Szengine{}
-	instanceName := "Test name"
-	settings := "{}"
-	verboseLogging := senzing.SzNoLogging
-	configID := senzing.SzInitializeWithDefaultConfiguration
-	err := result.Initialize(ctx, instanceName, settings, configID, verboseLogging)
 	return &result, err
 }
 
 func getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
+	var err error
+	_ = ctx
 	result := szproduct.Szproduct{}
-	instanceName := "Test name"
-	settings := "{}"
-	verboseLogging := senzing.SzNoLogging
-	err := result.Initialize(ctx, instanceName, settings, verboseLogging)
 	return &result, err
-}
-
-func handleError(err error) {
-	if err != nil {
-		panic(err)
-	}
 }

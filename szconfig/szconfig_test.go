@@ -251,67 +251,13 @@ func TestSzconfig_AsInterface(test *testing.T) {
 	require.NoError(test, err)
 }
 
-func TestSzconfig_Initialize(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	err = szConfig.Initialize(ctx, instanceName, settings, verboseLogging)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_Initialize_badSettings(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	err := szConfig.Initialize(ctx, instanceName, badSettings, verboseLogging)
-	assert.NoError(test, err)
-}
-
-// TODO: Implement TestSzconfig_Initialize_error
-// func TestSzconfig_Initialize_error(test *testing.T) {}
-
-func TestSzconfig_Initialize_again(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	err = szConfig.Initialize(ctx, instanceName, settings, verboseLogging)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_Destroy(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	err := szConfig.Destroy(ctx)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzconfig_Destroy_error
-// func TestSzconfig_Destroy_error(test *testing.T) {}
-
-func TestSzconfig_Destroy_withObserver(test *testing.T) {
-	ctx := context.TODO()
-	szConfigSingleton = nil
-	szConfig := getTestObject(ctx, test)
-	err := szConfig.Destroy(ctx)
-	require.NoError(test, err)
-}
-
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSettings() (string, error) {
-	return "{}", nil
-}
-
 func getSzConfig(ctx context.Context) (*Szconfig, error) {
 	var err error
 	if szConfigSingleton == nil {
-		settings, err := getSettings()
-		if err != nil {
-			return szConfigSingleton, fmt.Errorf("getSettings() Error: %w", err)
-		}
 		szConfigSingleton = &Szconfig{
 			AddDataSourceResult:  `{"DSRC_ID":1001}`,
 			CreateConfigResult:   1,
@@ -333,10 +279,6 @@ func getSzConfig(ctx context.Context) (*Szconfig, error) {
 			if err != nil {
 				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
-		}
-		err = szConfigSingleton.Initialize(ctx, instanceName, settings, verboseLogging)
-		if err != nil {
-			return szConfigSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szConfigSingleton, err

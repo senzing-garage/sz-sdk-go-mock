@@ -6,7 +6,6 @@ package szproduct
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/senzing-garage/go-logging/logging"
@@ -36,29 +35,6 @@ const (
 // ----------------------------------------------------------------------------
 // sz-sdk-go.SzProduct interface methods
 // ----------------------------------------------------------------------------
-
-/*
-Method Destroy will destroy and perform cleanup for the Senzing SzProduct object.
-It should be called after all other calls are complete.
-
-Input
-  - ctx: A context to control lifecycle.
-*/
-func (client *Szproduct) Destroy(ctx context.Context) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(3)
-		defer func() { client.traceExit(4, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
-		}()
-	}
-	return err
-}
 
 /*
 Method GetLicense retrieves information about the license used by the Senzing API.
@@ -128,36 +104,6 @@ Output
 func (client *Szproduct) GetObserverOrigin(ctx context.Context) string {
 	_ = ctx
 	return client.observerOrigin
-}
-
-/*
-Method Initialize initializes the Senzing SzProduct object.
-It must be called prior to any other calls.
-
-Input
-  - ctx: A context to control lifecycle.
-  - instanceName: A name for the auditing node, to help identify it within system logs.
-  - settings: A JSON string containing configuration parameters.
-  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
-*/
-func (client *Szproduct) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(13, instanceName, settings, verboseLogging)
-		defer func() { client.traceExit(14, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"instanceName":   instanceName,
-				"settings":       settings,
-				"verboseLogging": strconv.FormatInt(verboseLogging, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8002, err, details)
-		}()
-	}
-	return err
 }
 
 /*
