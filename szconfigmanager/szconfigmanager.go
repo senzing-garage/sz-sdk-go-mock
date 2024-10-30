@@ -73,29 +73,6 @@ func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition s
 }
 
 /*
-Method Destroy will destroy and perform cleanup for the Senzing SzConfigMgr object.
-It should be called after all other calls are complete.
-
-Input
-  - ctx: A context to control lifecycle.
-*/
-func (client *Szconfigmanager) Destroy(ctx context.Context) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(5)
-		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8002, err, details)
-		}()
-	}
-	return err
-}
-
-/*
 Method GetConfig retrieves a specific Senzing configuration JSON document from the Senzing datastore.
 
 Input
@@ -255,36 +232,6 @@ Output
 func (client *Szconfigmanager) GetObserverOrigin(ctx context.Context) string {
 	_ = ctx
 	return client.observerOrigin
-}
-
-/*
-Method Initialize initializes the Senzing SzConfigMgr object.
-It must be called prior to any other calls.
-
-Input
-  - ctx: A context to control lifecycle.
-  - instanceName: A name for the auditing node, to help identify it within system logs.
-  - settings: A JSON string containing configuration parameters.
-  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
-*/
-func (client *Szconfigmanager) Initialize(ctx context.Context, instanceName string, settings string, verboseLogging int64) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(17, instanceName, settings, verboseLogging)
-		defer func() { client.traceExit(18, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"instanceName":   instanceName,
-				"settings":       settings,
-				"verboseLogging": strconv.FormatInt(verboseLogging, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8006, err, details)
-		}()
-	}
-	return err
 }
 
 /*

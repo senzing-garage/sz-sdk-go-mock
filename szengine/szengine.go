@@ -194,29 +194,6 @@ func (client *Szengine) DeleteRecord(ctx context.Context, dataSourceCode string,
 }
 
 /*
-Method Destroy will destroy and perform cleanup for the Senzing Sz object.
-It should be called after all other calls are complete.
-
-Input
-  - ctx: A context to control lifecycle.
-*/
-func (client *Szengine) Destroy(ctx context.Context) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(11)
-		defer func() { client.traceExit(12, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8005, err, details)
-		}()
-	}
-	return err
-}
-
-/*
 Method ExportCsvEntityReport initializes a cursor over a CSV document of exported entities.
 It is part of the ExportCsvEntityReport, [Szengine.FetchNext], [Szengine.CloseExport] lifecycle of a list of entities to export.
 The first exported line is the CSV header.
@@ -1188,40 +1165,6 @@ Output
 func (client *Szengine) GetObserverOrigin(ctx context.Context) string {
 	_ = ctx
 	return client.observerOrigin
-}
-
-/*
-Method Initialize initializes the SzEngine object.
-It must be called prior to any other calls.
-
-Input
-  - ctx: A context to control lifecycle.
-  - instanceName: A name for the auditing node, to help identify it within system logs.
-  - settings: A JSON string containing configuration parameters.
-  - configID: The configuration ID used for the initialization.  0 for current default configuration.
-  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
-*/
-func (client *Szengine) Initialize(ctx context.Context, instanceName string, settings string, configID int64, verboseLogging int64) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(55, instanceName, settings, configID, verboseLogging)
-		defer func() {
-			client.traceExit(56, instanceName, settings, configID, verboseLogging, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configID":       strconv.FormatInt(configID, baseTen),
-				"instanceName":   instanceName,
-				"settings":       settings,
-				"verboseLogging": strconv.FormatInt(verboseLogging, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8025, err, details)
-		}()
-	}
-	return err
 }
 
 /*

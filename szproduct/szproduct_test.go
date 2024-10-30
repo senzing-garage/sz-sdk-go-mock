@@ -101,51 +101,13 @@ func TestSzproduct_AsInterface(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzproduct_Initialize(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	err = szProduct.Initialize(ctx, instanceName, settings, verboseLogging)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzengine_Initialize_error
-// func TestSzproduct_Initialize_error(test *testing.T) {}
-
-func TestSzproduct_Destroy(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
-	err := szProduct.Destroy(ctx)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzengine_Destroy_error
-// func TestSzproduct_Destroy_error(test *testing.T) {}
-
-func TestSzproduct_Destroy_withObserver(test *testing.T) {
-	ctx := context.TODO()
-	szProductSingleton = nil
-	szProduct := getTestObject(ctx, test)
-	err := szProduct.Destroy(ctx)
-	require.NoError(test, err)
-}
-
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSettings() (string, error) {
-	return "{}", nil
-}
-
 func getSzProduct(ctx context.Context) (*Szproduct, error) {
 	var err error
 	if szProductSingleton == nil {
-		settings, err := getSettings()
-		if err != nil {
-			return szProductSingleton, fmt.Errorf("getSettings() Error: %w", err)
-		}
 		szProductSingleton = &Szproduct{
 			LicenseResult: `{"customer":"Senzing Public Test License","contract":"Senzing Public Test - 50K records test","issueDate":"2023-11-02","licenseType":"EVAL (Solely for non-productive use)","licenseLevel":"STANDARD","billing":"YEARLY","expireDate":"2024-11-02","recordLimit":50000}`,
 			VersionResult: `{"PRODUCT_NAME":"Senzing API","VERSION":"3.5.0","BUILD_VERSION":"3.5.0.23041","BUILD_DATE":"2023-02-09","BUILD_NUMBER":"2023_02_09__23_01","COMPATIBILITY_VERSION":{"CONFIG_VERSION":"10"},"SCHEMA_VERSION":{"ENGINE_SCHEMA_VERSION":"3.5","MINIMUM_REQUIRED_SCHEMA_VERSION":"3.0","MAXIMUM_REQUIRED_SCHEMA_VERSION":"3.99"}}`,
@@ -164,10 +126,6 @@ func getSzProduct(ctx context.Context) (*Szproduct, error) {
 			if err != nil {
 				return szProductSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
-		}
-		err = szProductSingleton.Initialize(ctx, instanceName, settings, verboseLogging)
-		if err != nil {
-			return szProductSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szProductSingleton, err

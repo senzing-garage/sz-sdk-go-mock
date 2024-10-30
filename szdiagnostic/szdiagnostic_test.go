@@ -38,7 +38,6 @@ var (
 )
 
 var (
-	defaultConfigID   int64
 	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
@@ -148,58 +147,6 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzdiagnostic_Initialize(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	configID := senzing.SzInitializeWithDefaultConfiguration
-	err = szDiagnostic.Initialize(ctx, instanceName, settings, configID, verboseLogging)
-	require.NoError(test, err)
-}
-
-func TestSzdiagnostic_Initialize_withConfigId(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	settings, err := getSettings()
-	require.NoError(test, err)
-	configID := getDefaultConfigID()
-	err = szDiagnostic.Initialize(ctx, instanceName, settings, configID, verboseLogging)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzdiagnostic_Initialize_withConfigId_badConfigID
-// func TestSzdiagnostic_Initialize_withConfigId_badConfigID(test *testing.T) {}
-
-func TestSzdiagnostic_Reinitialize(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	configID := getDefaultConfigID()
-	err := szDiagnostic.Reinitialize(ctx, configID)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzdiagnostic_Reinitialize_error
-// func TestSzdiagnostic_Reinitialize_error(test *testing.T) {}
-
-func TestSzdiagnostic_Destroy(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	err := szDiagnostic.Destroy(ctx)
-	require.NoError(test, err)
-}
-
-func TestSzdiagnostic_Destroy_withObserver(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnosticSingleton = nil
-	szDiagnostic := getTestObject(ctx, test)
-	err := szDiagnostic.Destroy(ctx)
-	require.NoError(test, err)
-}
-
-// TODO: Implement TestSzdiagnostic_Destroy_error
-// func TestSzdiagnostic_Destroy_error(test *testing.T) {}
-
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
@@ -218,21 +165,9 @@ func deleteRecords(ctx context.Context, records []record.Record) error {
 	return err
 }
 
-func getDefaultConfigID() int64 {
-	return defaultConfigID
-}
-
-func getSettings() (string, error) {
-	return "{}", nil
-}
-
 func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 	var err error
 	if szDiagnosticSingleton == nil {
-		settings, err := getSettings()
-		if err != nil {
-			return szDiagnosticSingleton, fmt.Errorf("getSettings() Error: %w", err)
-		}
 		szDiagnosticSingleton = &Szdiagnostic{
 			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
 			GetFeatureResult:                `{}`,
@@ -252,10 +187,6 @@ func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 			if err != nil {
 				return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
 			}
-		}
-		err = szDiagnosticSingleton.Initialize(ctx, instanceName, settings, getDefaultConfigID(), verboseLogging)
-		if err != nil {
-			return szDiagnosticSingleton, fmt.Errorf("Initialize() Error: %w", err)
 		}
 	}
 	return szDiagnosticSingleton, err

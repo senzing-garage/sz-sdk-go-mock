@@ -69,29 +69,6 @@ func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secon
 }
 
 /*
-Method Destroy will destroy and perform cleanup for the Senzing SzDiagnostic object.
-It should be called after all other calls are complete.
-
-Input
-  - ctx: A context to control lifecycle.
-*/
-func (client *Szdiagnostic) Destroy(ctx context.Context) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(5)
-		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8002, err, details)
-		}()
-	}
-	return err
-}
-
-/*
 Method GetDatastoreInfo returns information about the Senzing datastore.
 
 Input
@@ -173,31 +150,6 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 	return err
 }
 
-/*
-Method Reinitialize re-initializes the Senzing SzDiagnostic object.
-
-Input
-  - ctx: A context to control lifecycle.
-  - configID: The Senzing configuration JSON document identifier used for the initialization.
-*/
-func (client *Szdiagnostic) Reinitialize(ctx context.Context, configID int64) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(19, configID)
-		defer func() { client.traceExit(20, configID, err, time.Since(entryTime)) }()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configID": strconv.FormatInt(configID, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8008, err, details)
-		}()
-	}
-	return err
-}
-
 // ----------------------------------------------------------------------------
 // Public non-interface methods
 // ----------------------------------------------------------------------------
@@ -214,40 +166,6 @@ Output
 func (client *Szdiagnostic) GetObserverOrigin(ctx context.Context) string {
 	_ = ctx
 	return client.observerOrigin
-}
-
-/*
-Method Initialize initializes the SzDiagnostic object.
-It must be called prior to any other calls.
-
-Input
-  - ctx: A context to control lifecycle.
-  - instanceName: A name for the auditing node, to help identify it within system logs.
-  - settings: A JSON string containing configuration parameters.
-  - configID: The configuration ID used for the initialization.  0 for current default configuration.
-  - verboseLogging: A flag to enable deeper logging of the Sz processing. 0 for no Senzing logging; 1 for logging.
-*/
-func (client *Szdiagnostic) Initialize(ctx context.Context, instanceName string, settings string, configID int64, verboseLogging int64) error {
-	var err error
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(15, instanceName, settings, configID, verboseLogging)
-		defer func() {
-			client.traceExit(16, instanceName, settings, configID, verboseLogging, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configID":       strconv.FormatInt(configID, baseTen),
-				"instanceName":   instanceName,
-				"settings":       settings,
-				"verboseLogging": strconv.FormatInt(verboseLogging, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8005, err, details)
-		}()
-	}
-	return err
 }
 
 /*
