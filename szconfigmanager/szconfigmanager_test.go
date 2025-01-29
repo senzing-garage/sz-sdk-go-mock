@@ -100,6 +100,91 @@ func TestSzconfigmanager_AddConfig_nilConfigComment(test *testing.T) {
 	printActual(test, actual)
 }
 
+func TestSzconfigmanager_CreateNewConfig(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	configComment := fmt.Sprintf("TestSzconfigmanager_CreateNewConfig: %s", timestamp)
+	dataSource1 := "TEST_1"
+	dataSource2 := "TEST_2"
+	dataSource3 := "TEST_3"
+	actual, err := szConfigManager.CreateNewConfig(ctx, 0, configComment, dataSource1, dataSource2, dataSource3)
+	require.NoError(test, err)
+	printActual(test, actual)
+}
+
+func TestSzconfigmanager_CreateNewConfig_Again(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	configComment := fmt.Sprintf("TestSzconfigmanager_CreateNewConfig_Again: %s", timestamp)
+	dataSource1 := "TEST_1"
+	dataSource2 := "TEST_2"
+	dataSource3 := "TEST_3"
+	actual, err := szConfigManager.CreateNewConfig(ctx, 0, configComment, dataSource1, dataSource2, dataSource3)
+	require.NoError(test, err)
+	printActual(test, actual)
+	datasources, err := szConfigManager.GetDataSources(ctx, actual)
+	require.NoError(test, err)
+	printActual(test, datasources)
+	configs, err := szConfigManager.GetConfigs(ctx)
+	require.NoError(test, err)
+	printActual(test, configs)
+}
+
+func TestSzconfigmanager_CreateNewConfig_Multi(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	now := time.Now().UTC()
+	timestamp := now.Format(time.RFC3339)
+	datasourceSuffix := strconv.FormatInt(now.Unix(), baseTen)
+	configComment := fmt.Sprintf("TestSzconfigmanager_CreateNewConfig_Multi: %s", timestamp)
+
+	datasources, err := szConfigManager.GetDataSources(ctx, 0)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	defaultConfigID, err := szConfigManager.GetDefaultConfigID(ctx)
+	require.NoError(test, err)
+	printActual(test, defaultConfigID)
+
+	datasources, err = szConfigManager.GetDataSources(ctx, defaultConfigID)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	newConfig1, err := szConfigManager.CreateNewConfig(ctx, 0, configComment, "THIS"+datasourceSuffix, "WAS"+datasourceSuffix, "HERE")
+	require.NoError(test, err)
+	printActual(test, newConfig1)
+	datasources, err = szConfigManager.GetDataSources(ctx, newConfig1)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	newConfig2, err := szConfigManager.CreateNewConfig(ctx, newConfig1, configComment, "THIS"+datasourceSuffix, "WAS"+datasourceSuffix, "HERE")
+	require.NoError(test, err)
+	printActual(test, newConfig2)
+	datasources, err = szConfigManager.GetDataSources(ctx, newConfig2)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	newConfig3, err := szConfigManager.CreateNewConfig(ctx, newConfig2, configComment, "THIS"+datasourceSuffix, "WAS"+datasourceSuffix, "HERE")
+	require.NoError(test, err)
+	printActual(test, newConfig3)
+	datasources, err = szConfigManager.GetDataSources(ctx, newConfig3)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	newConfig4, err := szConfigManager.CreateNewConfig(ctx, newConfig2, "Alternate comment", "THIS"+datasourceSuffix, "WAS"+datasourceSuffix, "HERE")
+	require.NoError(test, err)
+	printActual(test, newConfig4)
+	datasources, err = szConfigManager.GetDataSources(ctx, newConfig4)
+	require.NoError(test, err)
+	printActual(test, datasources)
+
+	configs, err := szConfigManager.GetConfigs(ctx)
+	require.NoError(test, err)
+	printActual(test, configs)
+}
+
 func TestSzconfigmanager_GetConfig(test *testing.T) {
 	ctx := context.TODO()
 	szConfigManager := getTestObject(ctx, test)
@@ -121,10 +206,26 @@ func TestSzconfigmanager_GetConfigs(test *testing.T) {
 	printActual(test, actual)
 }
 
+func TestSzconfigmanager_GetDataSources(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	actual, err := szConfigManager.GetDataSources(ctx, 0)
+	require.NoError(test, err)
+	printActual(test, actual)
+}
+
 func TestSzconfigmanager_GetDefaultConfigID(test *testing.T) {
 	ctx := context.TODO()
 	szConfigManager := getTestObject(ctx, test)
 	actual, err := szConfigManager.GetDefaultConfigID(ctx)
+	require.NoError(test, err)
+	printActual(test, actual)
+}
+
+func TestSzconfigmanager_GetTemplateConfigID(test *testing.T) {
+	ctx := context.TODO()
+	szConfigManager := getTestObject(ctx, test)
+	actual, err := szConfigManager.GetTemplateConfigID(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }

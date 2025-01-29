@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/senzing-garage/go-logging/logging"
@@ -19,14 +20,17 @@ import (
 )
 
 type Szconfigmanager struct {
-	AddConfigResult          int64
-	GetConfigResult          string
-	GetConfigsResult         string
-	GetDefaultConfigIDResult int64
-	isTrace                  bool
-	logger                   logging.Logging
-	observerOrigin           string
-	observers                subject.Subject
+	AddConfigResult           int64
+	CreateNewConfigResult     int64
+	GetConfigResult           string
+	GetConfigsResult          string
+	GetDataSourcesResult      string
+	GetDefaultConfigIDResult  int64
+	GetTemplateConfigIDResult int64
+	isTrace                   bool
+	logger                    logging.Logging
+	observerOrigin            string
+	observers                 subject.Subject
 }
 
 const (
@@ -73,6 +77,41 @@ func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition s
 }
 
 /*
+Method CreateNewConfig creates a new Senzing configuration given an existing Senzing configuration and Data Source Codes.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configID: The identifier of the initial Senzing configuration to build upon.
+  - configComment: A free-form string describing the Senzing configuration.
+  - dataSourceCodes: One or more data source codes.
+
+Output
+  - configID: A Senzing configuration identifier of the new configuration.
+*/
+func (client *Szconfigmanager) CreateNewConfig(ctx context.Context, configID int64, configComment string, dataSourceCodes ...string) (int64, error) {
+	var err error
+	result := client.CreateNewConfigResult
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(999, configID, configComment, strings.Join(dataSourceCodes, ","))
+		defer func() {
+			client.traceExit(999, configID, configComment, strings.Join(dataSourceCodes, ","), result, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"configID":        strconv.FormatInt(configID, baseTen),
+				"configComment":   configComment,
+				"dataSourceCodes": strings.Join(dataSourceCodes, ","),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 9999, err, details)
+		}()
+	}
+	return result, err
+}
+
+/*
 Method GetConfig retrieves a specific Senzing configuration JSON document from the Senzing datastore.
 
 Input
@@ -100,13 +139,13 @@ func (client *Szconfigmanager) GetConfig(ctx context.Context, configID int64) (s
 }
 
 /*
-Method GetConfigs retrieves a list of Senzing configuration JSON documents from the Senzing datastore.
+Method GetConfigs retrieves a list of Senzing configurations from the Senzing datastore.
 
 Input
   - ctx: A context to control lifecycle.
 
 Output
-  - A JSON document listing Senzing configuration JSON document metadata.
+  - A JSON document listing Senzing configuration metadata.
 */
 func (client *Szconfigmanager) GetConfigs(ctx context.Context) (string, error) {
 	var err error
@@ -126,7 +165,36 @@ func (client *Szconfigmanager) GetConfigs(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetDefaultConfigID retrieves the default Senzing configuration JSON document identifier from the Senzing datastore.
+Method GetDataSources retrieves a list of datasources from a Senzing configuration.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configID: The identifier of the desired Senzing configuration to inspect.
+
+Output
+  - A JSON document listing Senzing configuration datasources.
+*/
+func (client *Szconfigmanager) GetDataSources(ctx context.Context, configID int64) (string, error) {
+	var err error
+	result := client.GetDataSourcesResult
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(9999)
+		defer func() { client.traceExit(9999, result, err, time.Since(entryTime)) }()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"configID": strconv.FormatInt(configID, baseTen),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 9999, err, details)
+		}()
+	}
+	return result, err
+}
+
+/*
+Method GetDefaultConfigID retrieves the default Senzing configuration identifier from the Senzing datastore.
 Note: this may not be the currently active in-memory configuration.
 See [Szconfigmanager.SetDefaultConfigID] and [Szconfigmanager.ReplaceDefaultConfigID] for more details.
 
@@ -134,7 +202,7 @@ Input
   - ctx: A context to control lifecycle.
 
 Output
-  - configID: The default Senzing configuration JSON document identifier. If none exists, zero (0) is returned.
+  - configID: The default Senzing configuration identifier. If none exists, zero (0) is returned.
 */
 func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, error) {
 	var err error
@@ -154,19 +222,47 @@ func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, e
 }
 
 /*
+Method GetTemplateConfigID retrieves the Senzing configuration identifier of the template configuration.
+Note: this may not be the currently active in-memory configuration.
+See [Szconfigmanager.SetDefaultConfigID] and [Szconfigmanager.ReplaceDefaultConfigID] for more details.
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+  - configID: The template Senzing configuration identifier.
+*/
+func (client *Szconfigmanager) GetTemplateConfigID(ctx context.Context) (int64, error) {
+	var err error
+	result := client.GetTemplateConfigIDResult
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(9999)
+		defer func() { client.traceExit(9999, result, err, time.Since(entryTime)) }()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 9999, err, details)
+		}()
+	}
+	return result, err
+}
+
+/*
 Similar to the [Szconfigmanager.SetDefaultConfigID] method,
-method ReplaceDefaultConfigID sets which Senzing configuration JSON document is used when initializing or reinitializing the system.
-The difference is that ReplaceDefaultConfigID only succeeds when the old Senzing configuration JSON document identifier
+method ReplaceDefaultConfigID sets which Senzing configuration is used when initializing or reinitializing the system.
+The difference is that ReplaceDefaultConfigID only succeeds when the old Senzing configuration identifier
 is the existing default when the new identifier is applied.
 In other words, if currentDefaultConfigID is no longer the "old" identifier, the operation will fail.
 It is similar to a "compare-and-swap" instruction to avoid a "race condition".
 Note that calling the ReplaceDefaultConfigID method does not affect the currently running in-memory configuration.
-To simply set the default Senzing configuration JSON document identifier, use [Szconfigmanager.SetDefaultConfigID].
+To simply set the default Senzing configuration identifier, use [Szconfigmanager.SetDefaultConfigID].
 
 Input
   - ctx: A context to control lifecycle.
-  - currentDefaultConfigID: The Senzing configuration JSON document identifier to replace.
-  - newDefaultConfigID: The Senzing configuration JSON document identifier to use as the default.
+  - currentDefaultConfigID: The Senzing configuration identifier to replace.
+  - newDefaultConfigID: The Senzing configuration identifier to use as the default.
 */
 func (client *Szconfigmanager) ReplaceDefaultConfigID(ctx context.Context, currentDefaultConfigID int64, newDefaultConfigID int64) error {
 	var err error
@@ -187,7 +283,7 @@ func (client *Szconfigmanager) ReplaceDefaultConfigID(ctx context.Context, curre
 }
 
 /*
-Method SetDefaultConfigID sets which Senzing configuration JSON document identifier
+Method SetDefaultConfigID sets which Senzing configuration identifier
 is used when initializing or reinitializing the system.
 Note that calling the SetDefaultConfigID method does not affect the currently
 running in-memory configuration.
@@ -196,7 +292,7 @@ To avoid race conditions, see  [Szconfigmanager.ReplaceDefaultConfigID].
 
 Input
   - ctx: A context to control lifecycle.
-  - configID: The Senzing configuration JSON document identifier to use as the default.
+  - configID: The Senzing configuration identifier to use as the default.
 */
 func (client *Szconfigmanager) SetDefaultConfigID(ctx context.Context, configID int64) error {
 	var err error
