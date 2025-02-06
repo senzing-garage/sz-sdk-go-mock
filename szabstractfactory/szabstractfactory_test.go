@@ -89,6 +89,10 @@ func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
 	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	_, err := szAbstractFactory.CreateDiagnostic(ctx)
+	require.NoError(test, err)
+	_, err = szAbstractFactory.CreateEngine(ctx)
+	require.NoError(test, err)
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
 	configID, err := szConfigManager.GetDefaultConfigID(ctx)
@@ -103,8 +107,18 @@ func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 
 func getSzAbstractFactory(ctx context.Context) (senzing.SzAbstractFactory, error) {
 	var err error
+	var result senzing.SzAbstractFactory
 	_ = ctx
-	result := &Szabstractfactory{}
+	settings, err := getSettings()
+	if err != nil {
+		return result, err
+	}
+	result = &Szabstractfactory{
+		ConfigID:       senzing.SzInitializeWithDefaultConfiguration,
+		InstanceName:   instanceName,
+		Settings:       settings,
+		VerboseLogging: verboseLogging,
+	}
 	return result, err
 }
 

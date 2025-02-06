@@ -382,6 +382,12 @@ func getTestObject(ctx context.Context, test *testing.T) *Szconfigmanager {
 	return result
 }
 
+func handleError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func printActual(test *testing.T, actual interface{}) {
 	printResult(test, "Actual", actual)
 }
