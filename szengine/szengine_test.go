@@ -17,6 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type GetEntityByRecordIDResponse struct {
+	ResolvedEntity struct {
+		EntityID int64 `json:"ENTITY_ID"`
+	} `json:"RESOLVED_ENTITY"`
+}
+
 const (
 	avoidEntityIDs      = senzing.SzNoAvoidance
 	avoidRecordKeys     = senzing.SzNoAvoidance
@@ -60,7 +66,7 @@ var (
 	nilBuildOutDegrees     int64
 	nilBuildOutMaxEntities int64
 	nilCsvColumnList       string
-	nilDataSourceCode      string
+	// nilDataSourceCode      string
 	nilEntityID            int64
 	nilMaxDegrees          int64
 	nilRecordID            string
@@ -77,11 +83,52 @@ var (
 	szEngineSingleton *Szengine
 )
 
-type GetEntityByRecordIDResponse struct {
-	ResolvedEntity struct {
-		EntityID int64 `json:"ENTITY_ID"`
-	} `json:"RESOLVED_ENTITY"`
-}
+// Mock variables.
+
+var (
+	AddConfigResult                         = int64(1)
+	AddDataSourceResult                     = `{"DSRC_ID":1001}`
+	AddRecordResult                         = "{}"
+	CheckDatastorePerformanceResult         = `{"numRecordsInserted":76667,"insertTime":1000}`
+	CountRedoRecordsResult                  = int64(0)
+	CreateConfigResult                      = uintptr(1)
+	DeleteRecordResult                      = "{}"
+	ExportConfigResult                      = `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1003,"ATTR_CODE":"RECORD_ID","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1007,"ATTR_CODE":"DSRC_ACTION","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1101,"ATTR_CODE":"NAME_TYPE","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"USAGE_TYPE","FELEM_REQ":"No","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1102,"ATTR_CODE":"NAME_FULL","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"FULL_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1103,"ATTR_CODE":"NAME_ORG","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"ORG_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1104,"ATTR_CODE":"NAME_LAST","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"SUR_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1105,"ATTR_CODE":"NAME_FIRST","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"GIVEN_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1106,"ATTR_CODE":"NAME_MIDDLE",`
+	ExportCsvEntityReportResult             = uintptr(1)
+	ExportJSONEntityReportResult            = uintptr(1)
+	FetchNextResult                         = ``
+	FindInterestingEntitiesByEntityIDResult = `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`
+	FindInterestingEntitiesByRecordIDResult = `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`
+	FindNetworkByEntityIDResult             = `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`
+	FindNetworkByRecordIDResult             = `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`
+	FindPathByEntityIDResult                = `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`
+	FindPathByRecordIDResult                = `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`
+	GetActiveConfigIDResult                 = int64(1)
+	GetConfigResult                         = `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1003,"ATTR_CODE":"RECORD_ID","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"No","INTERNAL":"No"},{"ATTR_ID":1004,"ATTR_CODE":"ENTITY_TYPE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,`
+	GetConfigsResult                        = `{"CONFIGS":[{"CONFIG_ID":41320074,"CONFIG_COMMENTS":"Example configuration","SYS_CREATE_DT":"2023-02-16 21:43:10.171"},{"CONFIG_ID":1111755672,"CONFIG_COMMENTS":"szconfigmgr_test at 2023-02-16 21:43:10.154619801 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:10.159"},{"CONFIG_ID":3680541328,"CONFIG_COMMENTS":"Created by szdiagnostic_test at 2023-02-16 21:43:07.294747409 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:07.755"}]}`
+	GetDataSourcesResult                    = `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`
+	GetDatastoreInfoResult                  = `{}`
+	GetDefaultConfigIDResult                = int64(1)
+	GetEntityByEntityIDResult               = `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`
+	GetEntityByRecordIDResult               = `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`
+	GetFeatureResult                        = `{}`
+	GetRecordResult                         = `{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}`
+	GetRedoRecordResult                     = `{"REASON":"deferred delete","DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","DSRC_ACTION":"X"}`
+	GetStatsResult                          = `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`
+	GetVirtualEntityByRecordIDResult        = `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`
+	HowEntityByEntityIDResult               = `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`
+	ImportConfigResult                      = uintptr(1)
+	LicenseResult                           = `{"customer":"Senzing Public Test License","contract":"Senzing Public Test - 50K records test","issueDate":"2023-11-02","licenseType":"EVAL (Solely for non-productive use)","licenseLevel":"STANDARD","billing":"YEARLY","expireDate":"2024-11-02","recordLimit":50000}`
+	PreprocessRecordResult                  = "{}"
+	ProcessRedoRecordResult                 = ``
+	ReevaluateEntityResult                  = "{}"
+	ReevaluateRecordResult                  = "{}"
+	SearchByAttributesResult                = `{"RESOLVED_ENTITIES":[{"ENTITY":{"RESOLVED_ENTITY":{"ENTITY_ID":1}},"MATCH_INFO":{"ERRULE_CODE":"SF1","MATCH_KEY":"+PNAME+EMAIL","MATCH_LEVEL_CODE":"POSSIBLY_RELATED"}}]}`
+	VersionResult                           = `{"PRODUCT_NAME":"Senzing API","VERSION":"3.5.0","BUILD_VERSION":"3.5.0.23041","BUILD_DATE":"2023-02-09","BUILD_NUMBER":"2023_02_09__23_01","COMPATIBILITY_VERSION":{"CONFIG_VERSION":"10"},"SCHEMA_VERSION":{"ENGINE_SCHEMA_VERSION":"3.5","MINIMUM_REQUIRED_SCHEMA_VERSION":"3.0","MAXIMUM_REQUIRED_SCHEMA_VERSION":"3.99"}}`
+	WhyEntitiesResult                       = `{"WHY_RESULTS":[{"ENTITY_ID":1,"ENTITY_ID_2":1,"MATCH_INFO":{"WHY_KEY":...`
+	WhyRecordInEntityResult                 = `BOB`
+	WhyRecordsResult                        = `{"WHY_RESULTS":[{"INTERNAL_ID":1,"ENTITY_ID":1,"FOCUS_RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}],"INTERNAL_ID_2":2,"ENTITY_ID_2":1,"FOCUS_RECORDS_2":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1002"}],"MATCH_INFO":{"WHY_KEY":"+NAME+DOB+PHONE","WHY_ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_LEVEL_CODE":"RESOLVED"}}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`
+)
 
 // ----------------------------------------------------------------------------
 // Interface methods - test
@@ -98,51 +145,13 @@ func TestSzengine_AddRecord(test *testing.T) {
 	for _, record := range records {
 		actual, err := szEngine.AddRecord(ctx, record.DataSource, record.ID, record.JSON, flags)
 		require.NoError(test, err)
+		require.Equal(test, "", actual)
 		printActual(test, actual)
 	}
 	for _, record := range records {
 		actual, err := szEngine.DeleteRecord(ctx, record.DataSource, record.ID, flags)
 		require.NoError(test, err)
-		printActual(test, actual)
-	}
-}
-
-func TestSzengine_AddRecord_nilDataSourceCode(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1001"]
-	flags := senzing.SzWithoutInfo
-	actual, err := szEngine.AddRecord(ctx, nilDataSourceCode, record.ID, record.JSON, flags)
-	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzengine_AddRecord_nilRecordID(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	record := truthset.CustomerRecords["1001"]
-	flags := senzing.SzWithoutInfo
-	actual, err := szEngine.AddRecord(ctx, record.DataSource, nilRecordID, record.JSON, flags)
-	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzengine_AddRecord_withInfo(test *testing.T) {
-	ctx := context.TODO()
-	szEngine := getTestObject(ctx, test)
-	flags := senzing.SzWithInfo
-	records := []record.Record{
-		truthset.CustomerRecords["1003"],
-		truthset.CustomerRecords["1004"],
-	}
-	for _, record := range records {
-		actual, err := szEngine.AddRecord(ctx, record.DataSource, record.ID, record.JSON, flags)
-		require.NoError(test, err)
-		printActual(test, actual)
-	}
-	for _, record := range records {
-		actual, err := szEngine.DeleteRecord(ctx, record.DataSource, record.ID, flags)
-		require.NoError(test, err)
+		require.Equal(test, "", actual)
 		printActual(test, actual)
 	}
 }
@@ -177,6 +186,7 @@ func TestSzengine_DeleteRecord(test *testing.T) {
 	require.NoError(test, err)
 	actual, err := szEngine.DeleteRecord(ctx, record.DataSource, record.ID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -197,6 +207,7 @@ func TestSzengine_DeleteRecord_nilRecordID(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.DeleteRecord(ctx, record.DataSource, nilRecordID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -212,6 +223,7 @@ func TestSzengine_DeleteRecord_withInfo(test *testing.T) {
 	flags := senzing.SzWithInfo
 	actual, err := szEngine.DeleteRecord(ctx, record.DataSource, record.ID, flags)
 	require.NoError(test, err)
+	require.NotEqual(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -345,7 +357,7 @@ func TestSzengine_FindNetworkByEntityID_badMaxDegrees(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzengine_FindNetworkByEntityID_badBuildOutDegree(test *testing.T) {
+func TestSzengine_FindNetworkByEntityID_badBuildOutDegrees(test *testing.T) {
 	ctx := context.TODO()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -578,10 +590,8 @@ func TestSzengine_FindPathByEntityID_badMaxDegrees(test *testing.T) {
 	require.NoError(test, err)
 	endEntityID, err := getEntityID(truthset.CustomerRecords["1002"])
 	require.NoError(test, err)
-	exclusions := senzing.SzNoAvoidance
-	requiredDataSources := senzing.SzNoRequiredDatasources
 	flags := senzing.SzNoFlags
-	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, badMaxDegrees, exclusions, requiredDataSources, flags)
+	actual, err := szEngine.FindPathByEntityID(ctx, startEntityID, endEntityID, badMaxDegrees, avoidEntityIDs, requiredDataSources, flags)
 	require.NoError(test, err) // TODO: TestSzengine_FindPathByEntityID_badMaxDegrees should fail.
 	printActual(test, actual)
 }
@@ -908,7 +918,7 @@ func TestSzengine_HowEntityByEntityID(test *testing.T) {
 func TestSzengine_PreprocessRecord(test *testing.T) {
 	ctx := context.TODO()
 	szEngine := getTestObject(ctx, test)
-	flags := senzing.SzWithoutInfo
+	flags := senzing.SzNoFlags
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
 		truthset.CustomerRecords["1002"],
@@ -936,6 +946,7 @@ func TestSzengine_ProcessRedoRecord(test *testing.T) {
 		flags := senzing.SzWithoutInfo
 		actual, err := szEngine.ProcessRedoRecord(ctx, redoRecord, flags)
 		require.NoError(test, err)
+		require.Equal(test, "", actual)
 		printActual(test, actual)
 	}
 }
@@ -960,6 +971,7 @@ func TestSzengine_ProcessRedoRecord_withInfo(test *testing.T) {
 		flags := senzing.SzWithInfo
 		actual, err := szEngine.ProcessRedoRecord(ctx, redoRecord, flags)
 		require.NoError(test, err)
+		require.NotEqual(test, "", actual)
 		printActual(test, actual)
 	}
 }
@@ -978,6 +990,7 @@ func TestSzengine_ReevaluateEntity(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateEntity(ctx, entityID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -993,6 +1006,7 @@ func TestSzengine_ReevaluateEntity_badEntityID(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateEntity(ctx, badEntityID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -1008,6 +1022,7 @@ func TestSzengine_ReevaluateEntity_nilEntityID(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateEntity(ctx, nilEntityID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -1071,6 +1086,7 @@ func TestSzengine_ReevaluateRecord(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateRecord(ctx, record.DataSource, record.ID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -1087,6 +1103,7 @@ func TestSzengine_ReevaluateRecord_badRecordID(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateRecord(ctx, record.DataSource, badRecordID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -1103,6 +1120,7 @@ func TestSzengine_ReevaluateRecord_nilRecordID(test *testing.T) {
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateRecord(ctx, record.DataSource, nilRecordID, flags)
 	require.NoError(test, err)
+	require.Equal(test, "", actual)
 	printActual(test, actual)
 }
 
@@ -1170,18 +1188,13 @@ func TestSzengine_SearchByAttributes_withSearchProfile(test *testing.T) {
 	require.NoError(test, err)
 	szEngine := getTestObject(ctx, test)
 	attributes := `{"NAMES": [{"NAME_TYPE": "PRIMARY", "NAME_LAST": "JOHNSON"}], "SSN_NUMBER": "053-39-3251"}`
-	searchProfile := "SEARCH"
+	// searchProfile := "SEARCH"
+	searchProfile := "INGEST"
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.SearchByAttributes(ctx, attributes, searchProfile, flags)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
-
-// TODO: Implement TestSzengine_StreamExportCsvEntityReport
-// func TestSzengine_StreamExportCsvEntityReport(test *testing.T) {}
-
-// TODO: Implement TestSzengine_StreamExportJSONEntityReport
-// func TestSzengine_StreamExportJSONEntityReport(test *testing.T) {}
 
 func TestSzengine_SearchByAttributes_searchProfile(test *testing.T) {
 	ctx := context.TODO()
@@ -1357,62 +1370,43 @@ func getEntityIDStringForRecord(datasource string, id string) (string, error) {
 }
 
 func getSzEngine(ctx context.Context) (*Szengine, error) {
-	var err error
-	if szEngineSingleton == nil {
-		szEngineSingleton = &Szengine{
-			AddRecordResult:                         "{}",
-			CountRedoRecordsResult:                  int64(0),
-			DeleteRecordResult:                      "{}",
-			ExportConfigResult:                      `{"G2_CONFIG":{"CFG_ETYPE":[{"ETYPE_ID":...`,
-			ExportCsvEntityReportResult:             1,
-			ExportJSONEntityReportResult:            1,
-			FetchNextResult:                         ``,
-			FindInterestingEntitiesByEntityIDResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
-			FindInterestingEntitiesByRecordIDResult: `{"INTERESTING_ENTITIES":{"ENTITIES":[]}}`,
-			FindNetworkByEntityIDResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindNetworkByRecordIDResult:             `{"ENTITY_PATHS":[],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-			FindPathByEntityIDResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...`,
-			FindPathByRecordIDResult:                `{"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":...`,
-			GetActiveConfigIDResult:                 int64(1),
-			GetEntityByEntityIDResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			GetEntityByRecordIDResult:               `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			GetRecordResult:                         `{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}`,
-			GetRedoRecordResult:                     `{"REASON":"deferred delete","DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001","DSRC_ACTION":"X"}`,
-			GetStatsResult:                          `{ "workload": { "loadedRecords": 5,  "addedRecords": 5,  "deletedRecords": 1,  "reevaluations": 0,  "repairedEntities": 0,  "duration":...`,
-			GetVirtualEntityByRecordIDResult:        `{"RESOLVED_ENTITY":{"ENTITY_ID":1}}`,
-			HowEntityByEntityIDResult:               `{"HOW_RESULTS":{"FINAL_STATE":{"NEED_REEVALUATION":0,"VIRTUAL_ENTITIES":[{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]},{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1-S1"}]},"RESOLUTION_STEPS":[{"INBOUND_VIRTUAL_ENTITY_ID":"V2","MATCH_INFO":{"ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_KEY":"+NAME+DOB+PHONE"},"RESULT_VIRTUAL_ENTITY_ID":"V1-S1","STEP":1,"VIRTUAL_ENTITY_1":{"MEMBER_RECORDS":[{"INTERNAL_ID":1,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V1"},"VIRTUAL_ENTITY_2":{"MEMBER_RECORDS":[{"INTERNAL_ID":2,"RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":null}]}],"VIRTUAL_ENTITY_ID":"V2"}}]}}`,
-			PreprocessRecordResult:                  "{}",
-			ProcessRedoRecordResult:                 ``,
-			ReevaluateEntityResult:                  "{}",
-			ReevaluateRecordResult:                  "{}",
-			SearchByAttributesResult:                `{"RESOLVED_ENTITIES":[{"ENTITY":{"RESOLVED_ENTITY":{"ENTITY_ID":1}},"MATCH_INFO":{"ERRULE_CODE":"SF1","MATCH_KEY":"+PNAME+EMAIL","MATCH_LEVEL_CODE":"POSSIBLY_RELATED"}}]}`,
-			WhyEntitiesResult:                       `{"WHY_RESULTS":[{"ENTITY_ID":1,"ENTITY_ID_2":1,"MATCH_INFO":{"WHY_KEY":...`,
-			WhyRecordsResult:                        `{"WHY_RESULTS":[{"INTERNAL_ID":1,"ENTITY_ID":1,"FOCUS_RECORDS":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1001"}],"INTERNAL_ID_2":2,"ENTITY_ID_2":1,"FOCUS_RECORDS_2":[{"DATA_SOURCE":"CUSTOMERS","RECORD_ID":"1002"}],"MATCH_INFO":{"WHY_KEY":"+NAME+DOB+PHONE","WHY_ERRULE_CODE":"CNAME_CFF_CEXCL","MATCH_LEVEL_CODE":"RESOLVED"}}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":1}}]}`,
-		}
-		err = szEngineSingleton.SetLogLevel(ctx, logLevel)
-		if err != nil {
-			return szEngineSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
-		}
-		if logLevel == "TRACE" {
-			szEngineSingleton.SetObserverOrigin(ctx, observerOrigin)
-			err = szEngineSingleton.RegisterObserver(ctx, observerSingleton)
-			if err != nil {
-				return szEngineSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
-			}
-			err = szEngineSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
-			if err != nil {
-				return szEngineSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
-			}
-		}
-	}
-	return szEngineSingleton, err
+	_ = ctx
+	return &Szengine{
+		AddRecordResult:                         AddRecordResult,
+		CountRedoRecordsResult:                  CountRedoRecordsResult,
+		DeleteRecordResult:                      DeleteRecordResult,
+		ExportConfigResult:                      ExportConfigResult,
+		ExportCsvEntityReportResult:             ExportCsvEntityReportResult,
+		ExportJSONEntityReportResult:            ExportJSONEntityReportResult,
+		FetchNextResult:                         FetchNextResult,
+		FindInterestingEntitiesByEntityIDResult: FindInterestingEntitiesByEntityIDResult,
+		FindInterestingEntitiesByRecordIDResult: FindInterestingEntitiesByRecordIDResult,
+		FindNetworkByEntityIDResult:             FindNetworkByEntityIDResult,
+		FindNetworkByRecordIDResult:             FindNetworkByRecordIDResult,
+		FindPathByEntityIDResult:                FindPathByEntityIDResult,
+		FindPathByRecordIDResult:                FindPathByRecordIDResult,
+		GetActiveConfigIDResult:                 GetActiveConfigIDResult,
+		GetEntityByEntityIDResult:               GetEntityByEntityIDResult,
+		GetEntityByRecordIDResult:               GetEntityByRecordIDResult,
+		GetRecordResult:                         GetRecordResult,
+		GetRedoRecordResult:                     GetRedoRecordResult,
+		GetStatsResult:                          GetStatsResult,
+		GetVirtualEntityByRecordIDResult:        GetVirtualEntityByRecordIDResult,
+		HowEntityByEntityIDResult:               HowEntityByEntityIDResult,
+		PreprocessRecordResult:                  PreprocessRecordResult,
+		ProcessRedoRecordResult:                 ProcessRedoRecordResult,
+		ReevaluateEntityResult:                  ReevaluateEntityResult,
+		ReevaluateRecordResult:                  ReevaluateRecordResult,
+		SearchByAttributesResult:                SearchByAttributesResult,
+		WhyEntitiesResult:                       WhyEntitiesResult,
+		WhyRecordInEntityResult:                 WhyRecordInEntityResult,
+		WhyRecordsResult:                        WhyRecordsResult,
+	}, nil
 }
 
 func getSzEngineAsInterface(ctx context.Context) senzing.SzEngine {
 	result, err := getSzEngine(ctx)
-	if err != nil {
-		panic(err)
-	}
+	handleError(err)
 	return result
 }
 
@@ -1427,6 +1421,11 @@ func handleError(err error) {
 		panic(err)
 	}
 }
+
+// func handleErrorWithString(aString string, err error) {
+// 	_ = aString
+// 	handleError(err)
+// }
 
 func printActual(test *testing.T, actual interface{}) {
 	printResult(test, "Actual", actual)
