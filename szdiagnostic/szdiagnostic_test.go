@@ -31,12 +31,6 @@ const (
 	badSecondsToRun = -1
 )
 
-// Nil/empty parameters
-
-var (
-	nilSecondsToRun int
-)
-
 var (
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
