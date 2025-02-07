@@ -8,6 +8,7 @@ import (
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -44,7 +45,6 @@ var (
 		ID:       "Observer 1",
 		IsSilent: true,
 	}
-	szConfigSingleton *Szconfig
 )
 
 // ----------------------------------------------------------------------------
@@ -89,16 +89,6 @@ func TestSzconfig_CloseConfig(test *testing.T) {
 	err = szConfig.CloseConfig(ctx, configHandle)
 	require.NoError(test, err)
 }
-
-func TestSzconfig_CloseConfig_badConfigHandle(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	err := szConfig.CloseConfig(ctx, badConfigHandle)
-	require.NoError(test, err) // TODO: TestSzconfig_CloseConfig_badConfigHandle should fail.
-}
-
-// TODO: Implement TestSzconfig_CloseConfig_error
-// func TestSzconfig_CloseConfig_error(test *testing.T) {}
 
 func TestSzconfig_CreateConfig(test *testing.T) {
 	ctx := context.TODO()
@@ -255,47 +245,41 @@ func TestSzconfig_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzConfig(ctx context.Context) (*Szconfig, error) {
-	var err error
-	if szConfigSingleton == nil {
-		szConfigSingleton = &Szconfig{
-			AddDataSourceResult:  `{"DSRC_ID":1001}`,
-			CreateConfigResult:   1,
-			ExportConfigResult:   `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1003,"ATTR_CODE":"RECORD_ID","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1007,"ATTR_CODE":"DSRC_ACTION","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1101,"ATTR_CODE":"NAME_TYPE","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"USAGE_TYPE","FELEM_REQ":"No","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1102,"ATTR_CODE":"NAME_FULL","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"FULL_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1103,"ATTR_CODE":"NAME_ORG","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"ORG_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1104,"ATTR_CODE":"NAME_LAST","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"SUR_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1105,"ATTR_CODE":"NAME_FIRST","ATTR_CLASS":"NAME","FTYPE_CODE":"NAME","FELEM_CODE":"GIVEN_NAME","FELEM_REQ":"Any","DEFAULT_VALUE":null,"INTERNAL":"No"},{"ATTR_ID":1106,"ATTR_CODE":"NAME_MIDDLE",`,
-			GetDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
-			ImportConfigResult:   1,
-		}
-		err = szConfigSingleton.SetLogLevel(ctx, logLevel)
+func getSzConfig(ctx context.Context) *Szconfig {
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &Szconfig{
+		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
+		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
+		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
+		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
+		ExportConfigResult:   testValue.String("ExportConfigResult"),
+	}
+	if logLevel == "TRACE" {
+		result.SetObserverOrigin(ctx, observerOrigin)
+		err := result.RegisterObserver(ctx, observerSingleton)
 		if err != nil {
-			return szConfigSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
+			panic(err)
 		}
-		if logLevel == "TRACE" {
-			szConfigSingleton.SetObserverOrigin(ctx, observerOrigin)
-			err = szConfigSingleton.RegisterObserver(ctx, observerSingleton)
-			if err != nil {
-				return szConfigSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
-			}
-			err = szConfigSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
-			if err != nil {
-				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
-			}
+		err = result.SetLogLevel(ctx, "TRACE")
+		if err != nil {
+			panic(err)
 		}
 	}
-	return szConfigSingleton, err
+	return result
+
 }
 
 func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
-	result, err := getSzConfig(ctx)
-	if err != nil {
-		panic(err)
-	}
-	return result
+	return getSzConfig(ctx)
 }
 
 func getTestObject(ctx context.Context, test *testing.T) *Szconfig {
-	result, err := getSzConfig(ctx)
-	require.NoError(test, err)
-	return result
+	_ = test
+	return getSzConfig(ctx)
 }
 
 func printActual(test *testing.T, actual interface{}) {

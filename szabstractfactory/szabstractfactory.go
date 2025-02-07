@@ -17,6 +17,48 @@ Szabstractfactory is an implementation of the [senzing.SzAbstractFactory] interf
 [senzing.SzAbstractFactory]: https://pkg.go.dev/github.com/senzing-garage/sz-sdk-go/senzing#SzAbstractFactory
 */
 type Szabstractfactory struct {
+	AddConfigResult                         int64
+	AddDataSourceResult                     string
+	AddRecordResult                         string
+	CheckDatastorePerformanceResult         string
+	CountRedoRecordsResult                  int64
+	CreateConfigResult                      uintptr
+	DeleteRecordResult                      string
+	ExportConfigResult                      string
+	ExportCsvEntityReportResult             uintptr
+	ExportJSONEntityReportResult            uintptr
+	FetchNextResult                         string
+	FindInterestingEntitiesByEntityIDResult string
+	FindInterestingEntitiesByRecordIDResult string
+	FindNetworkByEntityIDResult             string
+	FindNetworkByRecordIDResult             string
+	FindPathByEntityIDResult                string
+	FindPathByRecordIDResult                string
+	GetActiveConfigIDResult                 int64
+	GetConfigResult                         string
+	GetConfigsResult                        string
+	GetDataSourcesResult                    string
+	GetDatastoreInfoResult                  string
+	GetDefaultConfigIDResult                int64
+	GetEntityByEntityIDResult               string
+	GetEntityByRecordIDResult               string
+	GetFeatureResult                        string
+	GetRecordResult                         string
+	GetRedoRecordResult                     string
+	GetStatsResult                          string
+	GetVirtualEntityByRecordIDResult        string
+	HowEntityByEntityIDResult               string
+	ImportConfigResult                      uintptr
+	GetLicenseResult                        string
+	PreprocessRecordResult                  string
+	ProcessRedoRecordResult                 string
+	ReevaluateEntityResult                  string
+	ReevaluateRecordResult                  string
+	SearchByAttributesResult                string
+	GetVersionResult                        string
+	WhyEntitiesResult                       string
+	WhyRecordInEntityResult                 string
+	WhyRecordsResult                        string
 }
 
 // ----------------------------------------------------------------------------
@@ -35,7 +77,13 @@ Output
 */
 func (factory *Szabstractfactory) CreateConfig(ctx context.Context) (senzing.SzConfig, error) {
 	_ = ctx
-	result := &szconfig.Szconfig{}
+	result := &szconfig.Szconfig{
+		AddDataSourceResult:  factory.AddDataSourceResult,
+		CreateConfigResult:   factory.CreateConfigResult,
+		ExportConfigResult:   factory.ExportConfigResult,
+		GetDataSourcesResult: factory.GetDataSourcesResult,
+		ImportConfigResult:   factory.ImportConfigResult,
+	}
 	return result, nil
 }
 
@@ -51,7 +99,12 @@ Output
 */
 func (factory *Szabstractfactory) CreateConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	_ = ctx
-	result := &szconfigmanager.Szconfigmanager{}
+	result := &szconfigmanager.Szconfigmanager{
+		AddConfigResult:          factory.AddConfigResult,
+		GetConfigResult:          factory.GetConfigResult,
+		GetConfigsResult:         factory.GetConfigsResult,
+		GetDefaultConfigIDResult: factory.GetDefaultConfigIDResult,
+	}
 	return result, nil
 }
 
@@ -67,7 +120,11 @@ Output
 */
 func (factory *Szabstractfactory) CreateDiagnostic(ctx context.Context) (senzing.SzDiagnostic, error) {
 	_ = ctx
-	result := &szdiagnostic.Szdiagnostic{}
+	result := &szdiagnostic.Szdiagnostic{
+		CheckDatastorePerformanceResult: factory.CheckDatastorePerformanceResult,
+		GetDatastoreInfoResult:          factory.GetDatastoreInfoResult,
+		GetFeatureResult:                factory.GetFeatureResult,
+	}
 	return result, nil
 }
 
@@ -83,7 +140,37 @@ Output
 */
 func (factory *Szabstractfactory) CreateEngine(ctx context.Context) (senzing.SzEngine, error) {
 	_ = ctx
-	result := &szengine.Szengine{}
+	result := &szengine.Szengine{
+		AddRecordResult:                         factory.AddRecordResult,
+		CountRedoRecordsResult:                  factory.CountRedoRecordsResult,
+		DeleteRecordResult:                      factory.DeleteRecordResult,
+		ExportConfigResult:                      factory.ExportConfigResult,
+		ExportCsvEntityReportResult:             factory.ExportCsvEntityReportResult,
+		ExportJSONEntityReportResult:            factory.ExportJSONEntityReportResult,
+		FetchNextResult:                         factory.FetchNextResult,
+		FindInterestingEntitiesByEntityIDResult: factory.FindInterestingEntitiesByEntityIDResult,
+		FindInterestingEntitiesByRecordIDResult: factory.FindInterestingEntitiesByRecordIDResult,
+		FindNetworkByEntityIDResult:             factory.FindNetworkByEntityIDResult,
+		FindNetworkByRecordIDResult:             factory.FindNetworkByRecordIDResult,
+		FindPathByEntityIDResult:                factory.FindPathByEntityIDResult,
+		FindPathByRecordIDResult:                factory.FindPathByRecordIDResult,
+		GetActiveConfigIDResult:                 factory.GetActiveConfigIDResult,
+		GetEntityByEntityIDResult:               factory.GetEntityByEntityIDResult,
+		GetEntityByRecordIDResult:               factory.GetEntityByRecordIDResult,
+		GetRecordResult:                         factory.GetRecordResult,
+		GetRedoRecordResult:                     factory.GetRedoRecordResult,
+		GetStatsResult:                          factory.GetStatsResult,
+		GetVirtualEntityByRecordIDResult:        factory.GetVirtualEntityByRecordIDResult,
+		HowEntityByEntityIDResult:               factory.HowEntityByEntityIDResult,
+		PreprocessRecordResult:                  factory.PreprocessRecordResult,
+		ProcessRedoRecordResult:                 factory.ProcessRedoRecordResult,
+		ReevaluateEntityResult:                  factory.ReevaluateEntityResult,
+		ReevaluateRecordResult:                  factory.ReevaluateRecordResult,
+		SearchByAttributesResult:                factory.SearchByAttributesResult,
+		WhyEntitiesResult:                       factory.WhyEntitiesResult,
+		WhyRecordInEntityResult:                 factory.WhyRecordInEntityResult,
+		WhyRecordsResult:                        factory.WhyRecordsResult,
+	}
 	return result, nil
 }
 
@@ -99,7 +186,10 @@ Output
 */
 func (factory *Szabstractfactory) CreateProduct(ctx context.Context) (senzing.SzProduct, error) {
 	_ = ctx
-	result := &szproduct.Szproduct{}
+	result := &szproduct.Szproduct{
+		GetLicenseResult: factory.GetLicenseResult,
+		GetVersionResult: factory.GetVersionResult,
+	}
 	return result, nil
 }
 

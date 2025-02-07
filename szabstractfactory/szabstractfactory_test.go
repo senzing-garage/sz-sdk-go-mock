@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/require"
 )
@@ -105,27 +106,64 @@ func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzAbstractFactory(ctx context.Context) (senzing.SzAbstractFactory, error) {
-	var err error
-	var result senzing.SzAbstractFactory
+func getSzAbstractFactory(ctx context.Context) *Szabstractfactory {
 	_ = ctx
-	settings, err := getSettings()
-	if err != nil {
-		return result, err
+
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
 	}
-	result = &Szabstractfactory{
-		ConfigID:       senzing.SzInitializeWithDefaultConfiguration,
-		InstanceName:   instanceName,
-		Settings:       settings,
-		VerboseLogging: verboseLogging,
+
+	return &Szabstractfactory{
+		AddConfigResult:                         testValue.Int64("AddConfigResult"),
+		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		AddRecordResult:                         testValue.String("AddRecordResult"),
+		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
+		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
+		ExportConfigResult:                      testValue.String("ExportConfigResult"),
+		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
+		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
+		FetchNextResult:                         testValue.String("FetchNextResult"),
+		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
+		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
+		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
+		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
+		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
+		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
+		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
+		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
+		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
+		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetFeatureResult:                        testValue.String("GetFeatureResult"),
+		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordResult:                         testValue.String("GetRecordResult"),
+		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetStatsResult:                          testValue.String("GetStatsResult"),
+		GetVersionResult:                        testValue.String("GetVersionResult"),
+		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
+		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
+		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
+		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
+		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
+		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
+		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
+		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
+		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
+		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
 	}
-	return result, err
 }
 
-func getTestObject(ctx context.Context, test *testing.T) senzing.SzAbstractFactory {
-	result, err := getSzAbstractFactory(ctx)
-	require.NoError(test, err)
-	return result
+func getTestObject(ctx context.Context, test *testing.T) *Szabstractfactory {
+	_ = test
+	return getSzAbstractFactory(ctx)
 }
 
 func handleError(err error) {
