@@ -244,21 +244,27 @@ func TestSzconfig_AsInterface(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func getSzConfig(ctx context.Context) *Szconfig {
-	_ = ctx
-
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-
-	return &Szconfig{
+	result := &Szconfig{
 		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
 		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
 		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
 		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
 		ExportConfigResult:   testValue.String("ExportConfigResult"),
 	}
+	err := result.SetLogLevel(ctx, "TRACE")
+	if err != nil {
+		panic(err)
+	}
+	err = result.RegisterObserver(ctx, observerSingleton)
+	if err != nil {
+		panic(err)
+	}
+	return result
 
 }
 

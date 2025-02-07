@@ -622,15 +622,12 @@ func getEntityIDString(record record.Record) (string, error) {
 }
 
 func getSzEngine(ctx context.Context) (*Szengine, error) {
-	_ = ctx
-
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-
-	return &Szengine{
+	result := &Szengine{
 		AddRecordResult:                         testValue.String("AddRecordResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
@@ -660,7 +657,16 @@ func getSzEngine(ctx context.Context) (*Szengine, error) {
 		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
 		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
-	}, nil
+	}
+	err := result.SetLogLevel(ctx, "TRACE")
+	if err != nil {
+		panic(err)
+	}
+	err = result.RegisterObserver(ctx, observerSingleton)
+	if err != nil {
+		panic(err)
+	}
+	return result, nil
 }
 
 func getSzEngineAsInterface(ctx context.Context) senzing.SzEngine {

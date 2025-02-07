@@ -194,20 +194,26 @@ func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
 }
 
 func getSzConfigManager(ctx context.Context) (*Szconfigmanager, error) {
-	_ = ctx
-
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-
-	return &Szconfigmanager{
+	result := &Szconfigmanager{
 		AddConfigResult:          testValue.Int64("AddConfigResult"),
 		GetConfigResult:          testValue.String("GetConfigResult"),
 		GetConfigsResult:         testValue.String("GetConfigsResult"),
 		GetDefaultConfigIDResult: testValue.Int64("GetDefaultConfigIDResult"),
-	}, nil
+	}
+	err := result.SetLogLevel(ctx, "TRACE")
+	if err != nil {
+		panic(err)
+	}
+	err = result.RegisterObserver(ctx, observerSingleton)
+	if err != nil {
+		panic(err)
+	}
+	return result, nil
 }
 
 func getSzConfigManagerAsInterface(ctx context.Context) senzing.SzConfigManager {

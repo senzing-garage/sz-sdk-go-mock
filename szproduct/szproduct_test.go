@@ -104,18 +104,24 @@ func TestSzproduct_AsInterface(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func getSzProduct(ctx context.Context) (*Szproduct, error) {
-	_ = ctx
-
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-
-	return &Szproduct{
+	result := &Szproduct{
 		GetLicenseResult: testValue.String("GetLicenseResult"),
 		GetVersionResult: testValue.String("GetVersionResult"),
-	}, nil
+	}
+	err := result.SetLogLevel(ctx, "TRACE")
+	if err != nil {
+		panic(err)
+	}
+	err = result.RegisterObserver(ctx, observerSingleton)
+	if err != nil {
+		panic(err)
+	}
+	return result, nil
 }
 
 func getSzProductAsInterface(ctx context.Context) senzing.SzProduct {

@@ -139,19 +139,25 @@ func deleteRecords(ctx context.Context, records []record.Record) error {
 }
 
 func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
-	_ = ctx
-
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-
-	return &Szdiagnostic{
+	result := &Szdiagnostic{
 		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
 		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
 		GetFeatureResult:                testValue.String("GetFeatureResult"),
-	}, nil
+	}
+	err := result.SetLogLevel(ctx, "TRACE")
+	if err != nil {
+		panic(err)
+	}
+	err = result.RegisterObserver(ctx, observerSingleton)
+	if err != nil {
+		panic(err)
+	}
+	return result, nil
 }
 
 func getSzDiagnosticAsInterface(ctx context.Context) senzing.SzDiagnostic {
