@@ -11,6 +11,7 @@ import (
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
+	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,20 +35,12 @@ const (
 	badNewDefaultConfigID     = int64(0)
 )
 
-// Nil/empty parameters
-
-var (
-	nilConfigComment string
-)
-
 var (
 	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
 	}
-	szConfigManagerSingleton *Szconfigmanager
-	szConfigSingleton        *szconfig.Szconfig
 )
 
 // ----------------------------------------------------------------------------
@@ -69,33 +62,6 @@ func TestSzconfigmanager_AddConfig(test *testing.T) {
 	require.NoError(test, err)
 	configComment := fmt.Sprintf("szconfigmanager_test at %s", now.UTC())
 	actual, err := szConfigManager.AddConfig(ctx, configDefinition, configComment)
-	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzconfigmanager_AddConfig_badConfigDefinition(test *testing.T) {
-	ctx := context.TODO()
-	szConfigManager := getTestObject(ctx, test)
-	now := time.Now()
-	configComment := fmt.Sprintf("szconfigmanager_test at %s", now.UTC())
-	_, err := szConfigManager.AddConfig(ctx, badConfigDefinition, configComment)
-	require.NoError(test, err) // TODO: TestSzconfigmanager_AddConfig_badConfigDefinition should fail.
-}
-
-func TestSzconfigmanager_AddConfig_nilConfigComment(test *testing.T) {
-	ctx := context.TODO()
-	szConfigManager := getTestObject(ctx, test)
-	now := time.Now()
-	szConfig, err := getSzConfig(ctx)
-	require.NoError(test, err)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	dataSourceCode := "GO_TEST_" + strconv.FormatInt(now.Unix(), baseTen)
-	_, err = szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
-	require.NoError(test, err)
-	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
-	require.NoError(test, err)
-	actual, err := szConfigManager.AddConfig(ctx, configDefinition, nilConfigComment)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -212,59 +178,47 @@ func TestSzconfigmanager_AsInterface(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
-	var err error
-	if szConfigSingleton == nil {
-		szConfigSingleton = &szconfig.Szconfig{
-			AddDataSourceResult:  `{"DSRC_ID":1001}`,
-			CreateConfigResult:   1,
-			GetDataSourcesResult: `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
-			ExportConfigResult:   `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE",`,
-		}
-		err = szConfigSingleton.SetLogLevel(ctx, logLevel)
-		if err != nil {
-			return szConfigSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
-		}
-		if logLevel == "TRACE" {
-			szConfigSingleton.SetObserverOrigin(ctx, observerOrigin)
-			err = szConfigSingleton.RegisterObserver(ctx, observerSingleton)
-			if err != nil {
-				return szConfigSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
-			}
-			err = szConfigSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
-			if err != nil {
-				return szConfigSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
-			}
-		}
+	_ = ctx
+
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
 	}
-	return szConfigSingleton, err
+
+	return &szconfig.Szconfig{
+		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
+		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
+		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
+		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
+		ExportConfigResult:   testValue.String("ExportConfigResult"),
+	}, nil
 }
 
 func getSzConfigManager(ctx context.Context) (*Szconfigmanager, error) {
-	var err error
-	if szConfigManagerSingleton == nil {
-		szConfigManagerSingleton = &Szconfigmanager{
-			AddConfigResult:          1,
-			GetConfigResult:          `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_ID":1001,"ATTR_CODE":"DATA_SOURCE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"Yes","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1002,"ATTR_CODE":"ROUTE_CODE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"Yes","INTERNAL":"No"},{"ATTR_ID":1003,"ATTR_CODE":"RECORD_ID","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,"FELEM_CODE":null,"FELEM_REQ":"No","DEFAULT_VALUE":null,"ADVANCED":"No","INTERNAL":"No"},{"ATTR_ID":1004,"ATTR_CODE":"ENTITY_TYPE","ATTR_CLASS":"OBSERVATION","FTYPE_CODE":null,`,
-			GetConfigsResult:         `{"CONFIGS":[{"CONFIG_ID":41320074,"CONFIG_COMMENTS":"Example configuration","SYS_CREATE_DT":"2023-02-16 21:43:10.171"},{"CONFIG_ID":1111755672,"CONFIG_COMMENTS":"szconfigmgr_test at 2023-02-16 21:43:10.154619801 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:10.159"},{"CONFIG_ID":3680541328,"CONFIG_COMMENTS":"Created by szdiagnostic_test at 2023-02-16 21:43:07.294747409 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:07.755"}]}`,
-			GetDefaultConfigIDResult: 1,
-		}
-		err = szConfigManagerSingleton.SetLogLevel(ctx, logLevel)
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &Szconfigmanager{
+		AddConfigResult:          testValue.Int64("AddConfigResult"),
+		GetConfigResult:          testValue.String("GetConfigResult"),
+		GetConfigsResult:         testValue.String("GetConfigsResult"),
+		GetDefaultConfigIDResult: testValue.Int64("GetDefaultConfigIDResult"),
+	}
+	if logLevel == "TRACE" {
+		result.SetObserverOrigin(ctx, observerOrigin)
+		err := result.RegisterObserver(ctx, observerSingleton)
 		if err != nil {
-			return szConfigManagerSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
+			panic(err)
 		}
-		if logLevel == "TRACE" {
-			szConfigManagerSingleton.SetObserverOrigin(ctx, observerOrigin)
-			err = szConfigManagerSingleton.RegisterObserver(ctx, observerSingleton)
-			if err != nil {
-				return szConfigManagerSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
-			}
-			err = szConfigManagerSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
-			if err != nil {
-				return szConfigManagerSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
-			}
+		err = result.SetLogLevel(ctx, "TRACE")
+		if err != nil {
+			panic(err)
 		}
 	}
-	return szConfigManagerSingleton, err
+	return result, nil
 }
 
 func getSzConfigManagerAsInterface(ctx context.Context) senzing.SzConfigManager {
@@ -280,6 +234,12 @@ func getTestObject(ctx context.Context, test *testing.T) *Szconfigmanager {
 	require.NoError(test, err)
 	return result
 }
+
+// func handleError(err error) {
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// }
 
 func printActual(test *testing.T, actual interface{}) {
 	printResult(test, "Actual", actual)

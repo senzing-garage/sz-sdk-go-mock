@@ -17,12 +17,12 @@ import (
 )
 
 type Szproduct struct {
-	isTrace        bool
-	LicenseResult  string
-	logger         logging.Logging
-	observerOrigin string
-	observers      subject.Subject
-	VersionResult  string
+	GetLicenseResult string
+	GetVersionResult string
+	isTrace          bool
+	logger           logging.Logging
+	observerOrigin   string
+	observers        subject.Subject
 }
 
 const (
@@ -47,7 +47,7 @@ Output
 */
 func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 	var err error
-	result := client.LicenseResult
+	result := client.GetLicenseResult
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(9)
@@ -73,7 +73,7 @@ Output
 */
 func (client *Szproduct) GetVersion(ctx context.Context) (string, error) {
 	var err error
-	result := client.VersionResult
+	result := client.GetVersionResult
 	if client.isTrace {
 		entryTime := time.Now()
 		client.traceEntry(11)

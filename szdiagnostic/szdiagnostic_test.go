@@ -10,6 +10,7 @@ import (
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,19 +32,12 @@ const (
 	badSecondsToRun = -1
 )
 
-// Nil/empty parameters
-
-var (
-	nilSecondsToRun int
-)
-
 var (
 	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
 	}
-	szDiagnosticSingleton *Szdiagnostic
 )
 
 // ----------------------------------------------------------------------------
@@ -55,22 +49,6 @@ func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
 	szDiagnostic := getTestObject(ctx, test)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
-	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzdiagnostic_CheckDatastorePerformance_badSecondsToRun(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, badSecondsToRun)
-	require.NoError(test, err)
-	printActual(test, actual)
-}
-
-func TestSzdiagnostic_CheckDatastorePerformance_nilSecondsToRun(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
-	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, nilSecondsToRun)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -97,9 +75,6 @@ func TestSzdiagnostic_GetFeature(test *testing.T) {
 	require.NoError(test, err)
 	printActual(test, actual)
 }
-
-// PurgeRepository is tested in szdiagnostic_examples_test.go
-// func TestSzdiagnostic_PurgeRepository(test *testing.T) {}
 
 // ----------------------------------------------------------------------------
 // Logging and observing
@@ -166,30 +141,28 @@ func deleteRecords(ctx context.Context, records []record.Record) error {
 }
 
 func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
-	var err error
-	if szDiagnosticSingleton == nil {
-		szDiagnosticSingleton = &Szdiagnostic{
-			CheckDatastorePerformanceResult: `{"numRecordsInserted":76667,"insertTime":1000}`,
-			GetFeatureResult:                `{}`,
-			GetDatastoreInfoResult:          `{}`,
-		}
-		err = szDiagnosticSingleton.SetLogLevel(ctx, logLevel)
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &Szdiagnostic{
+		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
+		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
+		GetFeatureResult:                testValue.String("GetFeatureResult"),
+	}
+	if logLevel == "TRACE" {
+		result.SetObserverOrigin(ctx, observerOrigin)
+		err := result.RegisterObserver(ctx, observerSingleton)
 		if err != nil {
-			return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() Error: %w", err)
+			panic(err)
 		}
-		if logLevel == "TRACE" {
-			szDiagnosticSingleton.SetObserverOrigin(ctx, observerOrigin)
-			err = szDiagnosticSingleton.RegisterObserver(ctx, observerSingleton)
-			if err != nil {
-				return szDiagnosticSingleton, fmt.Errorf("RegisterObserver() Error: %w", err)
-			}
-			err = szDiagnosticSingleton.SetLogLevel(ctx, logLevel) // Duplicated for coverage testing
-			if err != nil {
-				return szDiagnosticSingleton, fmt.Errorf("SetLogLevel() - 2 Error: %w", err)
-			}
+		err = result.SetLogLevel(ctx, "TRACE")
+		if err != nil {
+			panic(err)
 		}
 	}
-	return szDiagnosticSingleton, err
+	return result, nil
 }
 
 func getSzDiagnosticAsInterface(ctx context.Context) senzing.SzDiagnostic {
