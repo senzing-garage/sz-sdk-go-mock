@@ -11,6 +11,7 @@ import (
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-observing/observer"
+	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -60,6 +61,7 @@ const (
 )
 
 var (
+	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -658,13 +660,16 @@ func getSzEngine(ctx context.Context) (*Szengine, error) {
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
 		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
 	}
-	err := result.SetLogLevel(ctx, "TRACE")
-	if err != nil {
-		panic(err)
-	}
-	err = result.RegisterObserver(ctx, observerSingleton)
-	if err != nil {
-		panic(err)
+	if logLevel == "TRACE" {
+		result.SetObserverOrigin(ctx, observerOrigin)
+		err := result.RegisterObserver(ctx, observerSingleton)
+		if err != nil {
+			panic(err)
+		}
+		err = result.SetLogLevel(ctx, "TRACE")
+		if err != nil {
+			panic(err)
+		}
 	}
 	return result, nil
 }
