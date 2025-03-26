@@ -1,8 +1,6 @@
 module github.com/senzing-garage/sz-sdk-go-mock
 
-go 1.23.0
-
-toolchain go1.23.2
+go 1.24
 
 require (
 	github.com/aquilax/truncate v1.0.1

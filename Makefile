@@ -66,6 +66,7 @@ hello-world: hello-world-osarch-specific
 
 .PHONY: dependencies-for-development
 dependencies-for-development: dependencies-for-development-osarch-specific
+	@go install github.com/daixiang0/gci@latest
 	@go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest
 	@go install github.com/vladopajic/go-test-coverage/v2@latest
 	@go install golang.org/x/tools/cmd/godoc@latest
@@ -129,7 +130,7 @@ coverage: coverage-osarch-specific
 .PHONY: check-coverage
 check-coverage: export SENZING_LOG_LEVEL=TRACE
 check-coverage:
-	@go test ./... -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...
+	@go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
 	@${GOBIN}/go-test-coverage --config=.github/coverage/testcoverage.yaml
 
 # -----------------------------------------------------------------------------
