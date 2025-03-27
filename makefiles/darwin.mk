@@ -53,7 +53,7 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@echo "No setup required."
+	$(info No setup required.)
 
 
 .PHONY: test-osarch-specific
