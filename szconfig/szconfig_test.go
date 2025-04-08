@@ -35,12 +35,6 @@ const (
 	badSettings         = "{]"
 )
 
-// Nil/empty parameters
-
-var (
-	nilDataSourceCode string
-)
-
 var (
 	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
@@ -80,13 +74,6 @@ func TestSzconfig_DeleteDataSource(test *testing.T) {
 	printResult(test, "  Delete", actual)
 }
 
-func TestSzconfig_DeleteDataSource_nilDataSourceCode(test *testing.T) {
-	ctx := test.Context()
-	szConfig := getTestObject(test)
-	_, err := szConfig.DeleteDataSource(ctx, nilDataSourceCode)
-	require.NoError(test, err)
-}
-
 func TestSzconfig_Export(test *testing.T) {
 	ctx := test.Context()
 	szConfig := getTestObject(test)
@@ -101,6 +88,16 @@ func TestSzconfig_GetDataSources(test *testing.T) {
 	actual, err := szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
+}
+
+// ----------------------------------------------------------------------------
+// Public non-interface methods
+// ----------------------------------------------------------------------------
+
+func TestSzconfig_ImportTemplate(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	err := szConfig.ImportTemplate(ctx)
 	require.NoError(test, err)
 }
 
@@ -165,7 +162,7 @@ func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
 		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
 		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
-		ExportConfigResult:   testValue.String("ExportConfigResult"),
+		ExportResult:         testValue.String("ExportConfigResult"),
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
@@ -188,12 +185,6 @@ func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
 
 func getTestObject(test *testing.T) *szconfig.Szconfig {
 	return getSzConfig(test.Context())
-}
-
-func panicOnError(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

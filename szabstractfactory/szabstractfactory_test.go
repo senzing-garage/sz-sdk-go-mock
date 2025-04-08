@@ -25,9 +25,11 @@ const (
 // ----------------------------------------------------------------------------
 
 func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
 	configList, err := szConfigManager.GetConfigs(ctx)
@@ -36,9 +38,11 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+
 	szDiagnostic, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
 	result, err := szDiagnostic.CheckDatastorePerformance(ctx, 1)
@@ -47,9 +51,11 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateEngine(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	require.NoError(test, err)
 	stats, err := szEngine.GetStats(ctx)
@@ -58,9 +64,11 @@ func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateProduct(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+
 	szProduct, err := szAbstractFactory.CreateProduct(ctx)
 	require.NoError(test, err)
 	version, err := szProduct.GetVersion(ctx)
@@ -69,15 +77,18 @@ func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 }
 
 func TestSzAbstractFactory_Destroy(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 }
 
 func TestSzAbstractFactory_Reinitialize(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
+	ctx := test.Context()
+	szAbstractFactory := getTestObject(test)
+
 	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+
 	_, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
 	_, err = szAbstractFactory.CreateEngine(ctx)
@@ -110,6 +121,7 @@ func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfact
 		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteDataSourceResult:                  testValue.String("DeleteDataSourceResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
 		ExportConfigResult:                      testValue.String("ExportConfigResult"),
 		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
@@ -149,8 +161,10 @@ func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfact
 	}
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *szabstractfactory.Szabstractfactory {
-	_ = test
+func getTestObject(t *testing.T) senzing.SzAbstractFactory {
+	t.Helper()
+	ctx := t.Context()
+
 	return getSzAbstractFactory(ctx)
 }
 
@@ -160,13 +174,16 @@ func panicOnError(err error) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 

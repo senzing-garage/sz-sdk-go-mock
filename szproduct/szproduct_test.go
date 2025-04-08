@@ -42,7 +42,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_GetLicense(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getTestObject(test)
 	actual, err := szProduct.GetLicense(ctx)
 	require.NoError(test, err)
@@ -50,7 +50,7 @@ func TestSzproduct_GetLicense(test *testing.T) {
 }
 
 func TestSzproduct_GetVersion(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getTestObject(test)
 	actual, err := szProduct.GetVersion(ctx)
 	require.NoError(test, err)
@@ -62,20 +62,20 @@ func TestSzproduct_GetVersion(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_SetLogLevel_badLogLevelName(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
@@ -84,7 +84,7 @@ func TestSzproduct_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzproduct_UnregisterObserver(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getTestObject(test)
 	err := szProduct.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
@@ -95,7 +95,7 @@ func TestSzproduct_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_AsInterface(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getSzProductAsInterface(ctx)
 	actual, err := szProduct.GetLicense(ctx)
 	require.NoError(test, err)

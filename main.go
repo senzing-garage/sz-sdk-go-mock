@@ -71,13 +71,13 @@ func main() {
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
 	logger.Log(2001, "Just a test of logging", programmMetadataMap)
 
-	// Persist the Senzing configuration to the Senzing repository.
+	// Demonstrate persisting a Senzing configuration to the Senzing repository.
 
 	demonstrateConfigFunctions(ctx, szAbstractFactory)
 
 	// Demonstrate tests.
 
-	err = demonstrateAdditionalFunctions(ctx, szAbstractFactory)
+	demonstrateAdditionalFunctions(ctx, szAbstractFactory)
 
 	err = szAbstractFactory.Destroy(ctx)
 	failOnError(5008, err)
@@ -86,10 +86,10 @@ func main() {
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Demonstrations
 // ----------------------------------------------------------------------------
 
-func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) error {
+func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) {
 
 	// Using SzEngine: Add records with information returned.
 
@@ -109,7 +109,6 @@ func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzi
 	failOnError(5103, err)
 	logger.Log(2102, license)
 
-	return err
 }
 
 func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (string, error) {

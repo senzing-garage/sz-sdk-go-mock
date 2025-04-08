@@ -21,6 +21,7 @@ import (
 const (
 	defaultTruncation = 76
 	instanceName      = "SzDiagnostic Test"
+	jsonIndentation   = "    "
 	observerOrigin    = "SzDiagnostic observer"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
@@ -47,7 +48,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
@@ -56,7 +57,7 @@ func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
 }
 
 func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	actual, err := szDiagnostic.GetDatastoreInfo(ctx)
 	require.NoError(test, err)
@@ -64,13 +65,15 @@ func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 }
 
 func TestSzdiagnostic_GetFeature(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
 	}
-	defer func() { panicOnError(deleteRecords(ctx, records)) }()
-	err := addRecords(ctx, records)
-	require.NoError(test, err)
+
+	defer func() { deleteRecords(ctx, records) }()
+
+	addRecords(ctx, records)
+
 	szDiagnostic := getTestObject(test)
 	featureID := int64(1)
 	actual, err := szDiagnostic.GetFeature(ctx, featureID)
@@ -83,20 +86,20 @@ func TestSzdiagnostic_GetFeature(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_SetLogLevel_badLogLevelName(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzdiagnostic_SetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szDiagnostic.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szDiagnostic.SetObserverOrigin(ctx, origin)
@@ -105,7 +108,7 @@ func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	err := szDiagnostic.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
@@ -116,7 +119,7 @@ func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_AsInterface(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getSzDiagnosticAsInterface(ctx)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
@@ -128,18 +131,14 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func addRecords(ctx context.Context, records []record.Record) error {
-	var err error
+func addRecords(ctx context.Context, records []record.Record) {
 	_ = ctx
 	_ = records
-	return err
 }
 
-func deleteRecords(ctx context.Context, records []record.Record) error {
-	var err error
+func deleteRecords(ctx context.Context, records []record.Record) {
 	_ = ctx
 	_ = records
-	return err
 }
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
@@ -224,8 +223,9 @@ func getSzDiagnosticAsInterface(ctx context.Context) senzing.SzDiagnostic {
 	return getSzDiagnostic(ctx)
 }
 
-func getTestObject(test *testing.T) *szdiagnostic.Szdiagnostic {
-	return getSzDiagnostic(test.Context())
+func getTestObject(t *testing.T) *szdiagnostic.Szdiagnostic {
+	t.Helper()
+	return getSzDiagnostic(t.Context())
 }
 
 func panicOnError(err error) {
@@ -234,13 +234,16 @@ func panicOnError(err error) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 
