@@ -1,4 +1,4 @@
-package szconfigmanager
+package szconfigmanager_test
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"time"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-observing/observer"
-	"github.com/senzing-garage/sz-sdk-go-mock/helper"
 	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
@@ -36,7 +36,7 @@ const (
 )
 
 var (
-	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -235,11 +235,11 @@ func getTestObject(ctx context.Context, test *testing.T) *Szconfigmanager {
 	return result
 }
 
-// func handleError(err error) {
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
+func panicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
 
 func printActual(test *testing.T, actual interface{}) {
 	printResult(test, "Actual", actual)

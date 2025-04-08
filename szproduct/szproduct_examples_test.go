@@ -6,11 +6,9 @@ import (
 	"context"
 	"fmt"
 
-	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/go-helpers/jsonutil"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
-	"github.com/senzing-garage/sz-sdk-go-mock/szproduct"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 )
@@ -48,7 +46,7 @@ func ExampleSzproduct_GetVersion() {
 		handleError(err)
 	}
 	fmt.Println(truncate(result, 43))
-	// Output: {"PRODUCT_NAME":"Senzing API","VERSION":...
+	// Output: {"PRODUCT_NAME":"Senzing SDK","VERSION":...
 }
 
 // ----------------------------------------------------------------------------
@@ -147,27 +145,8 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	return result
 }
 
-func getSzProduct(ctx context.Context) *szproduct.Szproduct {
-	_ = ctx
-
-	testValue := &testdata.TestData{
-		Int64s:   testdata.Data1_int64s,
-		Strings:  testdata.Data1_strings,
-		Uintptrs: testdata.Data1_uintptrs,
-	}
-
-	return &szproduct.Szproduct{
-		GetLicenseResult: testValue.String("GetLicenseResult"),
-		GetVersionResult: testValue.String("GetVersionResult"),
-	}
-}
-
 func handleError(err error) {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-}
-
-func truncate(aString string, length int) string {
-	return truncator.Truncate(aString, length, "...", truncator.PositionEnd)
 }

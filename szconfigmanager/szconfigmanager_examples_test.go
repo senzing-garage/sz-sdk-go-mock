@@ -154,7 +154,9 @@ func ExampleSzconfigmanager_SetDefaultConfigID() {
 	if err != nil {
 		handleError(err)
 	}
-	configID, err := szConfigManager.GetDefaultConfigID(ctx) // For example purposes only. Normally would use output from GetConfigList()
+	configID, err := szConfigManager.GetDefaultConfigID(
+		ctx,
+	) // For example purposes only. Normally would use output from GetConfigList()
 	if err != nil {
 		handleError(err)
 	}

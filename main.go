@@ -10,10 +10,7 @@ import (
 
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-logging/logging"
-	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
-	"github.com/senzing-garage/sz-sdk-go-mock/szconfigmanager"
-	"github.com/senzing-garage/sz-sdk-go-mock/szengine"
-	"github.com/senzing-garage/sz-sdk-go-mock/szproduct"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 )
 
@@ -50,6 +47,7 @@ var logger logging.Logging
 
 func main() {
 	var err error
+
 	ctx := context.TODO()
 
 	// Configure the "log" standard library.
@@ -66,34 +64,23 @@ func main() {
 		"BuildIteration": buildIteration,
 	}
 
+	// Create a SzAbstractFactory.
+
+	szAbstractFactory := &szabstractfactory.Szabstractfactory{}
+
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
 	logger.Log(2001, "Just a test of logging", programmMetadataMap)
 
-	// Get Senzing objects for installing a Senzing Engine configuration.
-
-	szConfig, err := getSzConfig(ctx)
-	failOnError(5002, err)
-
-	szConfigManager, err := getSzConfigManager(ctx)
-	failOnError(5003, err)
-
 	// Persist the Senzing configuration to the Senzing repository.
 
-	err = demonstrateConfigFunctions(ctx, szConfig, szConfigManager)
-	failOnError(5004, err)
-
-	// Now that a Senzing configuration is installed, get the remainder of the Senzing objects.
-
-	szEngine, err := getSzEngine(ctx)
-	failOnError(5005, err)
-
-	szProduct, err := getSzProduct(ctx)
-	failOnError(5006, err)
+	demonstrateConfigFunctions(ctx, szAbstractFactory)
 
 	// Demonstrate tests.
 
-	err = demonstrateAdditionalFunctions(ctx, szEngine, szProduct)
-	failOnError(5007, err)
+	err = demonstrateAdditionalFunctions(ctx, szAbstractFactory)
+
+	err = szAbstractFactory.Destroy(ctx)
+	failOnError(5008, err)
 
 	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
 }
@@ -102,9 +89,12 @@ func main() {
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func demonstrateAdditionalFunctions(ctx context.Context, szEngine senzing.SzEngine, szProduct senzing.SzProduct) error {
+func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) error {
 
 	// Using SzEngine: Add records with information returned.
+
+	szEngine, err := szAbstractFactory.CreateEngine(ctx)
+	failOnError(5100, err)
 
 	withInfo, err := demonstrateAddRecord(ctx, szEngine)
 	failOnError(5101, err)
@@ -112,8 +102,11 @@ func demonstrateAdditionalFunctions(ctx context.Context, szEngine senzing.SzEngi
 
 	// Using SzProduct: Show license metadata.
 
-	license, err := szProduct.GetLicense(ctx)
+	szProduct, err := szAbstractFactory.CreateProduct(ctx)
 	failOnError(5102, err)
+
+	license, err := szProduct.GetLicense(ctx)
+	failOnError(5103, err)
 	logger.Log(2102, license)
 
 	return err
@@ -128,7 +121,8 @@ func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (strin
 		"%s%s%s",
 		`{"SOCIAL_HANDLE": "flavorh", "DATE_OF_BIRTH": "4/8/1983", "ADDR_STATE": "LA", "ADDR_POSTAL_CODE": "71232", "SSN_NUMBER": "053-39-3251", "ENTITY_TYPE": "TEST", "GENDER": "F", "srccode": "MDMPER", "CC_ACCOUNT_NUMBER": "5534202208773608", "RECORD_ID": "`,
 		recordID,
-		`", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "SEAMAN", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`)
+		`", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "SEAMAN", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`,
+	)
 	var flags = senzing.SzNoFlags
 
 	// Using SzEngine: Add record and return "withInfo".
@@ -136,38 +130,34 @@ func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (strin
 	return szEngine.AddRecord(ctx, dataSourceCode, recordID, recordDefinition, flags)
 }
 
-func demonstrateConfigFunctions(ctx context.Context, szConfig senzing.SzConfig, szConfigManager senzing.SzConfigManager) error {
+func demonstrateConfigFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) {
 	now := time.Now()
 
-	// Using SzConfig: Create a default configuration in memory.
+	// Create Senzing objects.
 
-	configHandle, err := szConfig.CreateConfig(ctx)
-	failOnError(5301, err)
+	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
+	failOnError(5101, err)
+
+	szConfig, err := szConfigManager.CreateConfigFromTemplate(ctx)
+	failOnError(5102, err)
 
 	// Using SzConfig: Add data source to in-memory configuration.
 
-	for _, testDataSource := range truthset.TruthsetDataSources {
-		_, err := szConfig.AddDataSource(ctx, configHandle, testDataSource.JSON)
-		failOnError(5302, err)
+	for testDataSourceCode := range truthset.TruthsetDataSources {
+		_, err := szConfig.AddDataSource(ctx, testDataSourceCode)
+		failOnError(5104, err)
 	}
 
 	// Using SzConfig: Persist configuration to a string.
 
-	configStr, err := szConfig.ExportConfig(ctx, configHandle)
-	failOnError(5303, err)
+	configStr, err := szConfig.Export(ctx)
+	failOnError(5105, err)
 
 	// Using SzConfigManager: Persist configuration string to database.
 
-	configComments := fmt.Sprintf("Created by main at %s", now.UTC())
-	configID, err := szConfigManager.AddConfig(ctx, configStr, configComments)
-	failOnError(5304, err)
-
-	// Using SzConfigManager: Set new configuration as the default.
-
-	err = szConfigManager.SetDefaultConfigID(ctx, configID)
-	failOnError(5305, err)
-
-	return err
+	configComment := fmt.Sprintf("Created by main.go at %s", now.UTC())
+	_, err = szConfigManager.SetDefaultConfig(ctx, configStr, configComment)
+	failOnError(5106, err)
 }
 
 func failOnError(msgID int, err error) {
@@ -182,32 +172,4 @@ func getLogger(ctx context.Context) (logging.Logging, error) {
 	logger, err := logging.NewSenzingLogger(9999, Messages)
 	failOnError(5401, err)
 	return logger, err
-}
-
-func getSzConfig(ctx context.Context) (senzing.SzConfig, error) {
-	var err error
-	_ = ctx
-	result := szconfig.Szconfig{}
-	return &result, err
-}
-
-func getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
-	var err error
-	_ = ctx
-	result := szconfigmanager.Szconfigmanager{}
-	return &result, err
-}
-
-func getSzEngine(ctx context.Context) (senzing.SzEngine, error) {
-	var err error
-	_ = ctx
-	result := szengine.Szengine{}
-	return &result, err
-}
-
-func getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
-	var err error
-	_ = ctx
-	result := szproduct.Szproduct{}
-	return &result, err
 }

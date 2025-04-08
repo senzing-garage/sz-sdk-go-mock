@@ -1,4 +1,4 @@
-package szabstractfactory
+package szabstractfactory_test
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/require"
@@ -23,23 +24,10 @@ const (
 // Interface methods - test
 // ----------------------------------------------------------------------------
 
-func TestSzAbstractFactory_CreateConfig(test *testing.T) {
-	ctx := context.TODO()
-	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
-	szConfig, err := szAbstractFactory.CreateConfig(ctx)
-	require.NoError(test, err)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	dataSources, err := szConfig.GetDataSources(ctx, configHandle)
-	require.NoError(test, err)
-	printActual(test, dataSources)
-}
-
 func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
 	configList, err := szConfigManager.GetConfigs(ctx)
@@ -50,7 +38,7 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 	szDiagnostic, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
 	result, err := szDiagnostic.CheckDatastorePerformance(ctx, 1)
@@ -61,7 +49,7 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	require.NoError(test, err)
 	stats, err := szEngine.GetStats(ctx)
@@ -72,7 +60,7 @@ func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 	szProduct, err := szAbstractFactory.CreateProduct(ctx)
 	require.NoError(test, err)
 	version, err := szProduct.GetVersion(ctx)
@@ -83,13 +71,13 @@ func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 func TestSzAbstractFactory_Destroy(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 }
 
 func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 	ctx := context.TODO()
 	szAbstractFactory := getTestObject(ctx, test)
-	defer func() { handleError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
 	_, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
 	_, err = szAbstractFactory.CreateEngine(ctx)
@@ -106,7 +94,7 @@ func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzAbstractFactory(ctx context.Context) *Szabstractfactory {
+func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfactory {
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -115,7 +103,7 @@ func getSzAbstractFactory(ctx context.Context) *Szabstractfactory {
 		Uintptrs: testdata.Data1_uintptrs,
 	}
 
-	return &Szabstractfactory{
+	return &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
 		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
@@ -161,12 +149,12 @@ func getSzAbstractFactory(ctx context.Context) *Szabstractfactory {
 	}
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *Szabstractfactory {
+func getTestObject(ctx context.Context, test *testing.T) *szabstractfactory.Szabstractfactory {
 	_ = test
 	return getSzAbstractFactory(ctx)
 }
 
-func handleError(err error) {
+func panicOnError(err error) {
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
-package szproduct
+package szproduct_test
 
 import (
 	"context"
@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-observing/observer"
-	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/szproduct"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +30,7 @@ const (
 )
 
 var (
-	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -42,7 +43,7 @@ var (
 
 func TestSzproduct_GetLicense(test *testing.T) {
 	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	szProduct := getTestObject(test)
 	actual, err := szProduct.GetLicense(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
@@ -50,7 +51,7 @@ func TestSzproduct_GetLicense(test *testing.T) {
 
 func TestSzproduct_GetVersion(test *testing.T) {
 	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	szProduct := getTestObject(test)
 	actual, err := szProduct.GetVersion(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
@@ -62,20 +63,20 @@ func TestSzproduct_GetVersion(test *testing.T) {
 
 func TestSzproduct_SetLogLevel_badLogLevelName(test *testing.T) {
 	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
 	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
 	actual := szProduct.GetObserverOrigin(ctx)
@@ -84,7 +85,7 @@ func TestSzproduct_GetObserverOrigin(test *testing.T) {
 
 func TestSzproduct_UnregisterObserver(test *testing.T) {
 	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	szProduct := getTestObject(test)
 	err := szProduct.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
 }
@@ -105,42 +106,41 @@ func TestSzproduct_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzProduct(ctx context.Context) (*Szproduct, error) {
+func getSzProduct(ctx context.Context) *szproduct.Szproduct {
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-	result := &Szproduct{
+	result := &szproduct.Szproduct{
 		GetLicenseResult: testValue.String("GetLicenseResult"),
 		GetVersionResult: testValue.String("GetVersionResult"),
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
 		err := result.RegisterObserver(ctx, observerSingleton)
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
+
 		err = result.SetLogLevel(ctx, "TRACE")
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
+
 	}
-	return result, nil
+	return result
 }
 
 func getSzProductAsInterface(ctx context.Context) senzing.SzProduct {
-	result, err := getSzProduct(ctx)
-	if err != nil {
-		panic(err)
-	}
+	result := getSzProduct(ctx)
 	return result
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *Szproduct {
-	result, err := getSzProduct(ctx)
-	require.NoError(test, err)
-	return result
+func getTestObject(test *testing.T) *szproduct.Szproduct {
+	return getSzProduct(test.Context())
+}
+
+func panicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

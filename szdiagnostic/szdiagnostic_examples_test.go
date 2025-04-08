@@ -8,10 +8,6 @@ import (
 
 	"github.com/senzing-garage/go-helpers/jsonutil"
 	"github.com/senzing-garage/go-logging/logging"
-	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
-	"github.com/senzing-garage/sz-sdk-go-mock/szdiagnostic"
-	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
-	"github.com/senzing-garage/sz-sdk-go/senzing"
 )
 
 // ----------------------------------------------------------------------------
@@ -121,79 +117,6 @@ func ExampleSzdiagnostic_GetObserverOrigin() {
 // ----------------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------------
-
-func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
-	var result senzing.SzAbstractFactory
-	_ = ctx
-
-	testValue := &testdata.TestData{
-		Int64s:   testdata.Data1_int64s,
-		Strings:  testdata.Data1_strings,
-		Uintptrs: testdata.Data1_uintptrs,
-	}
-
-	result = &szabstractfactory.Szabstractfactory{
-		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
-		AddRecordResult:                         testValue.String("AddRecordResult"),
-		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
-		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
-		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
-		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
-		ExportConfigResult:                      testValue.String("ExportConfigResult"),
-		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
-		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
-		FetchNextResult:                         testValue.String("FetchNextResult"),
-		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
-		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
-		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
-		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
-		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
-		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
-		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
-		GetConfigResult:                         testValue.String("GetConfigResult"),
-		GetConfigsResult:                        testValue.String("GetConfigsResult"),
-		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
-		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
-		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
-		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
-		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
-		GetFeatureResult:                        testValue.String("GetFeatureResult"),
-		GetLicenseResult:                        testValue.String("GetLicenseResult"),
-		GetRecordResult:                         testValue.String("GetRecordResult"),
-		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
-		GetStatsResult:                          testValue.String("GetStatsResult"),
-		GetVersionResult:                        testValue.String("GetVersionResult"),
-		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
-		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
-		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
-		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
-		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
-		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
-		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
-		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
-		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
-		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
-		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
-	}
-	return result
-}
-
-func getSzDiagnostic(ctx context.Context) *szdiagnostic.Szdiagnostic {
-	_ = ctx
-
-	testValue := &testdata.TestData{
-		Int64s:   testdata.Data1_int64s,
-		Strings:  testdata.Data1_strings,
-		Uintptrs: testdata.Data1_uintptrs,
-	}
-
-	return &szdiagnostic.Szdiagnostic{
-		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
-		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
-		GetFeatureResult:                testValue.String("GetFeatureResult"),
-	}
-}
 
 func handleError(err error) {
 	if err != nil {

@@ -15,6 +15,7 @@ import (
 	"github.com/senzing-garage/go-observing/observer"
 	"github.com/senzing-garage/go-observing/subject"
 	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/senzing-garage/sz-sdk-go/szconfigmanager"
 )
 
@@ -41,35 +42,28 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-Method AddConfig adds a Senzing configuration JSON document to the Senzing datastore.
+Method CreateConfigFromConfigID retrieves a specific Senzing configuration JSON document from the Senzing datastore.
 
 Input
   - ctx: A context to control lifecycle.
-  - configDefinition: The Senzing configuration JSON document.
-  - configComment: A free-form string describing the Senzing configuration JSON document.
+  - configID: The identifier of the desired Senzing configuration JSON document to retrieve.
 
 Output
-  - configID: A Senzing configuration JSON document identifier.
+  - senzing.SzConfig:
 */
-func (client *Szconfigmanager) AddConfig(ctx context.Context, configDefinition string, configComment string) (int64, error) {
-	var err error
-	result := client.AddConfigResult
-	if client.isTrace {
-		entryTime := time.Now()
-		client.traceEntry(1, configDefinition, configComment)
-		defer func() {
-			client.traceExit(2, configDefinition, configComment, result, err, time.Since(entryTime))
-		}()
-	}
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configComment": configComment,
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
-		}()
-	}
-	return result, err
+func (client *Szconfigmanager) CreateConfigFromConfigID(ctx context.Context, configID int64) (senzing.SzConfig, error) {
+	return nil, nil
+}
+
+func (client *Szconfigmanager) CreateConfigFromString(
+	ctx context.Context,
+	configDefinition string,
+) (senzing.SzConfig, error) {
+	return nil, nil
+}
+
+func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (senzing.SzConfig, error) {
+	return nil, nil
 }
 
 /*
@@ -154,6 +148,42 @@ func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, e
 }
 
 /*
+Method RegisterConfig adds a Senzing configuration JSON document to the Senzing datastore.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configDefinition: The Senzing configuration JSON document.
+  - configComment: A free-form string describing the Senzing configuration JSON document.
+
+Output
+  - configID: A Senzing configuration JSON document identifier.
+*/
+func (client *Szconfigmanager) RegisterConfig(
+	ctx context.Context,
+	configDefinition string,
+	configComment string,
+) (int64, error) {
+	var err error
+	result := client.AddConfigResult
+	if client.isTrace {
+		entryTime := time.Now()
+		client.traceEntry(1, configDefinition, configComment)
+		defer func() {
+			client.traceExit(2, configDefinition, configComment, result, err, time.Since(entryTime))
+		}()
+	}
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"configComment": configComment,
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
+		}()
+	}
+	return result, err
+}
+
+/*
 Similar to the [Szconfigmanager.SetDefaultConfigID] method,
 method ReplaceDefaultConfigID sets which Senzing configuration JSON document is used when initializing or reinitializing the system.
 The difference is that ReplaceDefaultConfigID only succeeds when the old Senzing configuration JSON document identifier
@@ -168,7 +198,11 @@ Input
   - currentDefaultConfigID: The Senzing configuration JSON document identifier to replace.
   - newDefaultConfigID: The Senzing configuration JSON document identifier to use as the default.
 */
-func (client *Szconfigmanager) ReplaceDefaultConfigID(ctx context.Context, currentDefaultConfigID int64, newDefaultConfigID int64) error {
+func (client *Szconfigmanager) ReplaceDefaultConfigID(
+	ctx context.Context,
+	currentDefaultConfigID int64,
+	newDefaultConfigID int64,
+) error {
 	var err error
 	if client.isTrace {
 		entryTime := time.Now()
@@ -184,6 +218,13 @@ func (client *Szconfigmanager) ReplaceDefaultConfigID(ctx context.Context, curre
 		}()
 	}
 	return err
+}
+
+func (client *Szconfigmanager) SetDefaultConfig(
+	ctx context.Context,
+	configDefinition string,
+	configComment string) (int64, error) {
+	return 0, nil
 }
 
 /*
