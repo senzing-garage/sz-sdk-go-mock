@@ -1,4 +1,4 @@
-package szconfig
+package szconfig_test
 
 import (
 	"context"
@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-observing/observer"
-	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
+	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +17,7 @@ import (
 )
 
 const (
+	baseTen           = 10
 	dataSourceCode    = "GO_TEST"
 	defaultTruncation = 76
 	instanceName      = "SzConfig Test"
@@ -33,14 +36,8 @@ const (
 	badSettings         = "{]"
 )
 
-// Nil/empty parameters
-
 var (
-	nilDataSourceCode string
-)
-
-var (
-	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -48,148 +45,79 @@ var (
 )
 
 // ----------------------------------------------------------------------------
-// Interface methods - test
+// Interface methods
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_AddDataSource(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
-	require.NoError(test, err)
-	printActual(test, actual)
-	err = szConfig.CloseConfig(ctx, configHandle)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_AddDataSource_withLoad(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
-	require.NoError(test, err)
-	err = szConfig.CloseConfig(ctx, configHandle)
-	require.NoError(test, err)
-	configHandle2, err := szConfig.ImportConfig(ctx, configDefinition)
-	require.NoError(test, err)
-	actual, err := szConfig.AddDataSource(ctx, configHandle2, dataSourceCode)
-	require.NoError(test, err)
-	printActual(test, actual)
-	err = szConfig.CloseConfig(ctx, configHandle2)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_CloseConfig(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	err = szConfig.CloseConfig(ctx, configHandle)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_CreateConfig(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	actual, err := szConfig.CreateConfig(ctx)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	actual, err := szConfig.AddDataSource(ctx, dataSourceCode)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
 
 func TestSzconfig_DeleteDataSource(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	require.NoError(test, err)
-	actual, err := szConfig.GetDataSources(ctx, configHandle)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	actual, err := szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printResult(test, "Original", actual)
-	_, err = szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
-	require.NoError(test, err)
-	actual, err = szConfig.GetDataSources(ctx, configHandle)
+
+	_, _ = szConfig.AddDataSource(ctx, dataSourceCode)
+	actual, err = szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printResult(test, "     Add", actual)
-	err = szConfig.DeleteDataSource(ctx, configHandle, dataSourceCode)
+
+	_, err = szConfig.DeleteDataSource(ctx, dataSourceCode)
 	require.NoError(test, err)
-	actual, err = szConfig.GetDataSources(ctx, configHandle)
+	actual, err = szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printResult(test, "  Delete", actual)
-	err = szConfig.CloseConfig(ctx, configHandle)
-	require.NoError(test, err)
 }
 
-func TestSzconfig_DeleteDataSource_withLoad(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.GetDataSources(ctx, configHandle)
-	require.NoError(test, err)
-	printResult(test, "Original", actual)
-	_, err = szConfig.AddDataSource(ctx, configHandle, dataSourceCode)
-	require.NoError(test, err)
-	actual, err = szConfig.GetDataSources(ctx, configHandle)
-	require.NoError(test, err)
-	printResult(test, "     Add", actual)
-	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
-	require.NoError(test, err)
-	err = szConfig.CloseConfig(ctx, configHandle)
-	require.NoError(test, err)
-	configHandle2, err := szConfig.ImportConfig(ctx, configDefinition)
-	require.NoError(test, err)
-	err = szConfig.DeleteDataSource(ctx, configHandle2, dataSourceCode)
-	require.NoError(test, err)
-	actual, err = szConfig.GetDataSources(ctx, configHandle2)
-	require.NoError(test, err)
-	printResult(test, "  Delete", actual)
-	err = szConfig.CloseConfig(ctx, configHandle2)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_DeleteDataSource_nilDataSourceCode(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	err = szConfig.DeleteDataSource(ctx, configHandle, nilDataSourceCode)
-	require.NoError(test, err)
-}
-
-func TestSzconfig_ExportConfig(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.ExportConfig(ctx, configHandle)
+func TestSzconfig_Export(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	actual, err := szConfig.Export(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
 
 func TestSzconfig_GetDataSources(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.GetDataSources(ctx, configHandle)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	actual, err := szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
-	err = szConfig.CloseConfig(ctx, configHandle)
+}
+
+// ----------------------------------------------------------------------------
+// Public non-interface methods
+// ----------------------------------------------------------------------------
+
+func TestSzconfig_Import(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	configDefinition, err := szConfig.Export(ctx)
+	require.NoError(test, err)
+	err = szConfig.Import(ctx, configDefinition)
 	require.NoError(test, err)
 }
 
-func TestSzconfig_ImportConfig(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
-	configHandle, err := szConfig.CreateConfig(ctx)
+func TestSzconfig_ImportTemplate(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	err := szConfig.ImportTemplate(ctx)
 	require.NoError(test, err)
-	configDefinition, err := szConfig.ExportConfig(ctx, configHandle)
+}
+
+func TestSzconfig_VerifyConfigDefinition(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	configDefinition, err := szConfig.Export(ctx)
 	require.NoError(test, err)
-	actual, err := szConfig.ImportConfig(ctx, configDefinition)
+	err = szConfig.VerifyConfigDefinition(ctx, configDefinition)
 	require.NoError(test, err)
-	printActual(test, actual)
 }
 
 // ----------------------------------------------------------------------------
@@ -197,21 +125,21 @@ func TestSzconfig_ImportConfig(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_SetLogLevel_badLogLevelName(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzconfig_SetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szConfig.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzconfig_GetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szConfig.SetObserverOrigin(ctx, origin)
 	actual := szConfig.GetObserverOrigin(ctx)
@@ -219,8 +147,8 @@ func TestSzconfig_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzconfig_UnregisterObserver(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	err := szConfig.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
 }
@@ -230,14 +158,11 @@ func TestSzconfig_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_AsInterface(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szConfig := getSzConfigAsInterface(ctx)
-	configHandle, err := szConfig.CreateConfig(ctx)
-	require.NoError(test, err)
-	actual, err := szConfig.GetDataSources(ctx, configHandle)
+	actual, err := szConfig.GetDataSources(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
-	err = szConfig.CloseConfig(ctx, configHandle)
 	require.NoError(test, err)
 }
 
@@ -245,18 +170,76 @@ func TestSzconfig_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzConfig(ctx context.Context) *Szconfig {
+func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
+	var result senzing.SzAbstractFactory
+	_ = ctx
+
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-	result := &Szconfig{
+
+	result = &szabstractfactory.Szabstractfactory{
+		AddConfigResult:                         testValue.Int64("AddConfigResult"),
+		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		AddRecordResult:                         testValue.String("AddRecordResult"),
+		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
+		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
+		ExportConfigResult:                      testValue.String("ExportConfigResult"),
+		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
+		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
+		FetchNextResult:                         testValue.String("FetchNextResult"),
+		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
+		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
+		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
+		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
+		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
+		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
+		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
+		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
+		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
+		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetFeatureResult:                        testValue.String("GetFeatureResult"),
+		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordResult:                         testValue.String("GetRecordResult"),
+		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetStatsResult:                          testValue.String("GetStatsResult"),
+		GetVersionResult:                        testValue.String("GetVersionResult"),
+		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
+		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
+		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
+		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
+		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
+		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
+		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
+		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
+		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
+		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
+	}
+
+	return result
+}
+
+func getSzConfig(ctx context.Context) *szconfig.Szconfig {
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &szconfig.Szconfig{
 		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
 		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
 		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
 		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
-		ExportConfigResult:   testValue.String("ExportConfigResult"),
+		ExportResult:         testValue.String("ExportConfigResult"),
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
@@ -277,9 +260,14 @@ func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
 	return getSzConfig(ctx)
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *Szconfig {
-	_ = test
-	return getSzConfig(ctx)
+func getTestObject(test *testing.T) *szconfig.Szconfig {
+	return getSzConfig(test.Context())
+}
+
+func handleError(err error) {
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

@@ -1,4 +1,4 @@
-package szproduct
+package szproduct_test
 
 import (
 	"context"
@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-observing/observer"
-	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
+	"github.com/senzing-garage/sz-sdk-go-mock/szproduct"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +31,7 @@ const (
 )
 
 var (
-	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -41,16 +43,16 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_GetLicense(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	ctx := test.Context()
+	szProduct := getTestObject(test)
 	actual, err := szProduct.GetLicense(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
 
 func TestSzproduct_GetVersion(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	ctx := test.Context()
+	szProduct := getTestObject(test)
 	actual, err := szProduct.GetVersion(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
@@ -61,21 +63,21 @@ func TestSzproduct_GetVersion(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_SetLogLevel_badLogLevelName(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	ctx := test.Context()
+	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	ctx := test.Context()
+	szProduct := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szProduct.SetObserverOrigin(ctx, origin)
 	actual := szProduct.GetObserverOrigin(ctx)
@@ -83,8 +85,8 @@ func TestSzproduct_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzproduct_UnregisterObserver(test *testing.T) {
-	ctx := context.TODO()
-	szProduct := getTestObject(ctx, test)
+	ctx := test.Context()
+	szProduct := getTestObject(test)
 	err := szProduct.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
 }
@@ -94,7 +96,7 @@ func TestSzproduct_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_AsInterface(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szProduct := getSzProductAsInterface(ctx)
 	actual, err := szProduct.GetLicense(ctx)
 	require.NoError(test, err)
@@ -105,42 +107,106 @@ func TestSzproduct_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getSzProduct(ctx context.Context) (*Szproduct, error) {
+func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
+	var result senzing.SzAbstractFactory
+	_ = ctx
+
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-	result := &Szproduct{
+
+	result = &szabstractfactory.Szabstractfactory{
+		AddConfigResult:                         testValue.Int64("AddConfigResult"),
+		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		AddRecordResult:                         testValue.String("AddRecordResult"),
+		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
+		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteDataSourceResult:                  testValue.String("DeleteDataSourceResult"),
+		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
+		ExportConfigResult:                      testValue.String("ExportConfigResult"),
+		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
+		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
+		FetchNextResult:                         testValue.String("FetchNextResult"),
+		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
+		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
+		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
+		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
+		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
+		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
+		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
+		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
+		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
+		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetFeatureResult:                        testValue.String("GetFeatureResult"),
+		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordResult:                         testValue.String("GetRecordResult"),
+		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetStatsResult:                          testValue.String("GetStatsResult"),
+		GetVersionResult:                        testValue.String("GetVersionResult"),
+		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
+		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
+		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
+		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
+		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
+		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
+		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
+		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
+		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
+		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
+	}
+
+	return result
+}
+
+func getSzProduct(ctx context.Context) *szproduct.Szproduct {
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &szproduct.Szproduct{
 		GetLicenseResult: testValue.String("GetLicenseResult"),
 		GetVersionResult: testValue.String("GetVersionResult"),
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
 		err := result.RegisterObserver(ctx, observerSingleton)
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
+
 		err = result.SetLogLevel(ctx, "TRACE")
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
+
 	}
-	return result, nil
+	return result
 }
 
 func getSzProductAsInterface(ctx context.Context) senzing.SzProduct {
-	result, err := getSzProduct(ctx)
-	if err != nil {
-		panic(err)
-	}
+	result := getSzProduct(ctx)
 	return result
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *Szproduct {
-	result, err := getSzProduct(ctx)
-	require.NoError(test, err)
-	return result
+func getTestObject(test *testing.T) *szproduct.Szproduct {
+	return getSzProduct(test.Context())
+}
+
+func handleError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func panicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

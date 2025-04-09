@@ -1,4 +1,4 @@
-package szdiagnostic
+package szdiagnostic_test
 
 import (
 	"context"
@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	truncator "github.com/aquilax/truncate"
+	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-helpers/record"
 	"github.com/senzing-garage/go-helpers/truthset"
 	"github.com/senzing-garage/go-observing/observer"
-	"github.com/senzing-garage/sz-sdk-go-mock/helper"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
+	"github.com/senzing-garage/sz-sdk-go-mock/szdiagnostic"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +21,7 @@ import (
 const (
 	defaultTruncation = 76
 	instanceName      = "SzDiagnostic Test"
+	jsonIndentation   = "    "
 	observerOrigin    = "SzDiagnostic observer"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
@@ -33,7 +36,7 @@ const (
 )
 
 var (
-	logLevel          = helper.GetEnv("SENZING_LOG_LEVEL", "INFO")
+	logLevel          = env.GetEnv("SENZING_LOG_LEVEL", "INFO")
 	observerSingleton = &observer.NullObserver{
 		ID:       "Observer 1",
 		IsSilent: true,
@@ -45,8 +48,8 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
+	ctx := test.Context()
+	szDiagnostic := getTestObject(test)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
 	require.NoError(test, err)
@@ -54,22 +57,24 @@ func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
 }
 
 func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
+	ctx := test.Context()
+	szDiagnostic := getTestObject(test)
 	actual, err := szDiagnostic.GetDatastoreInfo(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
 
 func TestSzdiagnostic_GetFeature(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
 	}
-	defer func() { handleError(deleteRecords(ctx, records)) }()
-	err := addRecords(ctx, records)
-	require.NoError(test, err)
-	szDiagnostic := getTestObject(ctx, test)
+
+	defer func() { deleteRecords(ctx, records) }()
+
+	addRecords(ctx, records)
+
+	szDiagnostic := getTestObject(test)
 	featureID := int64(1)
 	actual, err := szDiagnostic.GetFeature(ctx, featureID)
 	require.NoError(test, err)
@@ -81,21 +86,21 @@ func TestSzdiagnostic_GetFeature(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_SetLogLevel_badLogLevelName(test *testing.T) {
-	ctx := context.TODO()
-	szConfig := getTestObject(ctx, test)
+	ctx := test.Context()
+	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzdiagnostic_SetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
+	ctx := test.Context()
+	szDiagnostic := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szDiagnostic.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
+	ctx := test.Context()
+	szDiagnostic := getTestObject(test)
 	origin := "Machine: nn; Task: UnitTest"
 	szDiagnostic.SetObserverOrigin(ctx, origin)
 	actual := szDiagnostic.GetObserverOrigin(ctx)
@@ -103,8 +108,8 @@ func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
-	ctx := context.TODO()
-	szDiagnostic := getTestObject(ctx, test)
+	ctx := test.Context()
+	szDiagnostic := getTestObject(test)
 	err := szDiagnostic.UnregisterObserver(ctx, observerSingleton)
 	require.NoError(test, err)
 }
@@ -114,7 +119,7 @@ func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_AsInterface(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	szDiagnostic := getSzDiagnosticAsInterface(ctx)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
@@ -126,27 +131,80 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func addRecords(ctx context.Context, records []record.Record) error {
-	var err error
+func addRecords(ctx context.Context, records []record.Record) {
 	_ = ctx
 	_ = records
-	return err
 }
 
-func deleteRecords(ctx context.Context, records []record.Record) error {
-	var err error
+func deleteRecords(ctx context.Context, records []record.Record) {
 	_ = ctx
 	_ = records
-	return err
 }
 
-func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
+func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
+	var result senzing.SzAbstractFactory
+	_ = ctx
+
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
-	result := &Szdiagnostic{
+
+	result = &szabstractfactory.Szabstractfactory{
+		AddConfigResult:                         testValue.Int64("AddConfigResult"),
+		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		AddRecordResult:                         testValue.String("AddRecordResult"),
+		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
+		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
+		ExportConfigResult:                      testValue.String("ExportConfigResult"),
+		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
+		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
+		FetchNextResult:                         testValue.String("FetchNextResult"),
+		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
+		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
+		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
+		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
+		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
+		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
+		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
+		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
+		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
+		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetFeatureResult:                        testValue.String("GetFeatureResult"),
+		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordResult:                         testValue.String("GetRecordResult"),
+		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetStatsResult:                          testValue.String("GetStatsResult"),
+		GetVersionResult:                        testValue.String("GetVersionResult"),
+		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
+		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
+		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
+		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
+		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
+		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
+		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
+		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
+		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
+		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
+	}
+	return result
+}
+
+func getSzDiagnostic(ctx context.Context) *szdiagnostic.Szdiagnostic {
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+	result := &szdiagnostic.Szdiagnostic{
 		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
 		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
 		GetFeatureResult:                testValue.String("GetFeatureResult"),
@@ -154,44 +212,44 @@ func getSzDiagnostic(ctx context.Context) (*Szdiagnostic, error) {
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
 		err := result.RegisterObserver(ctx, observerSingleton)
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
 		err = result.SetLogLevel(ctx, "TRACE")
-		if err != nil {
-			panic(err)
-		}
+		panicOnError(err)
 	}
-	return result, nil
+	return result
 }
 
 func getSzDiagnosticAsInterface(ctx context.Context) senzing.SzDiagnostic {
-	result, err := getSzDiagnostic(ctx)
-	if err != nil {
-		panic(err)
-	}
-	return result
+	return getSzDiagnostic(ctx)
 }
 
-func getTestObject(ctx context.Context, test *testing.T) *Szdiagnostic {
-	result, err := getSzDiagnostic(ctx)
-	require.NoError(test, err)
-	return result
+func getTestObject(t *testing.T) *szdiagnostic.Szdiagnostic {
+	t.Helper()
+	return getSzDiagnostic(t.Context())
 }
 
 func handleError(err error) {
 	if err != nil {
+		fmt.Println("Error:", err)
+	}
+}
+
+func panicOnError(err error) {
+	if err != nil {
 		panic(err)
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 

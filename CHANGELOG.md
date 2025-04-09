@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning].
 
 -
 
+## [0.8.5] - 2025-04-09
+
+### Changed in 0.8.5
+
+- Restructure `SzConfig` and `SzConfigManager`
+
 ## [0.8.4] - 2024-12-10
 
 ### Changed in 0.8.4
