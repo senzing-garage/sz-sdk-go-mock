@@ -164,13 +164,3 @@ func ExampleSzdiagnostic_GetObserverOrigin() {
 	fmt.Println(result)
 	// Output: Machine: nn; Task: UnitTest
 }
-
-// ----------------------------------------------------------------------------
-// Helper functions
-// ----------------------------------------------------------------------------
-
-func handleError(err error) {
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
-}

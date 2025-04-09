@@ -53,7 +53,7 @@ func TestSzconfigmanager_CreateConfigFromConfigID(test *testing.T) {
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	configID, err1 := szConfigManager.GetDefaultConfigID(ctx)
-	panicOnError(err1)
+	require.NoError(test, err1)
 
 	actual, err := szConfigManager.CreateConfigFromConfigID(ctx, configID)
 	require.NoError(test, err)
@@ -115,12 +115,12 @@ func TestSzconfigmanager_ReplaceDefaultConfigID(test *testing.T) {
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	currentDefaultConfigID, err1 := szConfigManager.GetDefaultConfigID(ctx)
-	panicOnError(err1)
+	require.NoError(test, err1)
 
 	// TODO: This is kind of a cheater.
 
 	newDefaultConfigID, err2 := szConfigManager.GetDefaultConfigID(ctx)
-	panicOnError(err2)
+	require.NoError(test, err2)
 
 	err := szConfigManager.ReplaceDefaultConfigID(ctx, currentDefaultConfigID, newDefaultConfigID)
 	require.NoError(test, err)
@@ -130,7 +130,7 @@ func TestSzconfigmanager_SetDefaultConfigID(test *testing.T) {
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	configID, err := szConfigManager.GetDefaultConfigID(ctx)
-	panicOnError(err)
+	require.NoError(test, err)
 	err = szConfigManager.SetDefaultConfigID(ctx, configID)
 	require.NoError(test, err)
 }
@@ -289,6 +289,12 @@ func getTestObject(test *testing.T) *szconfigmanager.Szconfigmanager {
 	return getSzConfigManager(test.Context())
 }
 
+func handleError(err error) {
+	if err != nil {
+		safePrintln("Error:", err)
+	}
+}
+
 func panicOnError(err error) {
 	if err != nil {
 		panic(err)
@@ -303,6 +309,10 @@ func printResult(test *testing.T, title string, result interface{}) {
 	if printResults {
 		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
+}
+
+func safePrintln(message ...any) {
+	fmt.Println(message...)
 }
 
 func truncate(aString string, length int) string {

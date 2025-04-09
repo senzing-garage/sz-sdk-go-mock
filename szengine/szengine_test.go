@@ -640,17 +640,14 @@ func getEntityID(record record.Record) (int64, error) {
 
 func getEntityIDForRecord(datasource string, id string) (int64, error) {
 	ctx := context.TODO()
-	var result int64
 	szEngine := getSzEngine(ctx)
 	response, err := szEngine.GetEntityByRecordID(ctx, datasource, id, senzing.SzWithoutInfo)
-	if err != nil {
-		return result, err
-	}
+	panicOnError(err)
+
 	getEntityByRecordIDResponse := &GetEntityByRecordIDResponse{}
 	err = json.Unmarshal([]byte(response), &getEntityByRecordIDResponse)
-	if err != nil {
-		return result, err
-	}
+	panicOnError(err)
+
 	return getEntityByRecordIDResponse.ResolvedEntity.EntityID, err
 }
 
@@ -659,12 +656,10 @@ func getEntityIDString(record record.Record) (string, error) {
 	return strconv.FormatInt(entityID, baseTen), err
 }
 
-func getEntityIDStringForRecord(datasource string, id string) (string, error) {
+func getEntityIDStringForRecord(datasource string, id string) string {
 	entityID, err := getEntityIDForRecord(datasource, id)
-	if err != nil {
-		return "", err
-	}
-	return strconv.FormatInt(entityID, baseTen), err
+	panicOnError(err)
+	return strconv.FormatInt(entityID, baseTen)
 }
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
@@ -778,6 +773,12 @@ func getSzEngineAsInterface(ctx context.Context) senzing.SzEngine {
 
 func getTestObject(test *testing.T) *szengine.Szengine {
 	return getSzEngine(test.Context())
+}
+
+func handleError(err error) {
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 }
 
 func panicOnError(err error) {

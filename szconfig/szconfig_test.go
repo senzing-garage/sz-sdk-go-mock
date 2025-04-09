@@ -8,6 +8,7 @@ import (
 	truncator "github.com/aquilax/truncate"
 	"github.com/senzing-garage/go-helpers/env"
 	"github.com/senzing-garage/go-observing/observer"
+	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
 	"github.com/senzing-garage/sz-sdk-go-mock/szconfig"
 	"github.com/senzing-garage/sz-sdk-go-mock/testdata"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
@@ -94,10 +95,28 @@ func TestSzconfig_GetDataSources(test *testing.T) {
 // Public non-interface methods
 // ----------------------------------------------------------------------------
 
+func TestSzconfig_Import(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	configDefinition, err := szConfig.Export(ctx)
+	require.NoError(test, err)
+	err = szConfig.Import(ctx, configDefinition)
+	require.NoError(test, err)
+}
+
 func TestSzconfig_ImportTemplate(test *testing.T) {
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	err := szConfig.ImportTemplate(ctx)
+	require.NoError(test, err)
+}
+
+func TestSzconfig_VerifyConfigDefinition(test *testing.T) {
+	ctx := test.Context()
+	szConfig := getTestObject(test)
+	configDefinition, err := szConfig.Export(ctx)
+	require.NoError(test, err)
+	err = szConfig.VerifyConfigDefinition(ctx, configDefinition)
 	require.NoError(test, err)
 }
 
@@ -151,6 +170,64 @@ func TestSzconfig_AsInterface(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
+func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
+	var result senzing.SzAbstractFactory
+	_ = ctx
+
+	testValue := &testdata.TestData{
+		Int64s:   testdata.Data1_int64s,
+		Strings:  testdata.Data1_strings,
+		Uintptrs: testdata.Data1_uintptrs,
+	}
+
+	result = &szabstractfactory.Szabstractfactory{
+		AddConfigResult:                         testValue.Int64("AddConfigResult"),
+		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		AddRecordResult:                         testValue.String("AddRecordResult"),
+		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
+		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
+		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
+		ExportConfigResult:                      testValue.String("ExportConfigResult"),
+		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
+		ExportJSONEntityReportResult:            testValue.Uintptr("ExportJSONEntityReportResult"),
+		FetchNextResult:                         testValue.String("FetchNextResult"),
+		FindInterestingEntitiesByEntityIDResult: testValue.String("FindInterestingEntitiesByEntityIDResult"),
+		FindInterestingEntitiesByRecordIDResult: testValue.String("FindInterestingEntitiesByRecordIDResult"),
+		FindNetworkByEntityIDResult:             testValue.String("FindNetworkByEntityIDResult"),
+		FindNetworkByRecordIDResult:             testValue.String("FindNetworkByRecordIDResult"),
+		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
+		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
+		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
+		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
+		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
+		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetFeatureResult:                        testValue.String("GetFeatureResult"),
+		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordResult:                         testValue.String("GetRecordResult"),
+		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetStatsResult:                          testValue.String("GetStatsResult"),
+		GetVersionResult:                        testValue.String("GetVersionResult"),
+		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
+		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
+		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
+		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
+		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
+		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
+		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
+		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
+		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
+		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
+	}
+
+	return result
+}
+
 func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 	testValue := &testdata.TestData{
 		Int64s:   testdata.Data1_int64s,
@@ -185,6 +262,12 @@ func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
 
 func getTestObject(test *testing.T) *szconfig.Szconfig {
 	return getSzConfig(test.Context())
+}
+
+func handleError(err error) {
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 }
 
 func printActual(test *testing.T, actual interface{}) {

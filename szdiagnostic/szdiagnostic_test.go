@@ -228,6 +228,12 @@ func getTestObject(t *testing.T) *szdiagnostic.Szdiagnostic {
 	return getSzDiagnostic(t.Context())
 }
 
+func handleError(err error) {
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+}
+
 func panicOnError(err error) {
 	if err != nil {
 		panic(err)

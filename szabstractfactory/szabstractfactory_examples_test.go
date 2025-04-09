@@ -4,7 +4,6 @@ package szabstractfactory_test
 
 import (
 	"context"
-	"fmt"
 )
 
 // ----------------------------------------------------------------------------
@@ -77,14 +76,4 @@ func ExampleSzabstractfactory_CreateProduct() {
 
 	_ = szProduct // szProduct can now be used.
 	// Output:
-}
-
-// ----------------------------------------------------------------------------
-// Helper functions
-// ----------------------------------------------------------------------------
-
-func handleError(err error) {
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
 }

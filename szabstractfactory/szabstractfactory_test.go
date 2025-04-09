@@ -28,7 +28,7 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
@@ -41,7 +41,7 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 
 	szDiagnostic, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
@@ -54,7 +54,7 @@ func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	require.NoError(test, err)
@@ -67,7 +67,7 @@ func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 
 	szProduct, err := szAbstractFactory.CreateProduct(ctx)
 	require.NoError(test, err)
@@ -80,14 +80,14 @@ func TestSzAbstractFactory_Destroy(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 }
 
 func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { panicOnError(szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
 
 	_, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
@@ -168,11 +168,17 @@ func getTestObject(t *testing.T) senzing.SzAbstractFactory {
 	return getSzAbstractFactory(ctx)
 }
 
-func panicOnError(err error) {
+func handleError(err error) {
 	if err != nil {
-		panic(err)
+		safePrintln("Error:", err)
 	}
 }
+
+// func panicOnError(err error) {
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// }
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
@@ -185,6 +191,10 @@ func printResult(t *testing.T, title string, result interface{}) {
 	if printResults {
 		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
+}
+
+func safePrintln(message ...any) {
+	fmt.Println(message...)
 }
 
 func truncate(aString string, length int) string {

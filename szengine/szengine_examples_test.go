@@ -319,14 +319,8 @@ func ExampleSzengine_FindNetworkByEntityID() {
 		handleError(err)
 	}
 
-	entityID1, err := getEntityIDStringForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
-	entityID2, err := getEntityIDStringForRecord("CUSTOMERS", "1002")
-	if err != nil {
-		handleError(err)
-	}
+	entityID1 := getEntityIDStringForRecord("CUSTOMERS", "1001")
+	entityID2 := getEntityIDStringForRecord("CUSTOMERS", "1002")
 	entityList := `{"ENTITIES": [{"ENTITY_ID": ` + entityID1 + `}, {"ENTITY_ID": ` + entityID2 + `}]}`
 	maxDegrees := int64(2)
 	buildOutDegrees := int64(1)
@@ -1128,14 +1122,4 @@ func ExampleSzengine_GetObserverOrigin() {
 
 	fmt.Println(result)
 	// Output: Machine: nn; Task: UnitTest
-}
-
-// ----------------------------------------------------------------------------
-// Helper functions
-// ----------------------------------------------------------------------------
-
-func handleError(err error) {
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
 }

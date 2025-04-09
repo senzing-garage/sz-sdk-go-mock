@@ -425,6 +425,33 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 	return wraperror.Errorf(err, "szconfig.UnregisterObserver error: %w", err)
 }
 
+/*
+Method Verify sets the value of the Senzing configuration to be operated upon.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configDefinition: A Senzing configuration JSON document.
+*/
+func (client *Szconfig) VerifyConfigDefinition(ctx context.Context, configDefinition string) error {
+	var err error
+
+	if client.isTrace {
+		client.traceEntry(99, configDefinition)
+
+		entryTime := time.Now()
+		defer func() { client.traceExit(99, configDefinition, err, time.Since(entryTime)) }()
+	}
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8999, err, details)
+		}()
+	}
+
+	return wraperror.Errorf(err, "szconfig.Import error: %w", err)
+}
+
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
