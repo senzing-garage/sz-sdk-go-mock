@@ -268,10 +268,7 @@ func ExampleSzengine_FindInterestingEntitiesByEntityID() {
 		handleError(err)
 	}
 
-	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
+	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
 
 	flags := senzing.SzNoFlags
 
@@ -385,15 +382,8 @@ func ExampleSzengine_FindPathByEntityID() {
 		handleError(err)
 	}
 
-	startEntityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
-
-	endEntityID, err := getEntityIDForRecord("CUSTOMERS", "1002")
-	if err != nil {
-		handleError(err)
-	}
+	startEntityID := getEntityIDForRecord("CUSTOMERS", "1001")
+	endEntityID := getEntityIDForRecord("CUSTOMERS", "1002")
 
 	maxDegrees := int64(1)
 	avoidEntityIDs := ""
@@ -613,11 +603,7 @@ func ExampleSzengine_GetEntityByEntityID() {
 		handleError(err)
 	}
 
-	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
-
+	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
 	flags := senzing.SzNoFlags
 
 	result, err := szEngine.GetEntityByEntityID(ctx, entityID, flags)
@@ -758,11 +744,7 @@ func ExampleSzengine_HowEntityByEntityID() {
 		handleError(err)
 	}
 
-	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
-
+	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
 	flags := senzing.SzNoFlags
 
 	result, err := szEngine.HowEntityByEntityID(ctx, entityID, flags)
@@ -864,10 +846,7 @@ func ExampleSzengine_ReevaluateEntity() {
 		handleError(err)
 	}
 
-	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
-	if err != nil {
-		handleError(err)
-	}
+	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
 
 	flags := senzing.SzWithoutInfo
 
@@ -967,12 +946,12 @@ func ExampleSzengine_WhyEntities() {
 		handleError(err)
 	}
 
-	entityID1, err := getEntityID(truthset.CustomerRecords["1001"])
+	entityID1 := getEntityID(truthset.CustomerRecords["1001"])
 	if err != nil {
 		handleError(err)
 	}
 
-	entityID2, err := getEntityID(truthset.CustomerRecords["1002"])
+	entityID2 := getEntityID(truthset.CustomerRecords["1002"])
 	if err != nil {
 		handleError(err)
 	}

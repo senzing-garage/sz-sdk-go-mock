@@ -247,15 +247,15 @@ Output
 */
 func (client *Szconfig) ImportTemplate(ctx context.Context) error {
 	var (
-		err    error
-		result string
+		err              error
+		configDefinition string
 	)
 
 	if client.isTrace {
 		client.traceEntry(7)
 
 		entryTime := time.Now()
-		defer func() { client.traceExit(8, result, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(8, configDefinition, err, time.Since(entryTime)) }()
 	}
 
 	if client.observers != nil {
@@ -426,7 +426,8 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 }
 
 /*
-Method Verify sets the value of the Senzing configuration to be operated upon.
+Method VerifyConfigDefinition determines if the Senzing configuration JSON document is syntactically correct.
+If no error is returned, the JSON document is valid.
 
 Input
   - ctx: A context to control lifecycle.
@@ -436,20 +437,20 @@ func (client *Szconfig) VerifyConfigDefinition(ctx context.Context, configDefini
 	var err error
 
 	if client.isTrace {
-		client.traceEntry(99, configDefinition)
+		client.traceEntry(25, configDefinition)
 
 		entryTime := time.Now()
-		defer func() { client.traceExit(99, configDefinition, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(26, configDefinition, err, time.Since(entryTime)) }()
 	}
 
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8999, err, details)
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8010, err, details)
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.Import error: %w", err)
+	return wraperror.Errorf(err, "szconfig.VerifyConfigDefinition error: %w", err)
 }
 
 // ----------------------------------------------------------------------------

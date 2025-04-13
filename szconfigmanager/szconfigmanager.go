@@ -90,10 +90,10 @@ func (client *Szconfigmanager) CreateConfigFromString(
 	)
 
 	if client.isTrace {
-		client.traceEntry(999, configDefinition)
+		client.traceEntry(23, configDefinition)
 
 		entryTime := time.Now()
-		defer func() { client.traceExit(999, configDefinition, result, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(24, configDefinition, result, err, time.Since(entryTime)) }()
 	}
 
 	result = getSzConfig(ctx)
@@ -101,13 +101,23 @@ func (client *Szconfigmanager) CreateConfigFromString(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8999, err, details)
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8009, err, details)
 		}()
 	}
 
 	return result, wraperror.Errorf(err, "szconfigmanager.CreateConfigFromString error: %w", err)
 }
 
+/*
+Method CreateConfigFromTemplate creates an SzConfig from the template Senzing configuration JSON document.
+This document is found in a file on the gRPC server at PIPELINE.RESOURCEPATH/templates/g2config.json
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+  - senzing.SzConfig:
+*/
 func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (senzing.SzConfig, error) {
 	var (
 		err    error
@@ -115,10 +125,10 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 	)
 
 	if client.isTrace {
-		client.traceEntry(999)
+		client.traceEntry(25)
 
 		entryTime := time.Now()
-		defer func() { client.traceExit(999, result, err, time.Since(entryTime)) }()
+		defer func() { client.traceExit(26, result, err, time.Since(entryTime)) }()
 	}
 
 	result = getSzConfig(ctx)
@@ -126,7 +136,7 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8999, err, details)
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8010, err, details)
 		}()
 	}
 
@@ -288,6 +298,19 @@ func (client *Szconfigmanager) ReplaceDefaultConfigID(
 	return wraperror.Errorf(err, "szconfigmanager.ReplaceDefaultConfigID error: %w", err)
 }
 
+/*
+Method SetDefaultConfig sets which Senzing configuration JSON document
+is used when initializing or reinitializing the system.
+Note that calling the SetDefaultConfig method does not affect the currently
+running in-memory configuration.
+SetDefaultConfig is susceptible to "race conditions".
+To avoid race conditions, see  [Szconfigmanager.ReplaceDefaultConfigID].
+
+Input
+  - ctx: A context to control lifecycle.
+  - configDefinition: The Senzing configuration JSON document.
+  - configComment: A free-form string describing the Senzing configuration JSON document.
+*/
 func (client *Szconfigmanager) SetDefaultConfig(
 	ctx context.Context,
 	configDefinition string,
