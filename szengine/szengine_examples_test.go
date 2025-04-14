@@ -145,12 +145,15 @@ func ExampleSzengine_ExportCsvEntityReport() {
 	if err != nil {
 		handleError(err)
 	}
+
 	csvColumnList := ""
 	flags := senzing.SzNoFlags
+
 	exportHandle, err := szEngine.ExportCsvEntityReport(ctx, csvColumnList, flags)
 	if err != nil {
 		handleError(err)
 	}
+
 	fmt.Println(exportHandle > 0) // Dummy output.
 	// Output: true
 }
@@ -160,17 +163,21 @@ func ExampleSzengine_ExportCsvEntityReportIterator() {
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szAbstractFactory := getSzAbstractFactory(ctx)
+
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	if err != nil {
 		handleError(err)
 	}
+
 	csvColumnList := ""
 	flags := senzing.SzNoFlags
+
 	for result := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
 		if result.Error != nil {
 			handleError(err)
 			break
 		}
+
 		fmt.Println(result.Value)
 	}
 	// Output:
@@ -203,16 +210,19 @@ func ExampleSzengine_ExportJSONEntityReportIterator() {
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szAbstractFactory := getSzAbstractFactory(ctx)
+
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	if err != nil {
 		handleError(err)
 	}
+
 	flags := senzing.SzNoFlags
 	for result := range szEngine.ExportJSONEntityReportIterator(ctx, flags) {
 		if result.Error != nil {
 			handleError(err)
 			break
 		}
+
 		fmt.Println(result.Value)
 	}
 	// Output:
@@ -268,7 +278,10 @@ func ExampleSzengine_FindInterestingEntitiesByEntityID() {
 		handleError(err)
 	}
 
-	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
+	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
+	if err != nil {
+		handleError(err)
+	}
 
 	flags := senzing.SzNoFlags
 
@@ -382,8 +395,15 @@ func ExampleSzengine_FindPathByEntityID() {
 		handleError(err)
 	}
 
-	startEntityID := getEntityIDForRecord("CUSTOMERS", "1001")
-	endEntityID := getEntityIDForRecord("CUSTOMERS", "1002")
+	startEntityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
+	if err != nil {
+		handleError(err)
+	}
+
+	endEntityID, err := getEntityIDForRecord("CUSTOMERS", "1002")
+	if err != nil {
+		handleError(err)
+	}
 
 	maxDegrees := int64(1)
 	avoidEntityIDs := ""
@@ -603,7 +623,11 @@ func ExampleSzengine_GetEntityByEntityID() {
 		handleError(err)
 	}
 
-	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
+	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
+	if err != nil {
+		handleError(err)
+	}
+
 	flags := senzing.SzNoFlags
 
 	result, err := szEngine.GetEntityByEntityID(ctx, entityID, flags)
@@ -744,7 +768,11 @@ func ExampleSzengine_HowEntityByEntityID() {
 		handleError(err)
 	}
 
-	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
+	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
+	if err != nil {
+		handleError(err)
+	}
+
 	flags := senzing.SzNoFlags
 
 	result, err := szEngine.HowEntityByEntityID(ctx, entityID, flags)
@@ -846,7 +874,10 @@ func ExampleSzengine_ReevaluateEntity() {
 		handleError(err)
 	}
 
-	entityID := getEntityIDForRecord("CUSTOMERS", "1001")
+	entityID, err := getEntityIDForRecord("CUSTOMERS", "1001")
+	if err != nil {
+		handleError(err)
+	}
 
 	flags := senzing.SzWithoutInfo
 
@@ -946,12 +977,12 @@ func ExampleSzengine_WhyEntities() {
 		handleError(err)
 	}
 
-	entityID1 := getEntityID(truthset.CustomerRecords["1001"])
+	entityID1, err := getEntityID(truthset.CustomerRecords["1001"])
 	if err != nil {
 		handleError(err)
 	}
 
-	entityID2 := getEntityID(truthset.CustomerRecords["1002"])
+	entityID2, err := getEntityID(truthset.CustomerRecords["1002"])
 	if err != nil {
 		handleError(err)
 	}

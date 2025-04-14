@@ -169,7 +169,8 @@ func TestSzengine_FindInterestingEntitiesByEntityID(test *testing.T) {
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
-	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	entityID, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
 
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.FindInterestingEntitiesByEntityID(ctx, entityID, flags)
@@ -206,8 +207,10 @@ func TestSzengine_FindNetworkByEntityID(test *testing.T) {
 	szEngine := getTestObject(test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
-	entityID1 := getEntityIDString(record1)
-	entityID2 := getEntityIDString(record2)
+	entityID1, err := getEntityIDString(record1)
+	require.NoError(test, err)
+	entityID2, err := getEntityIDString(record2)
+	require.NoError(test, err)
 	entityIDs := `{"ENTITIES": [{"ENTITY_ID": ` + entityID1 + `}, {"ENTITY_ID": ` + entityID2 + `}]}`
 	flags := senzing.SzFindNetworkDefaultFlags
 	actual, err := szEngine.FindNetworkByEntityID(
@@ -276,8 +279,10 @@ func TestSzengine_FindPathByEntityID(test *testing.T) {
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
-	startEntityID := getEntityID(truthset.CustomerRecords["1001"])
-	endEntityID := getEntityID(truthset.CustomerRecords["1002"])
+	startEntityID, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
+	endEntityID, err := getEntityID(truthset.CustomerRecords["1002"])
+	require.NoError(test, err)
 
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.FindPathByEntityID(
@@ -342,7 +347,8 @@ func TestSzengine_GetEntityByEntityID(test *testing.T) {
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
-	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	entityID, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
 
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.GetEntityByEntityID(ctx, entityID, flags)
@@ -434,7 +440,8 @@ func TestSzengine_HowEntityByEntityID(test *testing.T) {
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
-	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	entityID, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
 
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.HowEntityByEntityID(ctx, entityID, flags)
@@ -488,7 +495,9 @@ func TestSzengine_ReevaluateEntity(test *testing.T) {
 
 	defer func() { deleteRecords(ctx, records) }()
 	szEngine := getTestObject(test)
-	entityID := getEntityID(truthset.CustomerRecords["1001"])
+	entityID, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
+
 	flags := senzing.SzWithoutInfo
 	actual, err := szEngine.ReevaluateEntity(ctx, entityID, flags)
 	require.NoError(test, err)
@@ -546,8 +555,10 @@ func TestSzengine_WhyEntities(test *testing.T) {
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
-	entityID1 := getEntityID(truthset.CustomerRecords["1001"])
-	entityID2 := getEntityID(truthset.CustomerRecords["1002"])
+	entityID1, err := getEntityID(truthset.CustomerRecords["1001"])
+	require.NoError(test, err)
+	entityID2, err := getEntityID(truthset.CustomerRecords["1002"])
+	require.NoError(test, err)
 
 	flags := senzing.SzNoFlags
 	actual, err := szEngine.WhyEntities(ctx, entityID1, entityID2, flags)
@@ -665,31 +676,50 @@ func deleteRecords(ctx context.Context, records []record.Record) {
 	_ = records
 }
 
-func getEntityID(record record.Record) int64 {
+func getEntityID(record record.Record) (int64, error) {
 	return getEntityIDForRecord(record.DataSource, record.ID)
 }
 
-func getEntityIDForRecord(datasource string, id string) int64 {
+func getEntityIDForRecord(datasource string, recordID string) (int64, error) {
+	var (
+		err    error
+		result int64
+	)
+
 	ctx := context.TODO()
 	szEngine := getSzEngine(ctx)
-	response, err := szEngine.GetEntityByRecordID(ctx, datasource, id, senzing.SzWithoutInfo)
+	response, err := szEngine.GetEntityByRecordID(ctx, datasource, recordID, senzing.SzWithoutInfo)
 	panicOnError(err)
 
 	getEntityByRecordIDResponse := &GetEntityByRecordIDResponse{}
 	err = json.Unmarshal([]byte(response), &getEntityByRecordIDResponse)
 	panicOnError(err)
 
-	return getEntityByRecordIDResponse.ResolvedEntity.EntityID
+	result = getEntityByRecordIDResponse.ResolvedEntity.EntityID
+
+	return result, nil
 }
 
-func getEntityIDString(record record.Record) string {
-	entityID := getEntityID(record)
-	return strconv.FormatInt(entityID, baseTen)
+func getEntityIDString(record record.Record) (string, error) {
+	entityID, err := getEntityID(record)
+	panicOnError(err)
+
+	result := strconv.FormatInt(entityID, baseTen)
+
+	return result, nil
 }
 
-func getEntityIDStringForRecord(datasource string, id string) string {
-	entityID := getEntityIDForRecord(datasource, id)
-	return strconv.FormatInt(entityID, baseTen)
+func getEntityIDStringForRecord(datasource string, recordID string) string {
+	var (
+		result string
+	)
+
+	entityID, err := getEntityIDForRecord(datasource, recordID)
+	panicOnError(err)
+
+	result = strconv.FormatInt(entityID, baseTen)
+
+	return result
 }
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {

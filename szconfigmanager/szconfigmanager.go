@@ -80,6 +80,16 @@ func (client *Szconfigmanager) CreateConfigFromConfigID(ctx context.Context, con
 	return result, wraperror.Errorf(err, "szconfigmanager.CreateConfigFromConfigID error: %w", err)
 }
 
+/*
+Method CreateConfigFromString creates an SzConfig from the submitted Senzing configuration JSON document.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configDefinition: The Senzing configuration JSON document.
+
+Output
+  - senzing.SzConfig:
+*/
 func (client *Szconfigmanager) CreateConfigFromString(
 	ctx context.Context,
 	configDefinition string,
