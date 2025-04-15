@@ -145,12 +145,15 @@ func ExampleSzengine_ExportCsvEntityReport() {
 	if err != nil {
 		handleError(err)
 	}
+
 	csvColumnList := ""
 	flags := senzing.SzNoFlags
+
 	exportHandle, err := szEngine.ExportCsvEntityReport(ctx, csvColumnList, flags)
 	if err != nil {
 		handleError(err)
 	}
+
 	fmt.Println(exportHandle > 0) // Dummy output.
 	// Output: true
 }
@@ -160,17 +163,21 @@ func ExampleSzengine_ExportCsvEntityReportIterator() {
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szAbstractFactory := getSzAbstractFactory(ctx)
+
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	if err != nil {
 		handleError(err)
 	}
+
 	csvColumnList := ""
 	flags := senzing.SzNoFlags
+
 	for result := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
 		if result.Error != nil {
 			handleError(err)
 			break
 		}
+
 		fmt.Println(result.Value)
 	}
 	// Output:
@@ -203,16 +210,19 @@ func ExampleSzengine_ExportJSONEntityReportIterator() {
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
 	szAbstractFactory := getSzAbstractFactory(ctx)
+
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	if err != nil {
 		handleError(err)
 	}
+
 	flags := senzing.SzNoFlags
 	for result := range szEngine.ExportJSONEntityReportIterator(ctx, flags) {
 		if result.Error != nil {
 			handleError(err)
 			break
 		}
+
 		fmt.Println(result.Value)
 	}
 	// Output:

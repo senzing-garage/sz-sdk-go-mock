@@ -78,6 +78,7 @@ Output
 */
 func (factory *Szabstractfactory) CreateConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	var err error
+
 	_ = ctx
 	result := &szconfigmanager.Szconfigmanager{
 		RegisterConfigResult:     factory.AddConfigResult,
@@ -101,6 +102,7 @@ Output
 */
 func (factory *Szabstractfactory) CreateDiagnostic(ctx context.Context) (senzing.SzDiagnostic, error) {
 	var err error
+
 	_ = ctx
 	result := &szdiagnostic.Szdiagnostic{
 		CheckDatastorePerformanceResult: factory.CheckDatastorePerformanceResult,
@@ -123,6 +125,7 @@ Output
 */
 func (factory *Szabstractfactory) CreateEngine(ctx context.Context) (senzing.SzEngine, error) {
 	var err error
+
 	_ = ctx
 	result := &szengine.Szengine{
 		AddRecordResult:                         factory.AddRecordResult,
@@ -171,6 +174,7 @@ Output
 */
 func (factory *Szabstractfactory) CreateProduct(ctx context.Context) (senzing.SzProduct, error) {
 	var err error
+
 	_ = ctx
 	result := &szproduct.Szproduct{
 		GetLicenseResult: factory.GetLicenseResult,
