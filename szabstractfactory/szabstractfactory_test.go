@@ -194,7 +194,7 @@ func printResult(t *testing.T, title string, result interface{}) {
 }
 
 func safePrintln(message ...any) {
-	fmt.Println(message...)
+	fmt.Println(message...) //nolint
 }
 
 func truncate(aString string, length int) string {

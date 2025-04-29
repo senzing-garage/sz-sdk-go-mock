@@ -23,6 +23,7 @@ const (
 	instanceName      = "SzDiagnostic Test"
 	jsonIndentation   = "    "
 	observerOrigin    = "SzDiagnostic observer"
+	originMessage     = "Machine: nn; Task: UnitTest"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
 )
@@ -94,17 +95,15 @@ func TestSzdiagnostic_SetLogLevel_badLogLevelName(test *testing.T) {
 func TestSzdiagnostic_SetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szDiagnostic.SetObserverOrigin(ctx, origin)
+	szDiagnostic.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szDiagnostic.SetObserverOrigin(ctx, origin)
+	szDiagnostic.SetObserverOrigin(ctx, originMessage)
 	actual := szDiagnostic.GetObserverOrigin(ctx)
-	assert.Equal(test, origin, actual)
+	assert.Equal(test, originMessage, actual)
 }
 
 func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
@@ -143,6 +142,7 @@ func deleteRecords(ctx context.Context, records []record.Record) {
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var result senzing.SzAbstractFactory
+
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -195,6 +195,7 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
 		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
 	}
+
 	return result
 }
 
@@ -204,6 +205,7 @@ func getSzDiagnostic(ctx context.Context) *szdiagnostic.Szdiagnostic {
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
+
 	result := &szdiagnostic.Szdiagnostic{
 		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
 		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
@@ -216,6 +218,7 @@ func getSzDiagnostic(ctx context.Context) *szdiagnostic.Szdiagnostic {
 		err = result.SetLogLevel(ctx, "TRACE")
 		panicOnError(err)
 	}
+
 	return result
 }
 
@@ -225,12 +228,13 @@ func getSzDiagnosticAsInterface(ctx context.Context) senzing.SzDiagnostic {
 
 func getTestObject(t *testing.T) *szdiagnostic.Szdiagnostic {
 	t.Helper()
+
 	return getSzDiagnostic(t.Context())
 }
 
 func handleError(err error) {
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error:", err) //nolint
 	}
 }
 

@@ -145,6 +145,7 @@ func (client *Szengine) CloseExport(ctx context.Context, exportHandle uintptr) e
 		entryTime := time.Now()
 		defer func() { client.traceExit(6, exportHandle, err, time.Since(entryTime)) }()
 	}
+
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -315,6 +316,7 @@ func (client *Szengine) ExportCsvEntityReportIterator(
 			entryTime := time.Now()
 			defer func() { client.traceExit(16, csvColumnList, flags, err, time.Since(entryTime)) }()
 		}
+
 		if client.observers != nil {
 			go func() {
 				details := map[string]string{
@@ -393,6 +395,7 @@ func (client *Szengine) ExportJSONEntityReportIterator(ctx context.Context, flag
 			entryTime := time.Now()
 			defer func() { client.traceExit(20, flags, err, time.Since(entryTime)) }()
 		}
+
 		if client.observers != nil {
 			go func() {
 				details := map[string]string{}
@@ -687,8 +690,14 @@ Output
   - A JSON document.
 */
 func (client *Szengine) FindPathByEntityID(
-	ctx context.Context, startEntityID int64, endEntityID int64, maxDegrees int64, avoidEntityIDs string,
-	requiredDataSources string, flags int64) (string, error) {
+	ctx context.Context,
+	startEntityID int64,
+	endEntityID int64,
+	maxDegrees int64,
+	avoidEntityIDs string,
+	requiredDataSources string,
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -753,9 +762,17 @@ Input
 Output
   - A JSON document.
 */
-func (client *Szengine) FindPathByRecordID(ctx context.Context, startDataSourceCode string, startRecordID string,
-	endDataSourceCode string, endRecordID string, maxDegrees int64, avoidRecordKeys string, requiredDataSources string,
-	flags int64) (string, error) {
+func (client *Szengine) FindPathByRecordID(
+	ctx context.Context,
+	startDataSourceCode string,
+	startRecordID string,
+	endDataSourceCode string,
+	endRecordID string,
+	maxDegrees int64,
+	avoidRecordKeys string,
+	requiredDataSources string,
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -895,7 +912,8 @@ func (client *Szengine) GetEntityByRecordID(
 	ctx context.Context,
 	dataSourceCode string,
 	recordID string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -942,7 +960,8 @@ func (client *Szengine) GetRecord(
 	ctx context.Context,
 	dataSourceCode string,
 	recordID string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1058,7 +1077,8 @@ Output
 func (client *Szengine) GetVirtualEntityByRecordID(
 	ctx context.Context,
 	recordKeys string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1180,6 +1200,7 @@ func (client *Szengine) PrimeEngine(ctx context.Context) error {
 		entryTime := time.Now()
 		defer func() { client.traceExit(58, err, time.Since(entryTime)) }()
 	}
+
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
@@ -1282,7 +1303,8 @@ func (client *Szengine) ReevaluateRecord(
 	ctx context.Context,
 	dataSourceCode string,
 	recordID string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1320,11 +1342,15 @@ Input
 */
 func (client *Szengine) Reinitialize(ctx context.Context, configID int64) error {
 	var err error
+
 	if client.isTrace {
 		entryTime := time.Now()
+
 		client.traceEntry(65, configID)
+
 		defer func() { client.traceExit(66, configID, err, time.Since(entryTime)) }()
 	}
+
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -1333,6 +1359,7 @@ func (client *Szengine) Reinitialize(ctx context.Context, configID int64) error 
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8030, err, details)
 		}()
 	}
+
 	return err
 }
 
@@ -1356,7 +1383,8 @@ func (client *Szengine) SearchByAttributes(
 	ctx context.Context,
 	attributes string,
 	searchProfile string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1447,7 +1475,8 @@ func (client *Szengine) WhyRecordInEntity(
 	ctx context.Context,
 	dataSourceCode string,
 	recordID string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1496,7 +1525,8 @@ func (client *Szengine) WhyRecords(
 	recordID1 string,
 	dataSourceCode2 string,
 	recordID2 string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1560,7 +1590,8 @@ func (client *Szengine) WhySearch(
 	attributes string,
 	entityID int64,
 	searchProfile string,
-	flags int64) (string, error) {
+	flags int64,
+) (string, error) {
 	var (
 		err    error
 		result string
@@ -1726,7 +1757,8 @@ func (client *Szengine) UnregisterObserver(ctx context.Context, observer observe
 			client.observers = nil
 		}
 	}
-	return err
+
+	return wraperror.Errorf(err, "szengine.UnregisterObserver error: %w", err)
 }
 
 // ----------------------------------------------------------------------------

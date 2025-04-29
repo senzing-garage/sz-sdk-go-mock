@@ -238,7 +238,8 @@ Output
 func (client *Szconfigmanager) RegisterConfig(
 	ctx context.Context,
 	configDefinition string,
-	configComment string) (int64, error) {
+	configComment string,
+) (int64, error) {
 	var (
 		err    error
 		result int64
@@ -286,7 +287,8 @@ Input
 func (client *Szconfigmanager) ReplaceDefaultConfigID(
 	ctx context.Context,
 	currentDefaultConfigID int64,
-	newDefaultConfigID int64) error {
+	newDefaultConfigID int64,
+) error {
 	var err error
 
 	if client.isTrace {
@@ -324,10 +326,12 @@ Input
 func (client *Szconfigmanager) SetDefaultConfig(
 	ctx context.Context,
 	configDefinition string,
-	configComment string) (int64, error) {
+	configComment string,
+) (int64, error) {
 	_ = ctx
 	_ = configComment
 	_ = configDefinition
+
 	return 0, nil
 }
 
@@ -352,6 +356,7 @@ func (client *Szconfigmanager) SetDefaultConfigID(ctx context.Context, configID 
 		entryTime := time.Now()
 		defer func() { client.traceExit(22, configID, err, time.Since(entryTime)) }()
 	}
+
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
@@ -523,7 +528,6 @@ func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 	}
 
 	return result
-
 }
 
 // --- Logging ----------------------------------------------------------------

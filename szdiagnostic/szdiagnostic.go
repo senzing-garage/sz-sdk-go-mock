@@ -169,6 +169,7 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 		entryTime := time.Now()
 		defer func() { client.traceExit(18, err, time.Since(entryTime)) }()
 	}
+
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}

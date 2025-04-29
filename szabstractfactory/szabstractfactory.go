@@ -193,7 +193,9 @@ Input
 */
 func (factory *Szabstractfactory) Destroy(ctx context.Context) error {
 	var err error
+
 	_ = ctx
+
 	return err
 }
 
@@ -207,7 +209,9 @@ Input
 */
 func (factory *Szabstractfactory) Reinitialize(ctx context.Context, configID int64) error {
 	var err error
+
 	_ = ctx
 	_ = configID
+
 	return err
 }

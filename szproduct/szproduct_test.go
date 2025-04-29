@@ -20,6 +20,7 @@ const (
 	defaultTruncation = 76
 	instanceName      = "SzProduct Test"
 	observerOrigin    = "SzProduct observer"
+	originMessage     = "Machine: nn; Task: UnitTest"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
 )
@@ -71,17 +72,15 @@ func TestSzproduct_SetLogLevel_badLogLevelName(test *testing.T) {
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szProduct := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szProduct.SetObserverOrigin(ctx, origin)
+	szProduct.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szProduct := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szProduct.SetObserverOrigin(ctx, origin)
+	szProduct.SetObserverOrigin(ctx, originMessage)
 	actual := szProduct.GetObserverOrigin(ctx)
-	assert.Equal(test, origin, actual)
+	assert.Equal(test, originMessage, actual)
 }
 
 func TestSzproduct_UnregisterObserver(test *testing.T) {
@@ -109,6 +108,7 @@ func TestSzproduct_AsInterface(test *testing.T) {
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var result senzing.SzAbstractFactory
+
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -172,6 +172,7 @@ func getSzProduct(ctx context.Context) *szproduct.Szproduct {
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
+
 	result := &szproduct.Szproduct{
 		GetLicenseResult: testValue.String("GetLicenseResult"),
 		GetVersionResult: testValue.String("GetVersionResult"),
@@ -183,18 +184,21 @@ func getSzProduct(ctx context.Context) *szproduct.Szproduct {
 
 		err = result.SetLogLevel(ctx, "TRACE")
 		panicOnError(err)
-
 	}
+
 	return result
 }
 
 func getSzProductAsInterface(ctx context.Context) senzing.SzProduct {
 	result := getSzProduct(ctx)
+
 	return result
 }
 
-func getTestObject(test *testing.T) *szproduct.Szproduct {
-	return getSzProduct(test.Context())
+func getTestObject(t *testing.T) *szproduct.Szproduct {
+	t.Helper()
+
+	return getSzProduct(t.Context())
 }
 
 func handleError(err error) {
@@ -209,13 +213,17 @@ func panicOnError(err error) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 

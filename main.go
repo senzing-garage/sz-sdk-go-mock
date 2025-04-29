@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/senzing-garage/go-helpers/truthset"
+	"github.com/senzing-garage/go-helpers/wraperror"
 	"github.com/senzing-garage/go-logging/logging"
 	"github.com/senzing-garage/sz-sdk-go-mock/szabstractfactory"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
@@ -36,10 +37,12 @@ var Messages = map[int]string{
 
 // Values updated via "go install -ldflags" parameters.
 
-var programName = "unknown"
-var buildVersion = "0.0.0"
-var buildIteration = "0"
-var logger logging.Logging
+var (
+	programName    = "unknown"
+	buildVersion   = "0.0.0"
+	buildIteration = "0"
+	logger         logging.Logging
+)
 
 // ----------------------------------------------------------------------------
 // Main
@@ -53,8 +56,8 @@ func main() {
 	// Configure the "log" standard library.
 
 	log.SetFlags(0)
-	logger, err = getLogger(ctx)
-	failOnError(5001, err)
+
+	logger = getLogger(ctx)
 
 	// Test logger.
 
@@ -68,7 +71,7 @@ func main() {
 
 	szAbstractFactory := &szabstractfactory.Szabstractfactory{}
 
-	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
+	outputf("\n-------------------------------------------------------------------------------\n\n")
 	logger.Log(2001, "Just a test of logging", programmMetadataMap)
 
 	// Demonstrate persisting a Senzing configuration to the Senzing repository.
@@ -82,7 +85,7 @@ func main() {
 	err = szAbstractFactory.Destroy(ctx)
 	failOnError(5008, err)
 
-	fmt.Printf("\n-------------------------------------------------------------------------------\n\n")
+	outputf("\n-------------------------------------------------------------------------------\n\n")
 }
 
 // ----------------------------------------------------------------------------
@@ -90,9 +93,7 @@ func main() {
 // ----------------------------------------------------------------------------
 
 func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) {
-
 	// Using SzEngine: Add records with information returned.
-
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	failOnError(5100, err)
 
@@ -108,13 +109,13 @@ func demonstrateAdditionalFunctions(ctx context.Context, szAbstractFactory senzi
 	license, err := szProduct.GetLicense(ctx)
 	failOnError(5103, err)
 	logger.Log(2102, license)
-
 }
 
 func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (string, error) {
 	dataSourceCode := "TEST"
 	randomNumber, err := rand.Int(rand.Reader, big.NewInt(1000000000))
 	failOnError(5201, err)
+
 	recordID := randomNumber.String()
 	recordDefinition := fmt.Sprintf(
 		"%s%s%s",
@@ -122,11 +123,14 @@ func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (strin
 		recordID,
 		`", "DSRC_ACTION": "A", "ADDR_CITY": "Delhi", "DRIVERS_LICENSE_STATE": "DE", "PHONE_NUMBER": "225-671-0796", "NAME_LAST": "SEAMAN", "entityid": "284430058", "ADDR_LINE1": "772 Armstrong RD"}`,
 	)
-	var flags = senzing.SzNoFlags
+
+	flags := senzing.SzNoFlags
 
 	// Using SzEngine: Add record and return "withInfo".
 
-	return szEngine.AddRecord(ctx, dataSourceCode, recordID, recordDefinition, flags)
+	result, err := szEngine.AddRecord(ctx, dataSourceCode, recordID, recordDefinition, flags)
+
+	return result, wraperror.Errorf(err, "demonstrateAddRecord.AddRecord error: %w", err)
 }
 
 func demonstrateConfigFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) {
@@ -166,9 +170,18 @@ func failOnError(msgID int, err error) {
 	}
 }
 
-func getLogger(ctx context.Context) (logging.Logging, error) {
+func getLogger(ctx context.Context) logging.Logging {
 	_ = ctx
 	logger, err := logging.NewSenzingLogger(9999, Messages)
 	failOnError(5401, err)
-	return logger, err
+
+	return logger
+}
+
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
+
+func outputf(format string, message ...any) {
+	fmt.Printf(format, message...) //nolint
 }
