@@ -175,6 +175,7 @@ func ExampleSzengine_ExportCsvEntityReportIterator() {
 	for result := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
 		if result.Error != nil {
 			handleError(err)
+
 			break
 		}
 
@@ -220,6 +221,7 @@ func ExampleSzengine_ExportJSONEntityReportIterator() {
 	for result := range szEngine.ExportJSONEntityReportIterator(ctx, flags) {
 		if result.Error != nil {
 			handleError(err)
+
 			break
 		}
 
@@ -446,7 +448,7 @@ func ExampleSzengine_FindPathByEntityID() {
 }
 
 func ExampleSzengine_FindPathByEntityID_avoiding() {
-	// TODO: Implement ExampleSzEngine_FindPathByEntityID_avoiding
+	// IMPROVE: Implement ExampleSzEngine_FindPathByEntityID_avoiding
 	// // For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -463,14 +465,18 @@ func ExampleSzengine_FindPathByEntityID_avoiding() {
 	// }
 	// fmt.Println(truncate(result, 107))
 	// // Output: {"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...
+
+	// Output:
 }
 
 func ExampleSzEngine_FindPathByEntityID_avoidingAndIncluding() {
-	// TODO: Implement ExampleSzEngine_FindPathByEntityID_avoidingAndIncluding
+	// IMPROVE: Implement ExampleSzEngine_FindPathByEntityID_avoidingAndIncluding
+
+	// Output:
 }
 
 func ExampleSzengine_FindPathByEntityID_including() {
-	// TODO: Implement ExampleSzEngine_FindPathByEntityID_including
+	// IMPROVE: Implement ExampleSzEngine_FindPathByEntityID_including
 	// // For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -485,6 +491,8 @@ func ExampleSzengine_FindPathByEntityID_including() {
 	// if err != nil {
 	// 	fmt.Println(err)
 	// }
+
+	// Output:
 }
 
 func ExampleSzengine_FindPathByRecordID() {
@@ -545,7 +553,7 @@ func ExampleSzengine_FindPathByRecordID() {
 }
 
 func ExampleSzengine_FindPathByRecordID_avoiding() {
-	// TODO: Implement ExampleSzEngine_FindPathByRecordID_avoiding
+	// IMPROVE: Implement ExampleSzEngine_FindPathByRecordID_avoiding
 	// // For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -564,14 +572,18 @@ func ExampleSzengine_FindPathByRecordID_avoiding() {
 	// }
 	// fmt.Println(truncate(result, 107))
 	// // Output: {"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[1]}],"ENTITIES":[{"RESOLVED_ENTITY":...
+
+	// Output:
 }
 
 func ExampleSzEngine_FindPathByRecordID_excludingAndIncluding() {
-	// TODO: Implement ExampleSzEngine_FindPathByRecordID_excludingAndIncluding
+	// IMPROVE: Implement ExampleSzEngine_FindPathByRecordID_excludingAndIncluding
+
+	// Output:
 }
 
 func ExampleSzengine_FindPathByRecordID_including() {
-	// TODO: Implement ExampleSzEngine_FindPathByRecordID_including
+	// IMPROVE: Implement ExampleSzEngine_FindPathByRecordID_including
 	// // For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -590,6 +602,8 @@ func ExampleSzengine_FindPathByRecordID_including() {
 	// }
 	// fmt.Println(truncate(result, 119))
 	// // Output: {"ENTITY_PATHS":[{"START_ENTITY_ID":1,"END_ENTITY_ID":1,"ENTITIES":[]}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":...
+
+	// Output:
 }
 
 func ExampleSzengine_GetActiveConfigID() {
@@ -826,7 +840,7 @@ func ExampleSzengine_PrimeEngine() {
 }
 
 func ExampleSzEngine_ProcessRedoRecord() {
-	// TODO: Uncomment after it has been implemented.
+	// IMPROVE: Uncomment after it has been implemented.
 	// // For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -842,10 +856,12 @@ func ExampleSzEngine_ProcessRedoRecord() {
 	// }
 	// fmt.Println(result)
 	// // Output: {}
+
+	// Output:
 }
 
 func ExampleSzEngine_ProcessRedoRecord_withInfo() {
-	// TODO: Uncomment after it has been implemented.
+	// IMPROVE: Uncomment after it has been implemented.
 	// // For more information,
 	// visit https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	// ctx := context.TODO()
@@ -861,6 +877,8 @@ func ExampleSzEngine_ProcessRedoRecord_withInfo() {
 	// }
 	// fmt.Println(result)
 	// // Output: {}
+
+	// Output:
 }
 
 func ExampleSzengine_ReevaluateEntity() {
@@ -963,7 +981,9 @@ func ExampleSzengine_SearchByAttributes() {
 }
 
 func ExampleSzEngine_SearchByAttributes_searchProfile() {
-	// TODO: Implement ExampleSzEngine_SearchByAttributes_searchProfile
+	// IMPROVE: Implement ExampleSzEngine_SearchByAttributes_searchProfile
+
+	// Output:
 }
 
 func ExampleSzengine_WhyEntities() {

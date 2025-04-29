@@ -37,6 +37,7 @@ const (
 	jsonIndentation     = "    "
 	maxDegrees          = int64(2)
 	observerOrigin      = "SzEngine observer"
+	originMessage       = "Machine: nn; Task: UnitTest"
 	printResults        = false
 	requiredDataSources = senzing.SzNoRequiredDatasources
 	searchAttributes    = `{"NAMES": [{"NAME_TYPE": "PRIMARY", "NAME_LAST": "JOHNSON"}], "SSN_NUMBER": "053-39-3251"}`
@@ -139,12 +140,10 @@ func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
 	szEngine := getTestObject(test)
 	csvColumnList := ""
 	flags := senzing.SzNoFlags
+
 	for result := range szEngine.ExportCsvEntityReportIterator(ctx, csvColumnList, flags) {
-		if result.Error != nil {
-			fmt.Println(result.Error)
-			break
-		}
-		fmt.Println(result.Value)
+		require.NoError(test, result.Error)
+		outputln(result.Value)
 	}
 }
 
@@ -202,15 +201,16 @@ func TestSzengine_FindNetworkByEntityID(test *testing.T) {
 		truthset.CustomerRecords["1001"],
 		truthset.CustomerRecords["1002"],
 	}
+
 	defer func() { deleteRecords(ctx, records) }()
 	addRecords(ctx, records)
+
 	szEngine := getTestObject(test)
 	record1 := truthset.CustomerRecords["1001"]
 	record2 := truthset.CustomerRecords["1002"]
-	entityID1, err := getEntityIDString(record1)
-	require.NoError(test, err)
-	entityID2, err := getEntityIDString(record2)
-	require.NoError(test, err)
+	entityID1 := getEntityIDString(record1)
+	entityID2 := getEntityIDString(record2)
+
 	entityIDs := `{"ENTITIES": [{"ENTITY_ID": ` + entityID1 + `}, {"ENTITY_ID": ` + entityID2 + `}]}`
 	flags := senzing.SzFindNetworkDefaultFlags
 	actual, err := szEngine.FindNetworkByEntityID(
@@ -494,6 +494,7 @@ func TestSzengine_ReevaluateEntity(test *testing.T) {
 	}
 
 	defer func() { deleteRecords(ctx, records) }()
+
 	szEngine := getTestObject(test)
 	entityID, err := getEntityID(truthset.CustomerRecords["1001"])
 	require.NoError(test, err)
@@ -617,17 +618,15 @@ func TestSzengine_SetLogLevel_badLogLevelName(test *testing.T) {
 func TestSzengine_SetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szEngine := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szEngine.SetObserverOrigin(ctx, origin)
+	szEngine.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzengine_GetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szEngine := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szEngine.SetObserverOrigin(ctx, origin)
+	szEngine.SetObserverOrigin(ctx, originMessage)
 	actual := szEngine.GetObserverOrigin(ctx)
-	assert.Equal(test, origin, actual)
+	assert.Equal(test, originMessage, actual)
 	printActual(test, actual)
 }
 
@@ -700,19 +699,17 @@ func getEntityIDForRecord(datasource string, recordID string) (int64, error) {
 	return result, nil
 }
 
-func getEntityIDString(record record.Record) (string, error) {
+func getEntityIDString(record record.Record) string {
 	entityID, err := getEntityID(record)
 	panicOnError(err)
 
 	result := strconv.FormatInt(entityID, baseTen)
 
-	return result, nil
+	return result
 }
 
 func getEntityIDStringForRecord(datasource string, recordID string) string {
-	var (
-		result string
-	)
+	var result string
 
 	entityID, err := getEntityIDForRecord(datasource, recordID)
 	panicOnError(err)
@@ -724,6 +721,7 @@ func getEntityIDStringForRecord(datasource string, recordID string) string {
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var result senzing.SzAbstractFactory
+
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -776,6 +774,7 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
 		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
 	}
+
 	return result
 }
 
@@ -785,6 +784,7 @@ func getSzEngine(ctx context.Context) *szengine.Szengine {
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
+
 	result := &szengine.Szengine{
 		AddRecordResult:                         testValue.String("AddRecordResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
@@ -822,8 +822,8 @@ func getSzEngine(ctx context.Context) *szengine.Szengine {
 		panicOnError(err)
 		err = result.SetLogLevel(ctx, "TRACE")
 		panicOnError(err)
-
 	}
+
 	return result
 }
 
@@ -831,14 +831,20 @@ func getSzEngineAsInterface(ctx context.Context) senzing.SzEngine {
 	return getSzEngine(ctx)
 }
 
-func getTestObject(test *testing.T) *szengine.Szengine {
-	return getSzEngine(test.Context())
+func getTestObject(t *testing.T) *szengine.Szengine {
+	t.Helper()
+
+	return getSzEngine(t.Context())
 }
 
 func handleError(err error) {
 	if err != nil {
-		fmt.Println("Error:", err)
+		outputln("Error:", err)
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func panicOnError(err error) {
@@ -847,13 +853,17 @@ func panicOnError(err error) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 

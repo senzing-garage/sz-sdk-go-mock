@@ -22,6 +22,7 @@ const (
 	defaultTruncation = 76
 	instanceName      = "SzConfigManager Test"
 	observerOrigin    = "SzConfigManager observer"
+	originMessage     = "Machine: nn; Task: UnitTest"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
 )
@@ -117,7 +118,7 @@ func TestSzconfigmanager_ReplaceDefaultConfigID(test *testing.T) {
 	currentDefaultConfigID, err1 := szConfigManager.GetDefaultConfigID(ctx)
 	require.NoError(test, err1)
 
-	// TODO: This is kind of a cheater.
+	// IMPROVE: This is kind of a cheater.
 
 	newDefaultConfigID, err2 := szConfigManager.GetDefaultConfigID(ctx)
 	require.NoError(test, err2)
@@ -148,17 +149,15 @@ func TestSzconfigmanager_SetLogLevel_badLogLevelName(test *testing.T) {
 func TestSzconfigmanager_SetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szConfigManager.SetObserverOrigin(ctx, origin)
+	szConfigManager.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzconfigmanager_GetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
-	szConfigManager.SetObserverOrigin(ctx, origin)
+	szConfigManager.SetObserverOrigin(ctx, originMessage)
 	actual := szConfigManager.GetObserverOrigin(ctx)
-	assert.Equal(test, origin, actual)
+	assert.Equal(test, originMessage, actual)
 }
 
 func TestSzconfigmanager_UnregisterObserver(test *testing.T) {
@@ -186,6 +185,7 @@ func TestSzconfigmanager_AsInterface(test *testing.T) {
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var result senzing.SzAbstractFactory
+
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -238,6 +238,7 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
 		WhyRecordsResult:                        testValue.String("WhyRecordsResult"),
 	}
+
 	return result
 }
 
@@ -265,6 +266,7 @@ func getSzConfigManager(ctx context.Context) *szconfigmanager.Szconfigmanager {
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
+
 	result := &szconfigmanager.Szconfigmanager{
 		RegisterConfigResult:     testValue.Int64("AddConfigResult"),
 		GetConfigResult:          testValue.String("GetConfigResult"),
@@ -278,6 +280,7 @@ func getSzConfigManager(ctx context.Context) *szconfigmanager.Szconfigmanager {
 		err = result.SetLogLevel(ctx, "TRACE")
 		panicOnError(err)
 	}
+
 	return result
 }
 
@@ -285,8 +288,10 @@ func getSzConfigManagerAsInterface(ctx context.Context) senzing.SzConfigManager 
 	return getSzConfigManager(ctx)
 }
 
-func getTestObject(test *testing.T) *szconfigmanager.Szconfigmanager {
-	return getSzConfigManager(test.Context())
+func getTestObject(t *testing.T) *szconfigmanager.Szconfigmanager {
+	t.Helper()
+
+	return getSzConfigManager(t.Context())
 }
 
 func handleError(err error) {
@@ -301,18 +306,22 @@ func panicOnError(err error) {
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 
 func safePrintln(message ...any) {
-	fmt.Println(message...)
+	fmt.Println(message...) //nolint
 }
 
 func truncate(aString string, length int) string {

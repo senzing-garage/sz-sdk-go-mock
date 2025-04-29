@@ -22,6 +22,7 @@ const (
 	defaultTruncation = 76
 	instanceName      = "SzConfig Test"
 	observerOrigin    = "SzConfig observer"
+	originMessage     = "Machine: nn; Task: UnitTest"
 	printResults      = false
 	verboseLogging    = senzing.SzNoLogging
 )
@@ -133,14 +134,14 @@ func TestSzconfig_SetLogLevel_badLogLevelName(test *testing.T) {
 func TestSzconfig_SetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szConfig := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
+	origin := originMessage
 	szConfig.SetObserverOrigin(ctx, origin)
 }
 
 func TestSzconfig_GetObserverOrigin(test *testing.T) {
 	ctx := test.Context()
 	szConfig := getTestObject(test)
-	origin := "Machine: nn; Task: UnitTest"
+	origin := originMessage
 	szConfig.SetObserverOrigin(ctx, origin)
 	actual := szConfig.GetObserverOrigin(ctx)
 	assert.Equal(test, origin, actual)
@@ -172,6 +173,7 @@ func TestSzconfig_AsInterface(test *testing.T) {
 
 func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var result senzing.SzAbstractFactory
+
 	_ = ctx
 
 	testValue := &testdata.TestData{
@@ -234,6 +236,7 @@ func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 		Strings:  testdata.Data1_strings,
 		Uintptrs: testdata.Data1_uintptrs,
 	}
+
 	result := &szconfig.Szconfig{
 		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
 		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
@@ -243,40 +246,48 @@ func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)
+
 		err := result.RegisterObserver(ctx, observerSingleton)
 		if err != nil {
 			panic(err)
 		}
+
 		err = result.SetLogLevel(ctx, "TRACE")
 		if err != nil {
 			panic(err)
 		}
 	}
-	return result
 
+	return result
 }
 
 func getSzConfigAsInterface(ctx context.Context) senzing.SzConfig {
 	return getSzConfig(ctx)
 }
 
-func getTestObject(test *testing.T) *szconfig.Szconfig {
-	return getSzConfig(test.Context())
+func getTestObject(t *testing.T) *szconfig.Szconfig {
+	t.Helper()
+
+	return getSzConfig(t.Context())
 }
 
 func handleError(err error) {
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error:", err) //nolint
 	}
 }
 
-func printActual(test *testing.T, actual interface{}) {
-	printResult(test, "Actual", actual)
+func printActual(t *testing.T, actual interface{}) {
+	t.Helper()
+
+	printResult(t, "Actual", actual)
 }
 
-func printResult(test *testing.T, title string, result interface{}) {
+func printResult(t *testing.T, title string, result interface{}) {
+	t.Helper()
+
 	if printResults {
-		test.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
+		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
 }
 
