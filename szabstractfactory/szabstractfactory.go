@@ -87,7 +87,7 @@ func (factory *Szabstractfactory) CreateConfigManager(ctx context.Context) (senz
 		GetDefaultConfigIDResult: factory.GetDefaultConfigIDResult,
 	}
 
-	return result, wraperror.Errorf(err, "szabstractfactory.CreateConfigManager  error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -110,7 +110,7 @@ func (factory *Szabstractfactory) CreateDiagnostic(ctx context.Context) (senzing
 		GetFeatureResult:                factory.GetFeatureResult,
 	}
 
-	return result, wraperror.Errorf(err, "szabstractfactory.CreateDiagnostic  error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -159,7 +159,7 @@ func (factory *Szabstractfactory) CreateEngine(ctx context.Context) (senzing.SzE
 		WhyRecordsResult:                        factory.WhyRecordsResult,
 	}
 
-	return result, wraperror.Errorf(err, "szabstractfactory.CreateEngine  error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -181,7 +181,7 @@ func (factory *Szabstractfactory) CreateProduct(ctx context.Context) (senzing.Sz
 		GetVersionResult: factory.GetVersionResult,
 	}
 
-	return result, wraperror.Errorf(err, "szabstractfactory.CreateProduct  error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*

@@ -79,6 +79,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzengine_AddRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	flags := senzing.SzWithoutInfo
@@ -103,6 +104,7 @@ func TestSzengine_AddRecord(test *testing.T) {
 }
 
 func TestSzengine_CloseExport(test *testing.T) {
+	test.Parallel()
 	// Tested in:
 	//  - TestSzengine_ExportCsvEntityReport
 	//  - TestSzengine_ExportJSONEntityReport
@@ -110,6 +112,7 @@ func TestSzengine_CloseExport(test *testing.T) {
 }
 
 func TestSzengine_CountRedoRecords(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := int64(0)
 	szEngine := getTestObject(test)
@@ -120,6 +123,7 @@ func TestSzengine_CountRedoRecords(test *testing.T) {
 }
 
 func TestSzengine_DeleteRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	records := []record.Record{
@@ -136,6 +140,7 @@ func TestSzengine_DeleteRecord(test *testing.T) {
 }
 
 func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	csvColumnList := ""
@@ -148,6 +153,7 @@ func TestSzengine_ExportCsvEntityReportIterator(test *testing.T) {
 }
 
 func TestSzengine_FetchNext(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	actual, err := szEngine.FetchNext(ctx, 0)
@@ -156,6 +162,7 @@ func TestSzengine_FetchNext(test *testing.T) {
 }
 
 func TestSzengine_FindInterestingEntitiesByEntityID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -178,6 +185,7 @@ func TestSzengine_FindInterestingEntitiesByEntityID(test *testing.T) {
 }
 
 func TestSzengine_FindInterestingEntitiesByRecordID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -196,6 +204,7 @@ func TestSzengine_FindInterestingEntitiesByRecordID(test *testing.T) {
 }
 
 func TestSzengine_FindNetworkByEntityID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -226,6 +235,7 @@ func TestSzengine_FindNetworkByEntityID(test *testing.T) {
 }
 
 func TestSzengine_FindNetworkByRecordID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -268,6 +278,7 @@ func TestSzengine_FindNetworkByRecordID(test *testing.T) {
 }
 
 func TestSzengine_FindPathByEntityID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -299,6 +310,7 @@ func TestSzengine_FindPathByEntityID(test *testing.T) {
 }
 
 func TestSzengine_FindPathByRecordID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -329,6 +341,7 @@ func TestSzengine_FindPathByRecordID(test *testing.T) {
 }
 
 func TestSzengine_GetActiveConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	actual, err := szEngine.GetActiveConfigID(ctx)
@@ -337,6 +350,7 @@ func TestSzengine_GetActiveConfigID(test *testing.T) {
 }
 
 func TestSzengine_GetEntityByEntityID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -357,6 +371,7 @@ func TestSzengine_GetEntityByEntityID(test *testing.T) {
 }
 
 func TestSzengine_GetEntityByRecordID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -375,6 +390,7 @@ func TestSzengine_GetEntityByRecordID(test *testing.T) {
 }
 
 func TestSzengine_GetRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -393,6 +409,7 @@ func TestSzengine_GetRecord(test *testing.T) {
 }
 
 func TestSzengine_GetRedoRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	actual, err := szEngine.GetRedoRecord(ctx)
@@ -401,6 +418,7 @@ func TestSzengine_GetRedoRecord(test *testing.T) {
 }
 
 func TestSzengine_GetStats(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	actual, err := szEngine.GetStats(ctx)
@@ -409,6 +427,7 @@ func TestSzengine_GetStats(test *testing.T) {
 }
 
 func TestSzengine_GetVirtualEntityByRecordID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -430,6 +449,7 @@ func TestSzengine_GetVirtualEntityByRecordID(test *testing.T) {
 }
 
 func TestSzengine_HowEntityByEntityID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -450,6 +470,7 @@ func TestSzengine_HowEntityByEntityID(test *testing.T) {
 }
 
 func TestSzengine_PreprocessRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	flags := senzing.SzNoFlags
@@ -466,6 +487,7 @@ func TestSzengine_PreprocessRecord(test *testing.T) {
 }
 
 func TestSzengine_PrimeEngine(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	err := szEngine.PrimeEngine(ctx)
@@ -473,6 +495,7 @@ func TestSzengine_PrimeEngine(test *testing.T) {
 }
 
 func TestSzengine_ProcessRedoRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	redoRecord, err := szEngine.GetRedoRecord(ctx)
@@ -488,6 +511,7 @@ func TestSzengine_ProcessRedoRecord(test *testing.T) {
 }
 
 func TestSzengine_ReevaluateEntity(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -507,6 +531,7 @@ func TestSzengine_ReevaluateEntity(test *testing.T) {
 }
 
 func TestSzengine_ReevaluateRecord(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -526,6 +551,7 @@ func TestSzengine_ReevaluateRecord(test *testing.T) {
 }
 
 func TestSzengine_SearchByAttributes(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -545,6 +571,7 @@ func TestSzengine_SearchByAttributes(test *testing.T) {
 }
 
 func TestSzengine_WhyEntities(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -568,6 +595,7 @@ func TestSzengine_WhyEntities(test *testing.T) {
 }
 
 func TestSzengine_WhyRecordInEntity(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -586,6 +614,7 @@ func TestSzengine_WhyRecordInEntity(test *testing.T) {
 }
 
 func TestSzengine_WhyRecords(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -610,18 +639,21 @@ func TestSzengine_WhyRecords(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzengine_SetLogLevel_badLogLevelName(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzengine_SetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	szEngine.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzengine_GetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	szEngine.SetObserverOrigin(ctx, originMessage)
@@ -631,6 +663,7 @@ func TestSzengine_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzengine_UnregisterObserver(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	err := szEngine.UnregisterObserver(ctx, observerSingleton)
@@ -642,6 +675,8 @@ func TestSzengine_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzengine_AsInterface(test *testing.T) {
+	test.Parallel()
+
 	expected := int64(0)
 	ctx := test.Context()
 	szEngine := getSzEngineAsInterface(ctx)
@@ -652,6 +687,7 @@ func TestSzengine_AsInterface(test *testing.T) {
 }
 
 func TestSzengine_Reinitialize(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
 	configID, err := szEngine.GetActiveConfigID(ctx)
@@ -855,7 +891,6 @@ func panicOnError(err error) {
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
-
 	printResult(t, "Actual", actual)
 }
 

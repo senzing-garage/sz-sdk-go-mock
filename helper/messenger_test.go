@@ -12,6 +12,8 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestHelpers_GetMessenger(test *testing.T) {
+	test.Parallel()
+
 	x := helper.GetMessenger(1, map[int]string{}, 4)
 	assert.NotEmpty(test, x)
 }

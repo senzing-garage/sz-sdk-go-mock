@@ -77,7 +77,7 @@ func (client *Szconfigmanager) CreateConfigFromConfigID(ctx context.Context, con
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.CreateConfigFromConfigID error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -115,7 +115,7 @@ func (client *Szconfigmanager) CreateConfigFromString(
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.CreateConfigFromString error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -150,7 +150,7 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.CreateConfigFromTemplate error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -184,7 +184,7 @@ func (client *Szconfigmanager) GetConfigs(ctx context.Context) (string, error) {
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.GetConfigs error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -221,7 +221,7 @@ func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, e
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.GetDefaultConfigID error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -265,7 +265,7 @@ func (client *Szconfigmanager) RegisterConfig(
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfigmanager.RegisterConfig error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -307,7 +307,7 @@ func (client *Szconfigmanager) ReplaceDefaultConfigID(
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfigmanager.ReplaceDefaultConfigID error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -366,7 +366,7 @@ func (client *Szconfigmanager) SetDefaultConfigID(ctx context.Context, configID 
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfigmanager.SetDefaultConfigID error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -420,7 +420,7 @@ func (client *Szconfigmanager) RegisterObserver(ctx context.Context, observer ob
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfigmanager.RegisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -456,7 +456,7 @@ func (client *Szconfigmanager) SetLogLevel(ctx context.Context, logLevelName str
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfigmanager.SetLogLevel error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -505,7 +505,7 @@ func (client *Szconfigmanager) UnregisterObserver(ctx context.Context, observer 
 		}
 	}
 
-	return wraperror.Errorf(err, "szconfigmanager.UnregisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------

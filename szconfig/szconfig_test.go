@@ -50,6 +50,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_AddDataSource(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	actual, err := szConfig.AddDataSource(ctx, dataSourceCode)
@@ -58,6 +59,7 @@ func TestSzconfig_AddDataSource(test *testing.T) {
 }
 
 func TestSzconfig_DeleteDataSource(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	actual, err := szConfig.GetDataSources(ctx)
@@ -77,6 +79,7 @@ func TestSzconfig_DeleteDataSource(test *testing.T) {
 }
 
 func TestSzconfig_Export(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	actual, err := szConfig.Export(ctx)
@@ -85,6 +88,7 @@ func TestSzconfig_Export(test *testing.T) {
 }
 
 func TestSzconfig_GetDataSources(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	actual, err := szConfig.GetDataSources(ctx)
@@ -97,6 +101,7 @@ func TestSzconfig_GetDataSources(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_Import(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	configDefinition, err := szConfig.Export(ctx)
@@ -106,6 +111,7 @@ func TestSzconfig_Import(test *testing.T) {
 }
 
 func TestSzconfig_ImportTemplate(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	err := szConfig.ImportTemplate(ctx)
@@ -113,6 +119,7 @@ func TestSzconfig_ImportTemplate(test *testing.T) {
 }
 
 func TestSzconfig_VerifyConfigDefinition(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	configDefinition, err := szConfig.Export(ctx)
@@ -126,12 +133,14 @@ func TestSzconfig_VerifyConfigDefinition(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_SetLogLevel_badLogLevelName(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzconfig_SetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	origin := originMessage
@@ -139,6 +148,7 @@ func TestSzconfig_SetObserverOrigin(test *testing.T) {
 }
 
 func TestSzconfig_GetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	origin := originMessage
@@ -148,6 +158,7 @@ func TestSzconfig_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzconfig_UnregisterObserver(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	err := szConfig.UnregisterObserver(ctx, observerSingleton)
@@ -159,6 +170,7 @@ func TestSzconfig_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfig_AsInterface(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getSzConfigAsInterface(ctx)
 	actual, err := szConfig.GetDataSources(ctx)
@@ -273,13 +285,16 @@ func getTestObject(t *testing.T) *szconfig.Szconfig {
 
 func handleError(err error) {
 	if err != nil {
-		fmt.Println("Error:", err) //nolint
+		outputln("Error:", err)
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
-
 	printResult(t, "Actual", actual)
 }
 

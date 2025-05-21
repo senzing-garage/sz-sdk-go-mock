@@ -25,6 +25,7 @@ const (
 // ----------------------------------------------------------------------------
 
 func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -38,6 +39,7 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -51,6 +53,7 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateEngine(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -64,6 +67,7 @@ func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 }
 
 func TestSzAbstractFactory_CreateProduct(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -77,6 +81,7 @@ func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 }
 
 func TestSzAbstractFactory_Destroy(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -84,6 +89,7 @@ func TestSzAbstractFactory_Destroy(test *testing.T) {
 }
 
 func TestSzAbstractFactory_Reinitialize(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
@@ -170,15 +176,13 @@ func getTestObject(t *testing.T) senzing.SzAbstractFactory {
 
 func handleError(err error) {
 	if err != nil {
-		safePrintln("Error:", err)
+		outputln("Error:", err)
 	}
 }
 
-// func panicOnError(err error) {
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
+}
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
@@ -191,10 +195,6 @@ func printResult(t *testing.T, title string, result interface{}) {
 	if printResults {
 		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
-}
-
-func safePrintln(message ...any) {
-	fmt.Println(message...) //nolint
 }
 
 func truncate(aString string, length int) string {

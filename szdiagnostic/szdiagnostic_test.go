@@ -49,6 +49,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	secondsToRun := 1
@@ -58,6 +59,7 @@ func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
 }
 
 func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	actual, err := szDiagnostic.GetDatastoreInfo(ctx)
@@ -66,6 +68,7 @@ func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
 }
 
 func TestSzdiagnostic_GetFeature(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	records := []record.Record{
 		truthset.CustomerRecords["1001"],
@@ -87,18 +90,21 @@ func TestSzdiagnostic_GetFeature(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzdiagnostic_SetLogLevel_badLogLevelName(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzdiagnostic_SetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	szDiagnostic.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	szDiagnostic.SetObserverOrigin(ctx, originMessage)
@@ -107,6 +113,7 @@ func TestSzdiagnostic_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	err := szDiagnostic.UnregisterObserver(ctx, observerSingleton)
@@ -119,6 +126,8 @@ func TestSzdiagnostic_UnregisterObserver(test *testing.T) {
 
 func TestSzdiagnostic_AsInterface(test *testing.T) {
 	ctx := test.Context()
+	test.Parallel()
+
 	szDiagnostic := getSzDiagnosticAsInterface(ctx)
 	secondsToRun := 1
 	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
@@ -234,8 +243,12 @@ func getTestObject(t *testing.T) *szdiagnostic.Szdiagnostic {
 
 func handleError(err error) {
 	if err != nil {
-		fmt.Println("Error:", err) //nolint
+		outputln("Error:", err)
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func panicOnError(err error) {

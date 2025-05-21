@@ -51,6 +51,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzconfigmanager_CreateConfigFromConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	configID, err1 := szConfigManager.GetDefaultConfigID(ctx)
@@ -62,6 +63,7 @@ func TestSzconfigmanager_CreateConfigFromConfigID(test *testing.T) {
 }
 
 func TestSzconfigmanager_CreateConfigFromString(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	actual, err := szConfigManager.CreateConfigFromString(ctx, "")
@@ -70,6 +72,7 @@ func TestSzconfigmanager_CreateConfigFromString(test *testing.T) {
 }
 
 func TestSzconfigmanager_CreateConfigFromTemplate(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	actual, err := szConfigManager.CreateConfigFromTemplate(ctx)
@@ -78,6 +81,7 @@ func TestSzconfigmanager_CreateConfigFromTemplate(test *testing.T) {
 }
 
 func TestSzconfigmanager_GetConfigs(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	actual, err := szConfigManager.GetConfigs(ctx)
@@ -86,6 +90,7 @@ func TestSzconfigmanager_GetConfigs(test *testing.T) {
 }
 
 func TestSzconfigmanager_GetDefaultConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	actual, err := szConfigManager.GetDefaultConfigID(ctx)
@@ -94,6 +99,7 @@ func TestSzconfigmanager_GetDefaultConfigID(test *testing.T) {
 }
 
 func TestSzconfigmanager_RegisterConfig(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	now := time.Now()
@@ -113,6 +119,7 @@ func TestSzconfigmanager_RegisterConfig(test *testing.T) {
 }
 
 func TestSzconfigmanager_ReplaceDefaultConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	currentDefaultConfigID, err1 := szConfigManager.GetDefaultConfigID(ctx)
@@ -128,6 +135,7 @@ func TestSzconfigmanager_ReplaceDefaultConfigID(test *testing.T) {
 }
 
 func TestSzconfigmanager_SetDefaultConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	configID, err := szConfigManager.GetDefaultConfigID(ctx)
@@ -141,18 +149,21 @@ func TestSzconfigmanager_SetDefaultConfigID(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfigmanager_SetLogLevel_badLogLevelName(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	_ = szConfigManager.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzconfigmanager_SetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	szConfigManager.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzconfigmanager_GetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	szConfigManager.SetObserverOrigin(ctx, originMessage)
@@ -161,6 +172,7 @@ func TestSzconfigmanager_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzconfigmanager_UnregisterObserver(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
 	err := szConfigManager.UnregisterObserver(ctx, observerSingleton)
@@ -172,6 +184,7 @@ func TestSzconfigmanager_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzconfigmanager_AsInterface(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getSzConfigManagerAsInterface(ctx)
 	actual, err := szConfigManager.GetConfigs(ctx)
@@ -296,8 +309,12 @@ func getTestObject(t *testing.T) *szconfigmanager.Szconfigmanager {
 
 func handleError(err error) {
 	if err != nil {
-		safePrintln("Error:", err)
+		outputln("Error:", err)
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func panicOnError(err error) {
@@ -308,7 +325,6 @@ func panicOnError(err error) {
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
-
 	printResult(t, "Actual", actual)
 }
 
@@ -318,10 +334,6 @@ func printResult(t *testing.T, title string, result interface{}) {
 	if printResults {
 		t.Logf("%s: %v", title, truncate(fmt.Sprintf("%v", result), defaultTruncation))
 	}
-}
-
-func safePrintln(message ...any) {
-	fmt.Println(message...) //nolint
 }
 
 func truncate(aString string, length int) string {

@@ -69,7 +69,7 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szproduct.GetLicense error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -103,7 +103,7 @@ func (client *Szproduct) GetVersion(ctx context.Context) (string, error) {
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szproduct.GetVersion error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -157,7 +157,7 @@ func (client *Szproduct) RegisterObserver(ctx context.Context, observer observer
 		}()
 	}
 
-	return wraperror.Errorf(err, "szproduct.RegisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -193,7 +193,7 @@ func (client *Szproduct) SetLogLevel(ctx context.Context, logLevelName string) e
 		}()
 	}
 
-	return wraperror.Errorf(err, "szproduct.SetLogLevel error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -241,7 +241,7 @@ func (client *Szproduct) UnregisterObserver(ctx context.Context, observer observ
 		}
 	}
 
-	return wraperror.Errorf(err, "szproduct.UnregisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
