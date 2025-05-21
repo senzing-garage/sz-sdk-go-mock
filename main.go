@@ -130,7 +130,7 @@ func demonstrateAddRecord(ctx context.Context, szEngine senzing.SzEngine) (strin
 
 	result, err := szEngine.AddRecord(ctx, dataSourceCode, recordID, recordDefinition, flags)
 
-	return result, wraperror.Errorf(err, "demonstrateAddRecord.AddRecord error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func demonstrateConfigFunctions(ctx context.Context, szAbstractFactory senzing.SzAbstractFactory) {

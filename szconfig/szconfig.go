@@ -5,7 +5,6 @@ package szconfig
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -80,7 +79,7 @@ func (client *Szconfig) AddDataSource(ctx context.Context, dataSourceCode string
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfig.AddDataSource error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -117,7 +116,7 @@ func (client *Szconfig) DeleteDataSource(ctx context.Context, dataSourceCode str
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfig.DeleteDataSource error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -151,7 +150,7 @@ func (client *Szconfig) Export(ctx context.Context) (string, error) {
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfig.Export error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -185,7 +184,7 @@ func (client *Szconfig) GetDataSources(ctx context.Context) (string, error) {
 		}()
 	}
 
-	return result, wraperror.Errorf(err, "szconfig.GetDataSources error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -231,7 +230,7 @@ func (client *Szconfig) Import(ctx context.Context, configDefinition string) err
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.Import error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -265,7 +264,7 @@ func (client *Szconfig) ImportTemplate(ctx context.Context) error {
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.ImportTemplate error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -304,7 +303,7 @@ func (client *Szconfig) Initialize(
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.Initialize error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -339,7 +338,7 @@ func (client *Szconfig) RegisterObserver(ctx context.Context, observer observer.
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.RegisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -360,7 +359,7 @@ func (client *Szconfig) SetLogLevel(ctx context.Context, logLevelName string) er
 	}
 
 	if !logging.IsValidLogLevelName(logLevelName) {
-		return fmt.Errorf("invalid error level: %s; %w", logLevelName, szerror.ErrSzSdk)
+		return wraperror.Errorf(szerror.ErrSzSdk, "invalid error level: %s", logLevelName)
 	}
 
 	err = client.getLogger().SetLogLevel(logLevelName)
@@ -375,7 +374,7 @@ func (client *Szconfig) SetLogLevel(ctx context.Context, logLevelName string) er
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.SetLogLevel error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -423,7 +422,7 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 		}
 	}
 
-	return wraperror.Errorf(err, "szconfig.UnregisterObserver error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -451,7 +450,7 @@ func (client *Szconfig) VerifyConfigDefinition(ctx context.Context, configDefini
 		}()
 	}
 
-	return wraperror.Errorf(err, "szconfig.VerifyConfigDefinition error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------

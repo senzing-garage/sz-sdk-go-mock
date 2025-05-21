@@ -44,6 +44,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_GetLicense(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getTestObject(test)
 	actual, err := szProduct.GetLicense(ctx)
@@ -52,6 +53,7 @@ func TestSzproduct_GetLicense(test *testing.T) {
 }
 
 func TestSzproduct_GetVersion(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getTestObject(test)
 	actual, err := szProduct.GetVersion(ctx)
@@ -64,18 +66,21 @@ func TestSzproduct_GetVersion(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_SetLogLevel_badLogLevelName(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szConfig := getTestObject(test)
 	_ = szConfig.SetLogLevel(ctx, badLogLevelName)
 }
 
 func TestSzproduct_SetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getTestObject(test)
 	szProduct.SetObserverOrigin(ctx, originMessage)
 }
 
 func TestSzproduct_GetObserverOrigin(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getTestObject(test)
 	szProduct.SetObserverOrigin(ctx, originMessage)
@@ -84,6 +89,7 @@ func TestSzproduct_GetObserverOrigin(test *testing.T) {
 }
 
 func TestSzproduct_UnregisterObserver(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getTestObject(test)
 	err := szProduct.UnregisterObserver(ctx, observerSingleton)
@@ -95,6 +101,7 @@ func TestSzproduct_UnregisterObserver(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestSzproduct_AsInterface(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	szProduct := getSzProductAsInterface(ctx)
 	actual, err := szProduct.GetLicense(ctx)
@@ -203,8 +210,12 @@ func getTestObject(t *testing.T) *szproduct.Szproduct {
 
 func handleError(err error) {
 	if err != nil {
-		panic(err)
+		outputln("Error:", err)
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func panicOnError(err error) {
@@ -215,7 +226,6 @@ func panicOnError(err error) {
 
 func printActual(t *testing.T, actual interface{}) {
 	t.Helper()
-
 	printResult(t, "Actual", actual)
 }
 

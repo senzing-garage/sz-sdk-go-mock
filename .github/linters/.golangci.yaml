@@ -109,9 +109,7 @@ linters:
     - zerologlint
   disable:
     - gochecknoglobals
-    - gochecknoinits
     - lll
-    - paralleltest
   exclusions:
     generated: lax
     presets:
@@ -133,6 +131,8 @@ linters:
           deny:
             - pkg: io/ioutil
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    dupl:
+      threshold: 200
     exhaustruct:
       exclude:
         - '.+/subject\.SimpleSubject$'
