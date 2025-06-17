@@ -786,7 +786,7 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
-		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
 		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
 		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),

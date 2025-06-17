@@ -33,7 +33,7 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
-	configList, err := szConfigManager.GetConfigs(ctx)
+	configList, err := szConfigManager.GetConfigRegistry(ctx)
 	require.NoError(test, err)
 	printActual(test, configList)
 }
@@ -141,7 +141,7 @@ func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfact
 		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
-		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
 		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
 		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),

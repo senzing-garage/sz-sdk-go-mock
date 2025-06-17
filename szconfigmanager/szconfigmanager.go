@@ -23,14 +23,14 @@ import (
 )
 
 type Szconfigmanager struct {
-	RegisterConfigResult     int64
+	GetConfigRegistryResult  string
 	GetConfigResult          string
-	GetConfigsResult         string
 	GetDefaultConfigIDResult int64
 	isTrace                  bool
 	logger                   logging.Logging
 	observerOrigin           string
 	observers                subject.Subject
+	RegisterConfigResult     int64
 }
 
 const (
@@ -153,7 +153,7 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 }
 
 /*
-Method GetConfigs retrieves a list of Senzing configuration JSON documents from the Senzing datastore.
+Method GetConfigRegistry retrieves a list of Senzing configuration JSON documents from the Senzing datastore.
 
 Input
   - ctx: A context to control lifecycle.
@@ -161,7 +161,7 @@ Input
 Output
   - A JSON document listing Senzing configuration JSON document metadata.
 */
-func (client *Szconfigmanager) GetConfigs(ctx context.Context) (string, error) {
+func (client *Szconfigmanager) GetConfigRegistry(ctx context.Context) (string, error) {
 	var (
 		err    error
 		result string
@@ -174,7 +174,7 @@ func (client *Szconfigmanager) GetConfigs(ctx context.Context) (string, error) {
 		defer func() { client.traceExit(10, result, err, time.Since(entryTime)) }()
 	}
 
-	result = client.GetConfigsResult
+	result = client.GetConfigRegistryResult
 
 	if client.observers != nil {
 		go func() {

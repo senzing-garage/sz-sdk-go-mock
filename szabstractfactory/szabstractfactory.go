@@ -36,27 +36,27 @@ type Szabstractfactory struct {
 	FindPathByEntityIDResult                string
 	FindPathByRecordIDResult                string
 	GetActiveConfigIDResult                 int64
+	GetConfigRegistryResult                 string
 	GetConfigResult                         string
-	GetConfigsResult                        string
 	GetDataSourcesResult                    string
 	GetDatastoreInfoResult                  string
 	GetDefaultConfigIDResult                int64
 	GetEntityByEntityIDResult               string
 	GetEntityByRecordIDResult               string
 	GetFeatureResult                        string
+	GetLicenseResult                        string
 	GetRecordResult                         string
 	GetRedoRecordResult                     string
 	GetStatsResult                          string
+	GetVersionResult                        string
 	GetVirtualEntityByRecordIDResult        string
 	HowEntityByEntityIDResult               string
 	ImportConfigResult                      uintptr
-	GetLicenseResult                        string
 	PreprocessRecordResult                  string
 	ProcessRedoRecordResult                 string
 	ReevaluateEntityResult                  string
 	ReevaluateRecordResult                  string
 	SearchByAttributesResult                string
-	GetVersionResult                        string
 	WhyEntitiesResult                       string
 	WhyRecordInEntityResult                 string
 	WhyRecordsResult                        string
@@ -83,7 +83,7 @@ func (factory *Szabstractfactory) CreateConfigManager(ctx context.Context) (senz
 	result := &szconfigmanager.Szconfigmanager{
 		RegisterConfigResult:     factory.AddConfigResult,
 		GetConfigResult:          factory.GetConfigResult,
-		GetConfigsResult:         factory.GetConfigsResult,
+		GetConfigRegistryResult:  factory.GetConfigRegistryResult,
 		GetDefaultConfigIDResult: factory.GetDefaultConfigIDResult,
 	}
 

@@ -80,11 +80,11 @@ func TestSzconfigmanager_CreateConfigFromTemplate(test *testing.T) {
 	assert.NotEmpty(test, actual)
 }
 
-func TestSzconfigmanager_GetConfigs(test *testing.T) {
+func TestSzconfigmanager_GetConfigRegistry(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getTestObject(test)
-	actual, err := szConfigManager.GetConfigs(ctx)
+	actual, err := szConfigManager.GetConfigRegistry(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -187,7 +187,7 @@ func TestSzconfigmanager_AsInterface(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	szConfigManager := getSzConfigManagerAsInterface(ctx)
-	actual, err := szConfigManager.GetConfigs(ctx)
+	actual, err := szConfigManager.GetConfigRegistry(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -227,7 +227,7 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
-		GetConfigsResult:                        testValue.String("GetConfigsResult"),
+		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
 		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
 		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
@@ -283,7 +283,7 @@ func getSzConfigManager(ctx context.Context) *szconfigmanager.Szconfigmanager {
 	result := &szconfigmanager.Szconfigmanager{
 		RegisterConfigResult:     testValue.Int64("AddConfigResult"),
 		GetConfigResult:          testValue.String("GetConfigResult"),
-		GetConfigsResult:         testValue.String("GetConfigsResult"),
+		GetConfigRegistryResult:  testValue.String("GetConfigRegistryResult"),
 		GetDefaultConfigIDResult: testValue.Int64("GetDefaultConfigIDResult"),
 	}
 	if logLevel == "TRACE" {
