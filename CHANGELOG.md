@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning].
 
 -
 
+## [0.8.10] - 2025-07-01
+
+### Changed in 0.8.10
+
+- Change `SzConfig.AddDataSource` to `SzConfig.RegisterDataSource`
+- Change `SzConfig.DeleteDataSource` to `SzConfig.UnregisterDataSource`
+- Change `SzConfig.GetDataSources` to `SzConfig.GetDataSourceRegistry`
+- Change `SzDiagnostic.CheckDatastorePerformance` to `SzDiagnostic.CheckRepositoryPerformance`
+- Change `SzDiagnostic.GetDatastoreInfo` to `SzDiagnostic.GetRepositoryInfo`
+- Change `SzEngine.CloseExport` to `SzEngine.CloseExportReport`
+- Change `SzEngine.PreprocessRecord` to ``SzEngine.GetRecordPreview`
+
 ## [0.8.9] - 2025-06-17
 
 ### Changed in 0.8.9

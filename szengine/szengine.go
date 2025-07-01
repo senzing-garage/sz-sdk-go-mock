@@ -37,6 +37,7 @@ type Szengine struct {
 	GetActiveConfigIDResult                 int64
 	GetEntityByEntityIDResult               string
 	GetEntityByRecordIDResult               string
+	GetRecordPreviewResult                  string
 	GetRecordResult                         string
 	GetRedoRecordResult                     string
 	GetStatsResult                          string
@@ -46,7 +47,6 @@ type Szengine struct {
 	logger                                  logging.Logging
 	observerOrigin                          string
 	observers                               subject.Subject
-	PreprocessRecordResult                  string
 	ProcessRedoRecordResult                 string
 	ReevaluateEntityResult                  string
 	ReevaluateRecordResult                  string
@@ -1171,7 +1171,7 @@ func (client *Szengine) HowEntityByEntityID(ctx context.Context, entityID int64,
 }
 
 /*
-Method PreprocessRecord tests adding a record into the Senzing repository.
+Method GetRecordPreview tests adding a record into the Senzing repository.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1181,7 +1181,7 @@ Input
 Output
   - A JSON document containing metadata as specified by the flags.
 */
-func (client *Szengine) PreprocessRecord(ctx context.Context, recordDefinition string, flags int64) (string, error) {
+func (client *Szengine) GetRecordPreview(ctx context.Context, recordDefinition string, flags int64) (string, error) {
 	var (
 		err    error
 		result string
@@ -1197,7 +1197,7 @@ func (client *Szengine) PreprocessRecord(ctx context.Context, recordDefinition s
 		}()
 	}
 
-	result = client.PreprocessRecordResult
+	result = client.GetRecordPreviewResult
 
 	if client.observers != nil {
 		go func() {

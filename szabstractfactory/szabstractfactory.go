@@ -18,12 +18,10 @@ Szabstractfactory is an implementation of the [senzing.SzAbstractFactory] interf
 */
 type Szabstractfactory struct {
 	AddConfigResult                         int64
-	RegisterDataSourceResult                string
 	AddRecordResult                         string
 	CheckRepositoryPerformanceResult        string
 	CountRedoRecordsResult                  int64
 	CreateConfigResult                      uintptr
-	UnregisterDataSourceResult              string
 	DeleteRecordResult                      string
 	ExportConfigResult                      string
 	ExportCsvEntityReportResult             uintptr
@@ -39,24 +37,26 @@ type Szabstractfactory struct {
 	GetConfigRegistryResult                 string
 	GetConfigResult                         string
 	GetDataSourceRegistryResult             string
-	GetRepositoryInfoResult                 string
 	GetDefaultConfigIDResult                int64
 	GetEntityByEntityIDResult               string
 	GetEntityByRecordIDResult               string
 	GetFeatureResult                        string
 	GetLicenseResult                        string
+	GetRecordPreviewResult                  string
 	GetRecordResult                         string
 	GetRedoRecordResult                     string
+	GetRepositoryInfoResult                 string
 	GetStatsResult                          string
 	GetVersionResult                        string
 	GetVirtualEntityByRecordIDResult        string
 	HowEntityByEntityIDResult               string
 	ImportConfigResult                      uintptr
-	PreprocessRecordResult                  string
 	ProcessRedoRecordResult                 string
 	ReevaluateEntityResult                  string
 	ReevaluateRecordResult                  string
+	RegisterDataSourceResult                string
 	SearchByAttributesResult                string
+	UnregisterDataSourceResult              string
 	WhyEntitiesResult                       string
 	WhyRecordInEntityResult                 string
 	WhyRecordsResult                        string
@@ -149,7 +149,7 @@ func (factory *Szabstractfactory) CreateEngine(ctx context.Context) (senzing.SzE
 		GetStatsResult:                          factory.GetStatsResult,
 		GetVirtualEntityByRecordIDResult:        factory.GetVirtualEntityByRecordIDResult,
 		HowEntityByEntityIDResult:               factory.HowEntityByEntityIDResult,
-		PreprocessRecordResult:                  factory.PreprocessRecordResult,
+		GetRecordPreviewResult:                  factory.GetRecordPreviewResult,
 		ProcessRedoRecordResult:                 factory.ProcessRedoRecordResult,
 		ReevaluateEntityResult:                  factory.ReevaluateEntityResult,
 		ReevaluateRecordResult:                  factory.ReevaluateRecordResult,

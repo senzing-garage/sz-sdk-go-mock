@@ -470,7 +470,7 @@ func TestSzengine_HowEntityByEntityID(test *testing.T) {
 	printActual(test, actual)
 }
 
-func TestSzengine_PreprocessRecord(test *testing.T) {
+func TestSzengine_GetRecordPreview(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	szEngine := getTestObject(test)
@@ -481,7 +481,7 @@ func TestSzengine_PreprocessRecord(test *testing.T) {
 	}
 
 	for _, record := range records {
-		actual, err := szEngine.PreprocessRecord(ctx, record.JSON, flags)
+		actual, err := szEngine.GetRecordPreview(ctx, record.JSON, flags)
 		require.NoError(test, err)
 		printActual(test, actual)
 	}
@@ -769,7 +769,6 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 
 	result = &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
 		CheckRepositoryPerformanceResult:        testValue.String("CheckRepositoryPerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
@@ -786,26 +785,27 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
 		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
-		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetDataSourceRegistryResult:             testValue.String("GetDataSourceRegistryResult"),
-		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
 		GetFeatureResult:                        testValue.String("GetFeatureResult"),
 		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordPreviewResult:                  testValue.String("GetRecordPreviewResult"),
 		GetRecordResult:                         testValue.String("GetRecordResult"),
 		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetStatsResult:                          testValue.String("GetStatsResult"),
 		GetVersionResult:                        testValue.String("GetVersionResult"),
 		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
 		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
 		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
-		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
 		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
 		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
 		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
 		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
@@ -839,12 +839,12 @@ func getSzEngine(ctx context.Context) *szengine.Szengine {
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
+		GetRecordPreviewResult:                  testValue.String("GetRecordPreviewResult"),
 		GetRecordResult:                         testValue.String("GetRecordResult"),
 		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
 		GetStatsResult:                          testValue.String("GetStatsResult"),
 		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
 		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
-		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
 		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
 		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
 		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
