@@ -103,7 +103,7 @@ func TestSzengine_AddRecord(test *testing.T) {
 	}
 }
 
-func TestSzengine_CloseExport(test *testing.T) {
+func TestSzengine_CloseExportReport(test *testing.T) {
 	test.Parallel()
 	// Tested in:
 	//  - TestSzengine_ExportCsvEntityReport
@@ -212,6 +212,7 @@ func TestSzengine_FindNetworkByEntityID(test *testing.T) {
 	}
 
 	defer func() { deleteRecords(ctx, records) }()
+
 	addRecords(ctx, records)
 
 	szEngine := getTestObject(test)
@@ -768,9 +769,9 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 
 	result = &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
-		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CheckRepositoryPerformanceResult:        testValue.String("CheckRepositoryPerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
@@ -787,8 +788,8 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
-		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
-		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDataSourceRegistryResult:             testValue.String("GetDataSourceRegistryResult"),
+		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),

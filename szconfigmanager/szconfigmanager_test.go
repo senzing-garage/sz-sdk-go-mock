@@ -107,7 +107,7 @@ func TestSzconfigmanager_RegisterConfig(test *testing.T) {
 	require.NoError(test, err)
 
 	dataSourceCode := "GO_TEST_" + strconv.FormatInt(now.Unix(), baseTen)
-	_, err = szConfig.AddDataSource(ctx, dataSourceCode)
+	_, err = szConfig.RegisterDataSource(ctx, dataSourceCode)
 	require.NoError(test, err)
 	configDefinition, err := szConfig.Export(ctx)
 	require.NoError(test, err)
@@ -209,9 +209,9 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 
 	result = &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
-		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CheckRepositoryPerformanceResult:        testValue.String("CheckRepositoryPerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
@@ -228,8 +228,8 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
-		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
-		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDataSourceRegistryResult:             testValue.String("GetDataSourceRegistryResult"),
+		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
@@ -265,9 +265,9 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 // 	}
 
 // 	return &szconfig.Szconfig{
-// 		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
+// 		RegisterDataSourceResult:  testValue.String("RegisterDataSourceResult"),
 // 		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
-// 		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
+// 		GetDataSourceRegistryResult: testValue.String("GetDataSourceRegistryResult"),
 // 		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
 // 		ExportConfigResult:   testValue.String("ExportConfigResult"),
 // 	}, nil

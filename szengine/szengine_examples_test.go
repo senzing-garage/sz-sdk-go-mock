@@ -66,7 +66,7 @@ func ExampleSzengine_AddRecord_secondRecord() {
 	// Output:
 }
 
-func ExampleSzengine_CloseExport() {
+func ExampleSzengine_CloseExportReport() {
 	// For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szengine/szengine_examples_test.go
 	ctx := context.TODO()
@@ -84,7 +84,7 @@ func ExampleSzengine_CloseExport() {
 		handleError(err)
 	}
 
-	err = szEngine.CloseExport(ctx, exportHandle)
+	err = szEngine.CloseExportReport(ctx, exportHandle)
 	if err != nil {
 		handleError(err)
 	}
@@ -249,7 +249,7 @@ func ExampleSzengine_FetchNext() {
 	}
 
 	defer func() {
-		err = szEngine.CloseExport(ctx, exportHandle)
+		err = szEngine.CloseExportReport(ctx, exportHandle)
 	}()
 
 	jsonEntityReport := ""

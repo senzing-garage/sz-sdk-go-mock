@@ -47,7 +47,7 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 
 	szDiagnostic, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
-	result, err := szDiagnostic.CheckDatastorePerformance(ctx, 1)
+	result, err := szDiagnostic.CheckRepositoryPerformance(ctx, 1)
 	require.NoError(test, err)
 	printActual(test, result)
 }
@@ -122,12 +122,12 @@ func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfact
 
 	return &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
+		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
-		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CheckRepositoryPerformanceResult:        testValue.String("CheckRepositoryPerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
-		DeleteDataSourceResult:                  testValue.String("DeleteDataSourceResult"),
+		UnregisterDataSourceResult:              testValue.String("UnregisterDataSourceResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
 		ExportConfigResult:                      testValue.String("ExportConfigResult"),
 		ExportCsvEntityReportResult:             testValue.Uintptr("ExportCsvEntityReportResult"),
@@ -142,8 +142,8 @@ func getSzAbstractFactory(ctx context.Context) *szabstractfactory.Szabstractfact
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
 		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
-		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
-		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetDataSourceRegistryResult:             testValue.String("GetDataSourceRegistryResult"),
+		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),

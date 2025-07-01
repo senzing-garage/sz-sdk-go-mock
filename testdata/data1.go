@@ -5,10 +5,10 @@ It contains test case helpers.
 package testdata
 
 var Data1_strings = map[string]string{
-	"AddDataSourceResult":                     `{"DSRC_ID":1001}`,
+	"RegisterDataSourceResult":                `{"DSRC_ID":1001}`,
 	"AddRecordResult":                         "",
-	"CheckDatastorePerformanceResult":         `{"numRecordsInserted":76667,"insertTime":1000}`,
-	"DeleteDataSourceResult":                  "",
+	"CheckRepositoryPerformanceResult":        `{"numRecordsInserted":76667,"insertTime":1000}`,
+	"UnregisterDataSourceResult":              "",
 	"DeleteRecordResult":                      "",
 	"ExportConfigResult":                      `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_CLASS":"ADDRESS","ATTR_CODE":"ADDR_CITY","ATTR_ID":1608,...`,
 	"FetchNextResult":                         ``,
@@ -20,8 +20,8 @@ var Data1_strings = map[string]string{
 	"FindPathByRecordIDResult":                `{"ENTITY_PATHS":[{"START_ENTITY_ID":100001,"END_ENTITY_ID":100001,"ENTITIES":[100001]}],"ENTITIES":[{"RESOLVED_ENTITY":{"ENTITY_ID":100001}}]}`,
 	"GetConfigResult":                         `{"G2_CONFIG":{"CFG_ATTR":[{"ATTR_CLASS":"ADDRESS","ATTR_CODE":"ADDR_CITY","ATTR_ID":1608,"DEFAULT_VALUE":null,"FELEM_CODE":"CITY","FELEM_REQ":"Any",...`,
 	"GetConfigRegistryResult":                 `{"CONFIGS":[{"CONFIG_ID":41320074,"CONFIG_COMMENTS":"Example configuration","SYS_CREATE_DT":"2023-02-16 21:43:10.171"},{"CONFIG_ID":1111755672,"CONFIG_COMMENTS":"szconfigmgr_test at 2023-02-16 21:43:10.154619801 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:10.159"},{"CONFIG_ID":3680541328,"CONFIG_COMMENTS":"Created by szdiagnostic_test at 2023-02-16 21:43:07.294747409 +0000 UTC","SYS_CREATE_DT":"2023-02-16 21:43:07.755"}]}`,
-	"GetDataSourcesResult":                    `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
-	"GetDatastoreInfoResult":                  `{"dataStores":[{"id":"CORE","type":"sqlite3","location":"nowhere"}]}`,
+	"GetDataSourceRegistryResult":             `{"DATA_SOURCES":[{"DSRC_ID":1,"DSRC_CODE":"TEST"},{"DSRC_ID":2,"DSRC_CODE":"SEARCH"}]}`,
+	"GetRepositoryInfoResult":                 `{"dataStores":[{"id":"CORE","type":"sqlite3","location":"nowhere"}]}`,
 	"GetEntityByEntityIDResult":               `{"RESOLVED_ENTITY":{"ENTITY_ID":100001}}`,
 	"GetEntityByRecordIDResult":               `{"RESOLVED_ENTITY":{"ENTITY_ID":100001}}`,
 	"GetFeatureResult":                        `{"LIB_FEAT_ID":1,"FTYPE_CODE":"NAME","ELEMENTS":[{"FELEM_CODE":"FULL_NAME","FELEM_VALUE":"Robert Smith"},{"FELEM_CODE":"SUR_NAME","FELEM_VALUE":"Smith"},{"FELEM_CODE":"GIVEN_NAME","FELEM_VALUE":"Robert"},{"FELEM_CODE":"CULTURE","FELEM_VALUE":"ANGLO"},{"FELEM_CODE":"CATEGORY","FELEM_VALUE":"PERSON"},{"FELEM_CODE":"TOKENIZED_NM","FELEM_VALUE":"ROBERT|SMITH"}]}`,

@@ -18,12 +18,12 @@ Szabstractfactory is an implementation of the [senzing.SzAbstractFactory] interf
 */
 type Szabstractfactory struct {
 	AddConfigResult                         int64
-	AddDataSourceResult                     string
+	RegisterDataSourceResult                string
 	AddRecordResult                         string
-	CheckDatastorePerformanceResult         string
+	CheckRepositoryPerformanceResult        string
 	CountRedoRecordsResult                  int64
 	CreateConfigResult                      uintptr
-	DeleteDataSourceResult                  string
+	UnregisterDataSourceResult              string
 	DeleteRecordResult                      string
 	ExportConfigResult                      string
 	ExportCsvEntityReportResult             uintptr
@@ -38,8 +38,8 @@ type Szabstractfactory struct {
 	GetActiveConfigIDResult                 int64
 	GetConfigRegistryResult                 string
 	GetConfigResult                         string
-	GetDataSourcesResult                    string
-	GetDatastoreInfoResult                  string
+	GetDataSourceRegistryResult             string
+	GetRepositoryInfoResult                 string
 	GetDefaultConfigIDResult                int64
 	GetEntityByEntityIDResult               string
 	GetEntityByRecordIDResult               string
@@ -105,9 +105,9 @@ func (factory *Szabstractfactory) CreateDiagnostic(ctx context.Context) (senzing
 
 	_ = ctx
 	result := &szdiagnostic.Szdiagnostic{
-		CheckDatastorePerformanceResult: factory.CheckDatastorePerformanceResult,
-		GetDatastoreInfoResult:          factory.GetDatastoreInfoResult,
-		GetFeatureResult:                factory.GetFeatureResult,
+		CheckRepositoryPerformanceResult: factory.CheckRepositoryPerformanceResult,
+		GetRepositoryInfoResult:          factory.GetRepositoryInfoResult,
+		GetFeatureResult:                 factory.GetFeatureResult,
 	}
 
 	return result, wraperror.Errorf(err, wraperror.NoMessage)
