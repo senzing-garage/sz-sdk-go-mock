@@ -48,21 +48,21 @@ var (
 // Interface methods - test
 // ----------------------------------------------------------------------------
 
-func TestSzdiagnostic_CheckDatastorePerformance(test *testing.T) {
+func TestSzdiagnostic_CheckRepositoryPerformance(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
 	secondsToRun := 1
-	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
+	actual, err := szDiagnostic.CheckRepositoryPerformance(ctx, secondsToRun)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
 
-func TestSzdiagnostic_GetDatastoreInfo(test *testing.T) {
+func TestSzdiagnostic_GetRepositoryInfo(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	szDiagnostic := getTestObject(test)
-	actual, err := szDiagnostic.GetDatastoreInfo(ctx)
+	actual, err := szDiagnostic.GetRepositoryInfo(ctx)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -130,7 +130,7 @@ func TestSzdiagnostic_AsInterface(test *testing.T) {
 
 	szDiagnostic := getSzDiagnosticAsInterface(ctx)
 	secondsToRun := 1
-	actual, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
+	actual, err := szDiagnostic.CheckRepositoryPerformance(ctx, secondsToRun)
 	require.NoError(test, err)
 	printActual(test, actual)
 }
@@ -162,9 +162,8 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 
 	result = &szabstractfactory.Szabstractfactory{
 		AddConfigResult:                         testValue.Int64("AddConfigResult"),
-		AddDataSourceResult:                     testValue.String("AddDataSourceResult"),
 		AddRecordResult:                         testValue.String("AddRecordResult"),
-		CheckDatastorePerformanceResult:         testValue.String("CheckDatastorePerformanceResult"),
+		CheckRepositoryPerformanceResult:        testValue.String("CheckRepositoryPerformanceResult"),
 		CountRedoRecordsResult:                  testValue.Int64("CountRedoRecordsResult"),
 		CreateConfigResult:                      testValue.Uintptr("CreateConfigResult"),
 		DeleteRecordResult:                      testValue.String("DeleteRecordResult"),
@@ -179,26 +178,27 @@ func getSzAbstractFactory(ctx context.Context) senzing.SzAbstractFactory {
 		FindPathByEntityIDResult:                testValue.String("FindPathByEntityIDResult"),
 		FindPathByRecordIDResult:                testValue.String("FindPathByRecordIDResult"),
 		GetActiveConfigIDResult:                 testValue.Int64("GetActiveConfigIDResult"),
-		GetConfigResult:                         testValue.String("GetConfigResult"),
 		GetConfigRegistryResult:                 testValue.String("GetConfigRegistryResult"),
-		GetDataSourcesResult:                    testValue.String("GetDataSourcesResult"),
-		GetDatastoreInfoResult:                  testValue.String("GetDatastoreInfoResult"),
+		GetConfigResult:                         testValue.String("GetConfigResult"),
+		GetDataSourceRegistryResult:             testValue.String("GetDataSourceRegistryResult"),
 		GetDefaultConfigIDResult:                testValue.Int64("GetDefaultConfigIDResult"),
 		GetEntityByEntityIDResult:               testValue.String("GetEntityByEntityIDResult"),
 		GetEntityByRecordIDResult:               testValue.String("GetEntityByRecordIDResult"),
 		GetFeatureResult:                        testValue.String("GetFeatureResult"),
 		GetLicenseResult:                        testValue.String("GetLicenseResult"),
+		GetRecordPreviewResult:                  testValue.String("GetRecordPreviewResult"),
 		GetRecordResult:                         testValue.String("GetRecordResult"),
 		GetRedoRecordResult:                     testValue.String("GetRedoRecordResult"),
+		GetRepositoryInfoResult:                 testValue.String("GetRepositoryInfoResult"),
 		GetStatsResult:                          testValue.String("GetStatsResult"),
 		GetVersionResult:                        testValue.String("GetVersionResult"),
 		GetVirtualEntityByRecordIDResult:        testValue.String("GetVirtualEntityByRecordIDResult"),
 		HowEntityByEntityIDResult:               testValue.String("HowEntityByEntityIDResult"),
 		ImportConfigResult:                      testValue.Uintptr("ImportConfigResult"),
-		PreprocessRecordResult:                  testValue.String("PreprocessRecordResult"),
 		ProcessRedoRecordResult:                 testValue.String("ProcessRedoRecordResult"),
 		ReevaluateEntityResult:                  testValue.String("ReevaluateEntityResult"),
 		ReevaluateRecordResult:                  testValue.String("ReevaluateRecordResult"),
+		RegisterDataSourceResult:                testValue.String("RegisterDataSourceResult"),
 		SearchByAttributesResult:                testValue.String("SearchByAttributesResult"),
 		WhyEntitiesResult:                       testValue.String("WhyEntitiesResult"),
 		WhyRecordInEntityResult:                 testValue.String("WhyRecordInEntityResult"),
@@ -216,9 +216,9 @@ func getSzDiagnostic(ctx context.Context) *szdiagnostic.Szdiagnostic {
 	}
 
 	result := &szdiagnostic.Szdiagnostic{
-		CheckDatastorePerformanceResult: testValue.String("CheckDatastorePerformanceResult"),
-		GetDatastoreInfoResult:          testValue.String("GetDatastoreInfoResult"),
-		GetFeatureResult:                testValue.String("GetFeatureResult"),
+		CheckRepositoryPerformanceResult: testValue.String("CheckRepositoryPerformanceResult"),
+		GetRepositoryInfoResult:          testValue.String("GetRepositoryInfoResult"),
+		GetFeatureResult:                 testValue.String("GetFeatureResult"),
 	}
 	if logLevel == "TRACE" {
 		result.SetObserverOrigin(ctx, observerOrigin)

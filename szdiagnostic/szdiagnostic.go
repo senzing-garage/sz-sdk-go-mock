@@ -20,13 +20,13 @@ import (
 )
 
 type Szdiagnostic struct {
-	CheckDatastorePerformanceResult string
-	GetDatastoreInfoResult          string
-	GetFeatureResult                string
-	isTrace                         bool
-	logger                          logging.Logging
-	observerOrigin                  string
-	observers                       subject.Subject
+	CheckRepositoryPerformanceResult string
+	GetFeatureResult                 string
+	GetRepositoryInfoResult          string
+	isTrace                          bool
+	logger                           logging.Logging
+	observerOrigin                   string
+	observers                        subject.Subject
 }
 
 const (
@@ -41,7 +41,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-Method CheckDatastorePerformance runs performance tests on the Senzing datastore.
+Method CheckRepositoryPerformance runs performance tests on the Senzing repository.
 
 Input
   - ctx: A context to control lifecycle.
@@ -52,7 +52,7 @@ Output
   - A JSON document containing performance results.
     Example: `{"numRecordsInserted":0,"insertTime":0}`
 */
-func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secondsToRun int) (string, error) {
+func (client *Szdiagnostic) CheckRepositoryPerformance(ctx context.Context, secondsToRun int) (string, error) {
 	var (
 		err    error
 		result string
@@ -62,50 +62,16 @@ func (client *Szdiagnostic) CheckDatastorePerformance(ctx context.Context, secon
 		client.traceEntry(1, secondsToRun)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(2, secondsToRun, result, err, time.Since(entryTime)) }()
 	}
 
-	result = client.CheckDatastorePerformanceResult
+	result = client.CheckRepositoryPerformanceResult
 
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
-		}()
-	}
-
-	return result, wraperror.Errorf(err, wraperror.NoMessage)
-}
-
-/*
-Method GetDatastoreInfo returns information about the Senzing datastore.
-
-Input
-  - ctx: A context to control lifecycle.
-
-Output
-
-  - A JSON document containing Senzing datastore metadata.
-*/
-func (client *Szdiagnostic) GetDatastoreInfo(ctx context.Context) (string, error) {
-	var (
-		err    error
-		result string
-	)
-
-	if client.isTrace {
-		client.traceEntry(7)
-
-		entryTime := time.Now()
-		defer func() { client.traceExit(8, result, err, time.Since(entryTime)) }()
-	}
-
-	result = client.GetDatastoreInfoResult
-
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8003, err, details)
 		}()
 	}
 
@@ -134,6 +100,7 @@ func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (st
 		client.traceEntry(9, featureID)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(10, featureID, result, err, time.Since(entryTime)) }()
 	}
 
@@ -152,7 +119,43 @@ func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (st
 }
 
 /*
-WARNING: Method PurgeRepository removes every record in the Senzing datastore.
+Method GetRepositoryInfo returns information about the Senzing repository.
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+
+  - A JSON document containing Senzing repository metadata.
+*/
+func (client *Szdiagnostic) GetRepositoryInfo(ctx context.Context) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	if client.isTrace {
+		client.traceEntry(7)
+
+		entryTime := time.Now()
+
+		defer func() { client.traceExit(8, result, err, time.Since(entryTime)) }()
+	}
+
+	result = client.GetRepositoryInfoResult
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8003, err, details)
+		}()
+	}
+
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+/*
+WARNING: Method PurgeRepository removes every record in the Senzing repository.
 This is a destructive method that cannot be undone.
 Before calling purgeRepository(), all programs using Senzing MUST be terminated.
 
@@ -166,6 +169,7 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 		client.traceEntry(17)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(18, err, time.Since(entryTime)) }()
 	}
 
@@ -212,6 +216,7 @@ func (client *Szdiagnostic) RegisterObserver(ctx context.Context, observer obser
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -247,6 +252,7 @@ func (client *Szdiagnostic) SetLogLevel(ctx context.Context, logLevelName string
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -295,6 +301,7 @@ func (client *Szdiagnostic) UnregisterObserver(ctx context.Context, observer obs
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 

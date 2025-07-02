@@ -14,7 +14,7 @@ import (
 // Interface methods - Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleSzdiagnostic_CheckDatastorePerformance() {
+func ExampleSzdiagnostic_CheckRepositoryPerformance() {
 	// For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szdiagnostic/szdiagnostic_examples_test.go
 	ctx := context.TODO()
@@ -27,7 +27,7 @@ func ExampleSzdiagnostic_CheckDatastorePerformance() {
 
 	secondsToRun := 1
 
-	result, err := szDiagnostic.CheckDatastorePerformance(ctx, secondsToRun)
+	result, err := szDiagnostic.CheckRepositoryPerformance(ctx, secondsToRun)
 	if err != nil {
 		handleError(err)
 	}
@@ -36,7 +36,7 @@ func ExampleSzdiagnostic_CheckDatastorePerformance() {
 	// Output: {"insertTime":1000,...
 }
 
-func ExampleSzdiagnostic_GetDatastoreInfo() {
+func ExampleSzdiagnostic_GetRepositoryInfo() {
 	// For more information, visit
 	// https://github.com/senzing-garage/sz-sdk-go-mock/blob/main/szdiagnostic/szdiagnostic_examples_test.go
 	ctx := context.TODO()
@@ -47,7 +47,7 @@ func ExampleSzdiagnostic_GetDatastoreInfo() {
 		handleError(err)
 	}
 
-	result, err := szDiagnostic.GetDatastoreInfo(ctx)
+	result, err := szDiagnostic.GetRepositoryInfo(ctx)
 	if err != nil {
 		handleError(err)
 	}

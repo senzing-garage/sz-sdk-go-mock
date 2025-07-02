@@ -45,7 +45,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-Method CreateConfigFromConfigID retrieves a specific Senzing configuration JSON document from the Senzing datastore.
+Method CreateConfigFromConfigID retrieves a specific Senzing configuration JSON document from the Senzing repository.
 
 Input
   - ctx: A context to control lifecycle.
@@ -64,6 +64,7 @@ func (client *Szconfigmanager) CreateConfigFromConfigID(ctx context.Context, con
 		client.traceEntry(7, configID)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(8, configID, result, err, time.Since(entryTime)) }()
 	}
 
@@ -102,6 +103,7 @@ func (client *Szconfigmanager) CreateConfigFromString(
 		client.traceEntry(23, configDefinition)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(24, configDefinition, result, err, time.Since(entryTime)) }()
 	}
 
@@ -137,6 +139,7 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 		client.traceEntry(25)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(26, result, err, time.Since(entryTime)) }()
 	}
 
@@ -153,7 +156,7 @@ func (client *Szconfigmanager) CreateConfigFromTemplate(ctx context.Context) (se
 }
 
 /*
-Method GetConfigRegistry retrieves a list of Senzing configuration JSON documents from the Senzing datastore.
+Method GetConfigRegistry retrieves a list of Senzing configuration JSON documents from the Senzing repository.
 
 Input
   - ctx: A context to control lifecycle.
@@ -171,6 +174,7 @@ func (client *Szconfigmanager) GetConfigRegistry(ctx context.Context) (string, e
 		client.traceEntry(9)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(10, result, err, time.Since(entryTime)) }()
 	}
 
@@ -188,7 +192,7 @@ func (client *Szconfigmanager) GetConfigRegistry(ctx context.Context) (string, e
 
 /*
 Method GetDefaultConfigID retrieves the default Senzing configuration JSON
-document identifier from the Senzing datastore.
+document identifier from the Senzing repository.
 Note: this may not be the currently active in-memory configuration.
 See [Szconfigmanager.SetDefaultConfigID] and [Szconfigmanager.ReplaceDefaultConfigID] for more details.
 
@@ -208,6 +212,7 @@ func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, e
 		client.traceEntry(11)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(12, result, err, time.Since(entryTime)) }()
 	}
 
@@ -224,7 +229,7 @@ func (client *Szconfigmanager) GetDefaultConfigID(ctx context.Context) (int64, e
 }
 
 /*
-Method RegisterConfig adds a Senzing configuration JSON document to the Senzing datastore.
+Method RegisterConfig adds a Senzing configuration JSON document to the Senzing repository.
 
 Input
   - ctx: A context to control lifecycle.
@@ -248,6 +253,7 @@ func (client *Szconfigmanager) RegisterConfig(
 		client.traceEntry(1, configDefinition, configComment)
 
 		entryTime := time.Now()
+
 		defer func() {
 			client.traceExit(2, configDefinition, configComment, result, err, time.Since(entryTime))
 		}()
@@ -294,6 +300,7 @@ func (client *Szconfigmanager) ReplaceDefaultConfigID(
 		client.traceEntry(19, currentDefaultConfigID, newDefaultConfigID)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(20, currentDefaultConfigID, newDefaultConfigID, err, time.Since(entryTime)) }()
 	}
 
@@ -353,6 +360,7 @@ func (client *Szconfigmanager) SetDefaultConfigID(ctx context.Context, configID 
 		client.traceEntry(21, configID)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(22, configID, err, time.Since(entryTime)) }()
 	}
 
@@ -401,6 +409,7 @@ func (client *Szconfigmanager) RegisterObserver(ctx context.Context, observer ob
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -436,6 +445,7 @@ func (client *Szconfigmanager) SetLogLevel(ctx context.Context, logLevelName str
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -484,6 +494,7 @@ func (client *Szconfigmanager) UnregisterObserver(ctx context.Context, observer 
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -519,11 +530,11 @@ func getSzConfig(ctx context.Context) *szconfig.Szconfig {
 		Uintptrs: testdata.Data1_uintptrs,
 	}
 	result := &szconfig.Szconfig{
-		AddDataSourceResult:  testValue.String("AddDataSourceResult"),
-		CreateConfigResult:   testValue.Uintptr("CreateConfigResult"),
-		GetDataSourcesResult: testValue.String("GetDataSourcesResult"),
-		ImportConfigResult:   testValue.Uintptr("ImportConfigResult"),
-		ExportResult:         testValue.String("ExportConfigResult"),
+		RegisterDataSourceResult:    testValue.String("RegisterDataSourceResult"),
+		CreateConfigResult:          testValue.Uintptr("CreateConfigResult"),
+		GetDataSourceRegistryResult: testValue.String("GetDataSourceRegistryResult"),
+		ImportConfigResult:          testValue.Uintptr("ImportConfigResult"),
+		ExportResult:                testValue.String("ExportConfigResult"),
 	}
 
 	return result
