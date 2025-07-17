@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning].
 
 -
 
+## [0.8.11] - 2025-07-17
+
+### Added in 0.8.11
+
+- `SzAbstractFactory.Close()`
+
 ## [0.8.10] - 2025-07-02
 
 ### Changed in 0.8.10
