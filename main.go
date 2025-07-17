@@ -82,7 +82,7 @@ func main() {
 
 	demonstrateAdditionalFunctions(ctx, szAbstractFactory)
 
-	err = szAbstractFactory.Destroy(ctx)
+	err = szAbstractFactory.Close(ctx)
 	failOnError(5008, err)
 
 	outputf("\n-------------------------------------------------------------------------------\n\n")

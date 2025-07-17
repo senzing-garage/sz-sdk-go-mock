@@ -67,6 +67,21 @@ type Szabstractfactory struct {
 // ----------------------------------------------------------------------------
 
 /*
+Method Close will destroy and perform cleanup for the Senzing objects created by the AbstractFactory.
+It should be called after all other calls are complete.
+
+Input
+  - ctx: A context to control lifecycle.
+*/
+func (factory *Szabstractfactory) Close(ctx context.Context) error {
+	var err error
+
+	_ = ctx
+
+	return err
+}
+
+/*
 Method CreateConfigManager returns an SzConfigManager object
 implemented to use the Senzing native C binary, libSz.so.
 
@@ -182,21 +197,6 @@ func (factory *Szabstractfactory) CreateProduct(ctx context.Context) (senzing.Sz
 	}
 
 	return result, wraperror.Errorf(err, wraperror.NoMessage)
-}
-
-/*
-Method Destroy will destroy and perform cleanup for the Senzing objects created by the AbstractFactory.
-It should be called after all other calls are complete.
-
-Input
-  - ctx: A context to control lifecycle.
-*/
-func (factory *Szabstractfactory) Destroy(ctx context.Context) error {
-	var err error
-
-	_ = ctx
-
-	return err
 }
 
 /*

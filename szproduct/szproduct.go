@@ -38,6 +38,34 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
+Method Destroy will destroy and perform cleanup for the Senzing SzProduct object.
+It should be called after all other calls are complete.
+
+Input
+  - ctx: A context to control lifecycle.
+*/
+func (client *Szproduct) Destroy(ctx context.Context) error {
+	var err error
+
+	if client.isTrace {
+		client.traceEntry(3)
+
+		entryTime := time.Now()
+
+		defer func() { client.traceExit(4, err, time.Since(entryTime)) }()
+	}
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
+		}()
+	}
+
+	return wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+/*
 Method GetLicense retrieves information about the license used by the Senzing API.
 
 Input

@@ -79,6 +79,34 @@ func (client *Szdiagnostic) CheckRepositoryPerformance(ctx context.Context, seco
 }
 
 /*
+Method Destroy will destroy and perform cleanup for the Senzing SzDiagnostic object.
+It should be called after all other calls are complete.
+
+Input
+  - ctx: A context to control lifecycle.
+*/
+func (client *Szdiagnostic) Destroy(ctx context.Context) error {
+	var err error
+
+	if client.isTrace {
+		client.traceEntry(5)
+
+		entryTime := time.Now()
+
+		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
+	}
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8002, err, details)
+		}()
+	}
+
+	return wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+/*
 Method GetFeature is an experimental method that returns diagnostic information of a feature.
 Not recommended for use.
 

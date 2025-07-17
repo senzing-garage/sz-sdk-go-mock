@@ -29,7 +29,7 @@ func TestSzAbstractFactory_CreateConfigManager(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 
 	szConfigManager, err := szAbstractFactory.CreateConfigManager(ctx)
 	require.NoError(test, err)
@@ -43,7 +43,7 @@ func TestSzAbstractFactory_CreateDiagnostic(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 
 	szDiagnostic, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)
@@ -57,7 +57,7 @@ func TestSzAbstractFactory_CreateEngine(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 
 	szEngine, err := szAbstractFactory.CreateEngine(ctx)
 	require.NoError(test, err)
@@ -71,7 +71,7 @@ func TestSzAbstractFactory_CreateProduct(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 
 	szProduct, err := szAbstractFactory.CreateProduct(ctx)
 	require.NoError(test, err)
@@ -85,7 +85,7 @@ func TestSzAbstractFactory_Destroy(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 }
 
 func TestSzAbstractFactory_Reinitialize(test *testing.T) {
@@ -93,7 +93,7 @@ func TestSzAbstractFactory_Reinitialize(test *testing.T) {
 	ctx := test.Context()
 	szAbstractFactory := getTestObject(test)
 
-	defer func() { require.NoError(test, szAbstractFactory.Destroy(ctx)) }()
+	defer func() { require.NoError(test, szAbstractFactory.Close(ctx)) }()
 
 	_, err := szAbstractFactory.CreateDiagnostic(ctx)
 	require.NoError(test, err)

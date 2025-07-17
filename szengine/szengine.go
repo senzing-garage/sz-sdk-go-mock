@@ -246,6 +246,34 @@ func (client *Szengine) DeleteRecord(
 }
 
 /*
+Method Destroy will destroy and perform cleanup for the Senzing Sz object.
+It should be called after all other calls are complete.
+
+Input
+  - ctx: A context to control lifecycle.
+*/
+func (client *Szengine) Destroy(ctx context.Context) error {
+	var err error
+
+	if client.isTrace {
+		client.traceEntry(11)
+
+		entryTime := time.Now()
+
+		defer func() { client.traceExit(12, err, time.Since(entryTime)) }()
+	}
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8005, err, details)
+		}()
+	}
+
+	return wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+/*
 Method ExportCsvEntityReport initializes a cursor over a CSV document of exported entities.
 It is part of the ExportCsvEntityReport, [Szengine.FetchNext], [Szengine.CloseExportReport] lifecycle
 of a list of entities to export.
