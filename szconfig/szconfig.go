@@ -43,7 +43,7 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-Method Export retrieves the Senzing configuration JSON document.
+Method Export retrieves the definition for this configuration.
 
 Input
   - ctx: A context to control lifecycle.
@@ -61,7 +61,6 @@ func (client *Szconfig) Export(ctx context.Context) (string, error) {
 		client.traceEntry(13)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(14, result, err, time.Since(entryTime)) }()
 	}
 
@@ -78,7 +77,7 @@ func (client *Szconfig) Export(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetDataSourceRegistry returns a JSON document containing data sources defined in the Senzing configuration.
+Method GetDataSourceRegistry gets the data source registry for this configuration.
 
 Input
   - ctx: A context to control lifecycle.
@@ -96,7 +95,6 @@ func (client *Szconfig) GetDataSourceRegistry(ctx context.Context) (string, erro
 		client.traceEntry(15)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(16, result, err, time.Since(entryTime)) }()
 	}
 
@@ -113,7 +111,10 @@ func (client *Szconfig) GetDataSourceRegistry(ctx context.Context) (string, erro
 }
 
 /*
-Method RegisterDataSource adds a new data source to the Senzing configuration.
+Method RegisterDataSource adds a data source to this configuration.
+
+Because SzConfig is an in-memory representation, the repository is not changed unless the configuration
+is exported and then registered via ConfigManager.
 
 Input
   - ctx: A context to control lifecycle.
@@ -132,7 +133,6 @@ func (client *Szconfig) RegisterDataSource(ctx context.Context, dataSourceCode s
 		client.traceEntry(1, dataSourceCode)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(2, dataSourceCode, result, err, time.Since(entryTime))
 		}()
@@ -154,7 +154,15 @@ func (client *Szconfig) RegisterDataSource(ctx context.Context, dataSourceCode s
 }
 
 /*
-Method UnregisterDataSource removes a data source from the Senzing configuration.
+Method UnregisterDataSource removes a data source from this configuration.
+
+Because SzConfig is an in-memory representation, the repository is not changed unless the configuration is exported
+and then registered via ConfigManager.
+
+Is idempotent.
+
+Warning: if records in the repository refer to the unregistered datasource the configuration cannot be used
+as the active configuration.
 
 Input
   - ctx: A context to control lifecycle.
@@ -173,7 +181,6 @@ func (client *Szconfig) UnregisterDataSource(ctx context.Context, dataSourceCode
 		client.traceEntry(9, dataSourceCode)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(10, dataSourceCode, err, time.Since(entryTime)) }()
 	}
 
@@ -224,7 +231,6 @@ func (client *Szconfig) Import(ctx context.Context, configDefinition string) err
 		client.traceEntry(21, configDefinition)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(22, configDefinition, err, time.Since(entryTime)) }()
 	}
 
@@ -240,6 +246,7 @@ func (client *Szconfig) Import(ctx context.Context, configDefinition string) err
 
 /*
 Method ImportTemplate retrieves a Senzing configuration from the default template.
+
 The default template is the Senzing configuration JSON document file,
 g2config.json, located in the PIPELINE.RESOURCEPATH path.
 
@@ -259,7 +266,6 @@ func (client *Szconfig) ImportTemplate(ctx context.Context) error {
 		client.traceEntry(7)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(8, configDefinition, err, time.Since(entryTime)) }()
 	}
 
@@ -275,6 +281,7 @@ func (client *Szconfig) ImportTemplate(ctx context.Context) error {
 
 /*
 Method Initialize initializes the Senzing Szconfig object.
+
 It must be called prior to any other calls.
 
 Input
@@ -295,7 +302,6 @@ func (client *Szconfig) Initialize(
 		client.traceEntry(23, instanceName, settings, verboseLogging)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(24, instanceName, settings, verboseLogging, err, time.Since(entryTime)) }()
 	}
 
@@ -327,7 +333,6 @@ func (client *Szconfig) RegisterObserver(ctx context.Context, observer observer.
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -363,7 +368,6 @@ func (client *Szconfig) SetLogLevel(ctx context.Context, logLevelName string) er
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -412,7 +416,6 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -437,6 +440,7 @@ func (client *Szconfig) UnregisterObserver(ctx context.Context, observer observe
 
 /*
 Method VerifyConfigDefinition determines if the Senzing configuration JSON document is syntactically correct.
+
 If no error is returned, the JSON document is valid.
 
 Input
@@ -450,7 +454,6 @@ func (client *Szconfig) VerifyConfigDefinition(ctx context.Context, configDefini
 		client.traceEntry(25, configDefinition)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(26, configDefinition, err, time.Since(entryTime)) }()
 	}
 

@@ -39,6 +39,7 @@ const (
 
 /*
 Method Destroy will destroy and perform cleanup for the Senzing SzProduct object.
+
 It should be called after all other calls are complete.
 
 Input
@@ -51,7 +52,6 @@ func (client *Szproduct) Destroy(ctx context.Context) error {
 		client.traceEntry(3)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(4, err, time.Since(entryTime)) }()
 	}
 
@@ -66,7 +66,9 @@ func (client *Szproduct) Destroy(ctx context.Context) error {
 }
 
 /*
-Method GetLicense retrieves information about the license used by the Senzing API.
+Method GetLicense gets the details and entitlements of the applied product license.
+
+The details do not include the license key.
 
 Input
   - ctx: A context to control lifecycle.
@@ -84,7 +86,6 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 		client.traceEntry(9)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(10, result, err, time.Since(entryTime)) }()
 	}
 
@@ -101,7 +102,7 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetVersion returns the Senzing API version information.
+Method GetVersion gets the product version details.
 
 Input
   - ctx: A context to control lifecycle.
@@ -119,7 +120,6 @@ func (client *Szproduct) GetVersion(ctx context.Context) (string, error) {
 		client.traceEntry(11)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(12, result, err, time.Since(entryTime)) }()
 	}
 
@@ -168,7 +168,6 @@ func (client *Szproduct) RegisterObserver(ctx context.Context, observer observer
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -204,7 +203,6 @@ func (client *Szproduct) SetLogLevel(ctx context.Context, logLevelName string) e
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -253,7 +251,6 @@ func (client *Szproduct) UnregisterObserver(ctx context.Context, observer observ
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 

@@ -69,13 +69,14 @@ const (
 // ----------------------------------------------------------------------------
 
 /*
-Method AddRecord adds a record into the Senzing repository.
-The unique identifier of a record is the [dataSourceCode, recordID] compound key.
-If the unique identifier does not exist in the Senzing repository, a new record definition is created in the
-Senzing repository.
-If the unique identifier already exists, the new record definition will replace the old record definition.
-If the record definition contains JSON keys of `DATA_SOURCE` and/or `RECORD_ID`, they must match the values of `
-dataSourceCode` and `recordID`.
+Method AddRecord loads a record into the repository and performs entity resolution.
+
+If a record already exists with the same data source code and record ID, it will be replaced.
+
+If the record definition contains DATA_SOURCE and RECORD_ID JSON keys,
+the values must match the dataSourceCode and recordID parameters.
+
+The data source code must be registered in the active configuration.
 
 Input
   - ctx: A context to control lifecycle.
@@ -103,7 +104,6 @@ func (client *Szengine) AddRecord(
 		client.traceEntry(1, dataSourceCode, recordID, recordDefinition, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(2, dataSourceCode, recordID, recordDefinition, flags, result, err, time.Since(entryTime))
 		}()
@@ -126,11 +126,9 @@ func (client *Szengine) AddRecord(
 }
 
 /*
-Method CloseExportReport closes the exported document created by [Szengine.ExportJSONEntityReport] or
-[Szengine.ExportCsvEntityReport].
-It is part of the ExportXxxEntityReport(), [Szengine.FetchNext], CloseExportReport lifecycle of a list of entities
-to export.
-CloseExportReport is idempotent; an exportHandle may be closed multiple times.
+Method CloseExportReport closes an export report.
+
+Used in conjunction with ExportJsonEntityReport(), ExportCsvEntityReport(), and FetchNext().
 
 Input
   - ctx: A context to control lifecycle.
@@ -144,7 +142,6 @@ func (client *Szengine) CloseExportReport(ctx context.Context, exportHandle uint
 		client.traceEntry(5, exportHandle)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(6, exportHandle, err, time.Since(entryTime)) }()
 	}
 
@@ -159,8 +156,7 @@ func (client *Szengine) CloseExportReport(ctx context.Context, exportHandle uint
 }
 
 /*
-Method CountRedoRecords returns the number of records needing re-evaluation.
-These are often called "redo records".
+Method CountRedoRecords gets the number of redo records pending processing.
 
 Input
   - ctx: A context to control lifecycle.
@@ -178,7 +174,6 @@ func (client *Szengine) CountRedoRecords(ctx context.Context) (int64, error) {
 		client.traceEntry(7)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(8, result, err, time.Since(entryTime)) }()
 	}
 
@@ -195,11 +190,11 @@ func (client *Szengine) CountRedoRecords(ctx context.Context) (int64, error) {
 }
 
 /*
-Method DeleteRecord deletes a record from the Senzing repository.
-The unique identifier of a record is the [dataSourceCode, recordID] compound key.
-DeleteRecord() is idempotent.
-Multiple calls to delete the same unique identifier will all succeed,
-even if the unique identifier is not present in the Senzing repository.
+Method DeleteRecord deletes a record from the repository and performs entity resolution.
+
+The data source code must be registered in the active configuration.
+
+Is idempotent.
 
 Input
   - ctx: A context to control lifecycle.
@@ -225,7 +220,6 @@ func (client *Szengine) DeleteRecord(
 		client.traceEntry(9, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(10, dataSourceCode, recordID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -247,6 +241,7 @@ func (client *Szengine) DeleteRecord(
 
 /*
 Method Destroy will destroy and perform cleanup for the Senzing Sz object.
+
 It should be called after all other calls are complete.
 
 Input
@@ -259,7 +254,6 @@ func (client *Szengine) Destroy(ctx context.Context) error {
 		client.traceEntry(11)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(12, err, time.Since(entryTime)) }()
 	}
 
@@ -274,11 +268,15 @@ func (client *Szengine) Destroy(ctx context.Context) error {
 }
 
 /*
-Method ExportCsvEntityReport initializes a cursor over a CSV document of exported entities.
-It is part of the ExportCsvEntityReport, [Szengine.FetchNext], [Szengine.CloseExportReport] lifecycle
-of a list of entities to export.
-The first exported line is the CSV header.
-Each subsequent line contains metadata for a single entity.
+Method ExportCsvEntityReport initiates an export report of entity data in CSV format.
+
+Used in conjunction with FetchNext() and CloseEntityReport().
+
+The first FetchNext() call, after calling this method, returns the CSV header.
+
+Subsequent FetchNext() calls return exported entity data in CSV format.
+
+Use with large repositories is not advised.
 
 Input
   - ctx: A context to control lifecycle.
@@ -299,7 +297,6 @@ func (client *Szengine) ExportCsvEntityReport(ctx context.Context, csvColumnList
 		client.traceEntry(13, csvColumnList, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(14, csvColumnList, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -320,6 +317,7 @@ func (client *Szengine) ExportCsvEntityReport(ctx context.Context, csvColumnList
 /*
 Method ExportCsvEntityReportIterator creates an Iterator that can be used in a for-loop
 to scroll through a CSV document of exported entities.
+
 It is a convenience method for the [Szenzine.ExportCsvEntityReport], [Szengine.FetchNext], [Szengine.CloseExportReport]
 lifecycle of a list of entities to export.
 
@@ -348,7 +346,6 @@ func (client *Szengine) ExportCsvEntityReportIterator(
 			client.traceEntry(15, csvColumnList, flags)
 
 			entryTime := time.Now()
-
 			defer func() { client.traceExit(16, csvColumnList, flags, err, time.Since(entryTime)) }()
 		}
 
@@ -366,9 +363,13 @@ func (client *Szengine) ExportCsvEntityReportIterator(
 }
 
 /*
-Method ExportJSONEntityReport initializes a cursor over a JSON document of exported entities.
-It is part of the ExportJSONEntityReport, [Szengine.FetchNext], [Szengine.CloseExportReport] lifecycle
-of a list of entities to export.
+Method ExportJSONEntityReport initiates an export report of entity data in JSON Lines format.
+
+Used in conjunction with FetchNext)() and CloseEntityReport().
+
+Each fetchNext() call returns exported entity data as a JSON object.
+
+Use with large repositories is not advised.
 
 Input
   - ctx: A context to control lifecycle.
@@ -387,7 +388,6 @@ func (client *Szengine) ExportJSONEntityReport(ctx context.Context, flags int64)
 		client.traceEntry(17, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(18, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -408,6 +408,7 @@ func (client *Szengine) ExportJSONEntityReport(ctx context.Context, flags int64)
 /*
 Method ExportJSONEntityReportIterator creates an Iterator that can be used in a for-loop
 to scroll through a JSON document of exported entities.
+
 It is a convenience method for the [Szengine.ExportJSONEntityReport], [Szengine.FetchNext], [Szengine.CloseExportReport]
 lifecycle of a list of entities to export.
 
@@ -430,7 +431,6 @@ func (client *Szengine) ExportJSONEntityReportIterator(ctx context.Context, flag
 			client.traceEntry(19, flags)
 
 			entryTime := time.Now()
-
 			defer func() { client.traceExit(20, flags, err, time.Since(entryTime)) }()
 		}
 
@@ -446,9 +446,17 @@ func (client *Szengine) ExportJSONEntityReportIterator(ctx context.Context, flag
 }
 
 /*
-Method FetchNext is used to scroll through an exported JSON or CSV document.
-It is part of the [Szengine.ExportJSONEntityReport] or [Szengine.ExportCsvEntityReport], FetchNext,
-[Szengine.CloseExportReport] lifecycle of a list of exported entities.
+Method FetchNext fetches the next line of entity data from an open export report.
+
+Used in conjunction with ExportJsonEntityReport(), ExportCsvEntityReport(), and CloseEntityReport().
+
+If the export handle was obtained from ExportCsvEntityReport(), this returns the CSV header on the first call and
+exported entity data in CSV format on subsequent calls.
+
+If the export handle was obtained from ExportJsonEntityReport(), this returns exported entity data as a JSON object.
+
+When empty string is returned, the export report is complete
+and the caller should invoke closeExportReport() to free resources.
 
 Input
   - ctx: A context to control lifecycle.
@@ -467,7 +475,6 @@ func (client *Szengine) FetchNext(ctx context.Context, exportHandle uintptr) (st
 		client.traceEntry(21, exportHandle)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(22, exportHandle, result, err, time.Since(entryTime)) }()
 	}
 
@@ -485,7 +492,8 @@ func (client *Szengine) FetchNext(ctx context.Context, exportHandle uintptr) (st
 
 /*
 Method FindInterestingEntitiesByEntityID is an experimental method.
-Not recommended for use.
+
+Contact Senzing support.
 
 Input
   - ctx: A context to control lifecycle.
@@ -509,7 +517,6 @@ func (client *Szengine) FindInterestingEntitiesByEntityID(
 		client.traceEntry(23, entityID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(24, entityID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -530,7 +537,8 @@ func (client *Szengine) FindInterestingEntitiesByEntityID(
 
 /*
 Method FindInterestingEntitiesByRecordID is an experimental method.
-Not recommended for use.
+
+Contact Senzing support.
 
 Input
   - ctx: A context to control lifecycle.
@@ -556,7 +564,6 @@ func (client *Szengine) FindInterestingEntitiesByRecordID(
 		client.traceEntry(25, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(26, dataSourceCode, recordID, flags, result, err, time.Since(entryTime))
 		}()
@@ -579,9 +586,10 @@ func (client *Szengine) FindInterestingEntitiesByRecordID(
 }
 
 /*
-Method FindNetworkByEntityID finds a network of entities surrounding a requested set of entities.
-This includes the requested entities, paths between them, and relations to other nearby entities.
-The size and character of the returned network can be modified by input parameters.
+Method FindNetworkByEntityID retrieves a network of relationships among entities, specified by entity IDs.
+
+Warning: Entity networks may be very large due to the volume of inter-related data in the repository.
+The parameters of this method can be used to limit the information returned.
 
 Input
   - ctx: A context to control lifecycle.
@@ -613,7 +621,6 @@ func (client *Szengine) FindNetworkByEntityID(
 		client.traceEntry(27, entityIDs, maxDegrees, buildOutDegrees, buildOutMaxEntities, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(
 				28,
@@ -645,10 +652,10 @@ func (client *Szengine) FindNetworkByEntityID(
 }
 
 /*
-Method FindNetworkByRecordID finds a network of entities surrounding a requested set of entities identified
-by record keys.
-This includes the requested entities, paths between them, and relations to other nearby entities.
-The size and character of the returned network can be modified by input parameters.
+Method FindNetworkByRecordID retrieves a network of relationships among entities, specified by record IDs.
+
+Warning: Entity networks may be very large due to the volume of inter-related data in the repository.
+The parameters of this method can be used to limit the information returned.
 
 Input
   - ctx: A context to control lifecycle.
@@ -680,7 +687,6 @@ func (client *Szengine) FindNetworkByRecordID(
 		client.traceEntry(29, recordKeys, maxDegrees, buildOutDegrees, buildOutMaxEntities, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(
 				30,
@@ -712,9 +718,9 @@ func (client *Szengine) FindNetworkByRecordID(
 }
 
 /*
-Method FindPathByEntityID finds a relationship path between two entities.
-Paths are found using known relationships with other entities.
-The path can be modified by input parameters.
+Method FindPathByEntityID searches for the shortest relationship path between two entities, specified by entity IDs.
+
+The returned path is the shortest path among the paths that satisfy the parameters.
 
 Input
   - ctx: A context to control lifecycle.
@@ -750,7 +756,6 @@ func (client *Szengine) FindPathByEntityID(
 		client.traceEntry(31, startEntityID, endEntityID, maxDegrees, avoidEntityIDs, requiredDataSources, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(32, startEntityID, endEntityID, maxDegrees, avoidEntityIDs, requiredDataSources,
 				flags, result, err, time.Since(entryTime))
@@ -776,9 +781,9 @@ func (client *Szengine) FindPathByEntityID(
 }
 
 /*
-Method FindPathByRecordID finds a relationship path between two entities identified by record keys.
-Paths are found using known relationships with other entities.
-The path can be modified by input parameters.
+Method FindPathByRecordID searches for the shortest relationship path between two entities, specifiec by record IDs.
+
+The returned path is the shortest path among the paths that satisfy the parameters.
 
 Input
   - ctx: A context to control lifecycle.
@@ -867,7 +872,9 @@ func (client *Szengine) FindPathByRecordID(
 }
 
 /*
-Method GetActiveConfigID returns the Senzing configuration JSON document identifier.
+Method GetActiveConfigID gets the currently active configuration ID.
+
+May not be the default configuration ID.
 
 Input
   - ctx: A context to control lifecycle.
@@ -885,7 +892,6 @@ func (client *Szengine) GetActiveConfigID(ctx context.Context) (int64, error) {
 		client.traceEntry(35)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(36, result, err, time.Since(entryTime)) }()
 	}
 
@@ -902,7 +908,7 @@ func (client *Szengine) GetActiveConfigID(ctx context.Context) (int64, error) {
 }
 
 /*
-Method GetEntityByEntityID returns information about a resolved identity.
+Method GetEntityByEntityID retrieves information about an entity, specified by entity ID.
 
 Input
   - ctx: A context to control lifecycle.
@@ -923,7 +929,6 @@ func (client *Szengine) GetEntityByEntityID(ctx context.Context, entityID int64,
 		client.traceEntry(37, entityID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(38, entityID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -943,8 +948,7 @@ func (client *Szengine) GetEntityByEntityID(ctx context.Context, entityID int64,
 }
 
 /*
-Method GetEntityByRecordID returns information about a resolved entity identified by a record
-which is a member of the entity.
+Method GetEntityByRecordID retrieves information about an entity, specified by record ID.
 
 Input
   - ctx: A context to control lifecycle.
@@ -970,7 +974,6 @@ func (client *Szengine) GetEntityByRecordID(
 		client.traceEntry(39, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(40, dataSourceCode, recordID, flags, result, err, time.Since(entryTime))
 		}()
@@ -993,7 +996,10 @@ func (client *Szengine) GetEntityByRecordID(
 }
 
 /*
-Method GetRecord returns a JSON document containing a single record from the Senzing repository.
+Method GetRecord retrieves information about a record.
+
+The information contains the original record data that was loaded and may contain other information
+depending on the flags parameter.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1019,7 +1025,6 @@ func (client *Szengine) GetRecord(
 		client.traceEntry(45, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(46, dataSourceCode, recordID, flags, result, err, time.Since(entryTime))
 		}()
@@ -1042,8 +1047,59 @@ func (client *Szengine) GetRecord(
 }
 
 /*
-Method GetRedoRecord returns the next maintenance record from the Senzing repository.
-Usually, [Szengine.ProcessRedoRecord] is called to process the maintenance record retrieved by GetRedoRecord.
+Method GetRecordPreview describes the features resulting from the hypothetical load of a record.
+
+Used to preview the features for a record that has not been loaded.
+
+Input
+  - ctx: A context to control lifecycle.
+  - recordDefinition: A JSON document containing the record to be tested against the Senzing repository.
+  - flags: Flags used to control information returned.
+
+Output
+  - A JSON document containing metadata as specified by the flags.
+*/
+func (client *Szengine) GetRecordPreview(ctx context.Context, recordDefinition string, flags int64) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	if client.isTrace {
+		client.traceEntry(77, recordDefinition, flags)
+
+		entryTime := time.Now()
+		defer func() {
+			client.traceExit(78, recordDefinition, flags, result, err, time.Since(entryTime))
+		}()
+	}
+
+	result = client.GetRecordPreviewResult
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"flags": strconv.FormatInt(flags, baseTen),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8035, err, details)
+		}()
+	}
+
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+/*
+Method GetRedoRecord retrieves and removes a pending redo record.
+
+An empty value will be returned if there are no pending redo records.
+
+Use processRedoRecord() to process the result of this function.
+
+Once a redo record is retrieved, it is no longer tracked by Senzing.
+
+The redo record may be stored externally for later processing.
+
+See also countRedoRecords(), processRedoRecord().
 
 Input
   - ctx: A context to control lifecycle.
@@ -1061,7 +1117,6 @@ func (client *Szengine) GetRedoRecord(ctx context.Context) (string, error) {
 		client.traceEntry(47)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(48, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1078,8 +1133,11 @@ func (client *Szengine) GetRedoRecord(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetStats retrieves workload statistics for the current process.
-These statistics are automatically reset after each call.
+Method GetStats gets and resets the internal engine workload statistics for the current operating system process.
+
+The output is helpful when interacting with Senzing support.
+
+Best practice to periodically log the results.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1097,7 +1155,6 @@ func (client *Szengine) GetStats(ctx context.Context) (string, error) {
 		client.traceEntry(49)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(50, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1114,7 +1171,9 @@ func (client *Szengine) GetStats(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetVirtualEntityByRecordID describes a hypothetical entity based on a list of records.
+Method GetVirtualEntityByRecordID describes how an entity would look if composed of a given set of records.
+
+Virtual entities do not have relationships.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1139,7 +1198,6 @@ func (client *Szengine) GetVirtualEntityByRecordID(
 		client.traceEntry(51, recordKeys, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(52, recordKeys, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1159,7 +1217,7 @@ func (client *Szengine) GetVirtualEntityByRecordID(
 }
 
 /*
-Method HowEntityByEntityID explains how an entity was constructed from its constituent records.
+Method HowEntityByEntityID explains how an entity was constructed from its records.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1179,7 +1237,6 @@ func (client *Szengine) HowEntityByEntityID(ctx context.Context, entityID int64,
 		client.traceEntry(53, entityID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(54, entityID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1199,48 +1256,10 @@ func (client *Szengine) HowEntityByEntityID(ctx context.Context, entityID int64,
 }
 
 /*
-Method GetRecordPreview tests adding a record into the Senzing repository.
+Method PrimeEngine pre-loads engine resources.
 
-Input
-  - ctx: A context to control lifecycle.
-  - recordDefinition: A JSON document containing the record to be tested against the Senzing repository.
-  - flags: Flags used to control information returned.
-
-Output
-  - A JSON document containing metadata as specified by the flags.
-*/
-func (client *Szengine) GetRecordPreview(ctx context.Context, recordDefinition string, flags int64) (string, error) {
-	var (
-		err    error
-		result string
-	)
-
-	if client.isTrace {
-		client.traceEntry(77, recordDefinition, flags)
-
-		entryTime := time.Now()
-
-		defer func() {
-			client.traceExit(78, recordDefinition, flags, result, err, time.Since(entryTime))
-		}()
-	}
-
-	result = client.GetRecordPreviewResult
-
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"flags": strconv.FormatInt(flags, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8035, err, details)
-		}()
-	}
-
-	return result, wraperror.Errorf(err, wraperror.NoMessage)
-}
-
-/*
-Method PrimeEngine pre-initializes some of the heavier weight internal resources of the Senzing engine.
+Explicitly calling this method ensures the performance cost is incurred at a predictable time rather than unexpectedly
+with the first call requiring the resource.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1252,7 +1271,6 @@ func (client *Szengine) PrimeEngine(ctx context.Context) error {
 		client.traceEntry(57)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(58, err, time.Since(entryTime)) }()
 	}
 
@@ -1267,8 +1285,13 @@ func (client *Szengine) PrimeEngine(ctx context.Context) error {
 }
 
 /*
-Method ProcessRedoRecord processes a redo record retrieved by [Szengine.GetRedoRecord].
-Calling ProcessRedoRecord has the potential to create more redo records in certain situations.
+Method ProcessRedoRecord processes the provided redo record.
+
+This operation performs entity resolution.
+
+Calling processRedoRecord() has the potential to create more redo records in certain situations.
+
+See also getRedoRecord() countRedoRecords().
 
 Input
   - ctx: A context to control lifecycle.
@@ -1286,7 +1309,6 @@ func (client *Szengine) ProcessRedoRecord(ctx context.Context, redoRecord string
 		client.traceEntry(59, redoRecord, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(60, redoRecord, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1305,10 +1327,11 @@ func (client *Szengine) ProcessRedoRecord(ctx context.Context, redoRecord string
 }
 
 /*
-Method ReevaluateEntity verifies that the entity is consistent with its records.
-If inconsistent, ReevaluateEntity() adjusts the entity definition, splits entities, and/or merges entities.
-Usually, the ReevaluateEntity method is called after a Senzing configuration change to impact
-entities immediately.
+Method ReevaluateEntity reevaluates an entity by entity ID.
+
+This operation performs entity resolution.
+
+If the entity is not found, then no changes are made.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1325,7 +1348,6 @@ func (client *Szengine) ReevaluateEntity(ctx context.Context, entityID int64, fl
 		client.traceEntry(61, entityID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(62, entityID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1345,10 +1367,11 @@ func (client *Szengine) ReevaluateEntity(ctx context.Context, entityID int64, fl
 }
 
 /*
-Method ReevaluateRecord verifies that a record is consistent with the entity to which it belongs.
-If inconsistent, ReevaluateRecord() adjusts the entity definition, splits entities, and/or merges entities.
-Usually, the ReevaluateRecord method is called after a Senzing configuration change to impact
-the record immediately.
+Method ReevaluateRecord reevaluates an entity by record ID.
+
+This operation performs entity resolution.
+
+If the record is not found, then no changes are made.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1371,7 +1394,6 @@ func (client *Szengine) ReevaluateRecord(
 		client.traceEntry(63, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(64, dataSourceCode, recordID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1392,38 +1414,9 @@ func (client *Szengine) ReevaluateRecord(
 }
 
 /*
-Method Reinitialize re-initializes the Senzing engine with a specific Senzing configuration JSON document identifier.
+Method SearchByAttributes searches for entities that match or relate to the provided attributes.
 
-Input
-  - ctx: A context to control lifecycle.
-  - configID: The Senzing configuration JSON document identifier used for the initialization.
-*/
-func (client *Szengine) Reinitialize(ctx context.Context, configID int64) error {
-	var err error
-
-	if client.isTrace {
-		entryTime := time.Now()
-
-		client.traceEntry(65, configID)
-
-		defer func() { client.traceExit(66, configID, err, time.Since(entryTime)) }()
-	}
-
-	if client.observers != nil {
-		go func() {
-			details := map[string]string{
-				"configID": strconv.FormatInt(configID, baseTen),
-			}
-			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8030, err, details)
-		}()
-	}
-
-	return err
-}
-
-/*
-Method SearchByAttributes retrieves entity data based on entity attributes
-and an optional search profile.
+The default search profile is SEARCH. Alternatively, INGEST may be used.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1452,7 +1445,6 @@ func (client *Szengine) SearchByAttributes(
 		client.traceEntry(69, attributes, searchProfile, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(70, attributes, searchProfile, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1473,7 +1465,7 @@ func (client *Szengine) SearchByAttributes(
 }
 
 /*
-Method WhyEntities explains the ways in which two entities are related to each other.
+Method WhyEntities describes the ways two entities relate to each other.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1499,7 +1491,6 @@ func (client *Szengine) WhyEntities(
 		client.traceEntry(71, entityID1, entityID2, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(72, entityID1, entityID2, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1520,7 +1511,7 @@ func (client *Szengine) WhyEntities(
 }
 
 /*
-Method WhyRecordInEntity explains why a record belongs to its resolved entitiy.
+Method WhyRecordInEntity describes the ways a record relates to the rest of its respective entity.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1546,7 +1537,6 @@ func (client *Szengine) WhyRecordInEntity(
 		client.traceEntry(73, dataSourceCode, recordID, flags)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(74, dataSourceCode, recordID, flags, result, err, time.Since(entryTime)) }()
 	}
 
@@ -1567,7 +1557,7 @@ func (client *Szengine) WhyRecordInEntity(
 }
 
 /*
-Method WhyRecords describes ways in which two records are related to each other.
+Method WhyRecords describes the ways two records relate to each other.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1597,7 +1587,6 @@ func (client *Szengine) WhyRecords(
 		client.traceEntry(75, dataSourceCode1, recordID1, dataSourceCode2, recordID2, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(
 				76,
@@ -1632,7 +1621,9 @@ func (client *Szengine) WhyRecords(
 }
 
 /*
-Method WhySearch ...
+Method WhySearch describes the ways a set of search attributes relate to an entity.
+
+The default search profile is SEARCH. Alternatively, INGEST may be used.
 
 Input
   - ctx: A context to control lifecycle.
@@ -1663,7 +1654,6 @@ func (client *Szengine) WhySearch(
 		client.traceEntry(69, attributes, entityID, searchProfile, flags)
 
 		entryTime := time.Now()
-
 		defer func() {
 			client.traceExit(70, attributes, entityID, searchProfile, flags, result, err, time.Since(entryTime))
 		}()
@@ -1706,6 +1696,38 @@ func (client *Szengine) GetObserverOrigin(ctx context.Context) string {
 }
 
 /*
+Method Initialize initializes the SzEngine object.
+
+It must be called prior to any other calls.
+
+Input
+  - ctx: A context to control lifecycle.
+  - configID: The Senzing configuration JSON document identifier used for the initialization.
+*/
+func (client *Szengine) Reinitialize(ctx context.Context, configID int64) error {
+	var err error
+
+	if client.isTrace {
+		entryTime := time.Now()
+
+		client.traceEntry(65, configID)
+
+		defer func() { client.traceExit(66, configID, err, time.Since(entryTime)) }()
+	}
+
+	if client.observers != nil {
+		go func() {
+			details := map[string]string{
+				"configID": strconv.FormatInt(configID, baseTen),
+			}
+			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8030, err, details)
+		}()
+	}
+
+	return err
+}
+
+/*
 Method RegisterObserver adds the observer to the list of observers notified.
 
 Input
@@ -1719,7 +1741,6 @@ func (client *Szengine) RegisterObserver(ctx context.Context, observer observer.
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -1755,7 +1776,6 @@ func (client *Szengine) SetLogLevel(ctx context.Context, logLevelName string) er
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -1804,7 +1824,6 @@ func (client *Szengine) UnregisterObserver(ctx context.Context, observer observe
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
-
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
