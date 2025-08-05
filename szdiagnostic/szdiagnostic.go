@@ -66,6 +66,7 @@ func (client *Szdiagnostic) CheckRepositoryPerformance(ctx context.Context, seco
 		client.traceEntry(1, secondsToRun)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(2, secondsToRun, result, err, time.Since(entryTime)) }()
 	}
 
@@ -96,6 +97,7 @@ func (client *Szdiagnostic) Destroy(ctx context.Context) error {
 		client.traceEntry(5)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(6, err, time.Since(entryTime)) }()
 	}
 
@@ -130,6 +132,7 @@ func (client *Szdiagnostic) GetFeature(ctx context.Context, featureID int64) (st
 		client.traceEntry(9, featureID)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(10, featureID, result, err, time.Since(entryTime)) }()
 	}
 
@@ -167,6 +170,7 @@ func (client *Szdiagnostic) GetRepositoryInfo(ctx context.Context) (string, erro
 		client.traceEntry(7)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(8, result, err, time.Since(entryTime)) }()
 	}
 
@@ -201,6 +205,7 @@ func (client *Szdiagnostic) PurgeRepository(ctx context.Context) error {
 		client.traceEntry(17)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(18, err, time.Since(entryTime)) }()
 	}
 
@@ -247,6 +252,7 @@ func (client *Szdiagnostic) RegisterObserver(ctx context.Context, observer obser
 		client.traceEntry(703, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(704, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
@@ -282,6 +288,7 @@ func (client *Szdiagnostic) SetLogLevel(ctx context.Context, logLevelName string
 		client.traceEntry(705, logLevelName)
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(706, logLevelName, err, time.Since(entryTime)) }()
 	}
 
@@ -330,6 +337,7 @@ func (client *Szdiagnostic) UnregisterObserver(ctx context.Context, observer obs
 		client.traceEntry(707, observer.GetObserverID(ctx))
 
 		entryTime := time.Now()
+
 		defer func() { client.traceExit(708, observer.GetObserverID(ctx), err, time.Since(entryTime)) }()
 	}
 
