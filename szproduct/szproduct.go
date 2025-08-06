@@ -39,6 +39,7 @@ const (
 
 /*
 Method Destroy will destroy and perform cleanup for the Senzing SzProduct object.
+
 It should be called after all other calls are complete.
 
 Input
@@ -66,7 +67,9 @@ func (client *Szproduct) Destroy(ctx context.Context) error {
 }
 
 /*
-Method GetLicense retrieves information about the license used by the Senzing API.
+Method GetLicense gets the details and entitlements of the applied product license.
+
+The details do not include the license key.
 
 Input
   - ctx: A context to control lifecycle.
@@ -101,7 +104,7 @@ func (client *Szproduct) GetLicense(ctx context.Context) (string, error) {
 }
 
 /*
-Method GetVersion returns the Senzing API version information.
+Method GetVersion gets the product version details.
 
 Input
   - ctx: A context to control lifecycle.
