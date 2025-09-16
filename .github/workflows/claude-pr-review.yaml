@@ -1,10 +1,10 @@
-name: Claude Auto Review with Tracking
+name: Claude PR Review Checklist
 on:
   pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+    types: [opened, synchronize]
 
 jobs:
-  review:
+  checklist-review:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,18 +18,38 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          track_progress: true # ✨ Enables tracking comments
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Please review this pull request with a focus on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Security implications
-            - Performance considerations
+            Review this PR against our team checklist:
 
-            Provide detailed feedback using inline comments for specific issues.
+            ## Code Quality
+            - [ ] Code follows our style guide
+            - [ ] No commented-out code
+            - [ ] Meaningful variable names
+            - [ ] DRY principle followed
+
+            ## Testing
+            - [ ] Unit tests for new functions
+            - [ ] Integration tests for new endpoints
+            - [ ] Edge cases covered
+            - [ ] Test coverage > 80%
+
+            ## Documentation
+            - [ ] README updated if needed
+            - [ ] API docs updated
+            - [ ] Inline comments for complex logic
+            - [ ] CHANGELOG.md updated
+
+            ## Security
+            - [ ] No hardcoded credentials
+            - [ ] Input validation implemented
+            - [ ] Proper error handling
+            - [ ] No sensitive data in logs
+
+            For each item, check if it's satisfied and comment on any that need attention.
+            Post a summary comment with checklist results.
 
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"
