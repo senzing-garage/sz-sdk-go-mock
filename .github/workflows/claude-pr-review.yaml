@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          persist-credentials: false
 
       - uses: anthropics/claude-code-action@v1
         with:
