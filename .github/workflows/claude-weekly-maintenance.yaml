@@ -1,5 +1,7 @@
 name: Weekly Maintenance
 on:
+  push:
+    branches: "claude-test"
   schedule:
     - cron: "0 0 * * 0" # Every Sunday at midnight
   workflow_dispatch: # Manual trigger option
