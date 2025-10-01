@@ -3,8 +3,7 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   checklist-review:
@@ -19,6 +18,8 @@ jobs:
           persist-credentials: false
 
       - uses: anthropics/claude-code-action@v1
+        env:
+          anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |

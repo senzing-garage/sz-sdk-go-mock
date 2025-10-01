@@ -11,6 +11,8 @@ permissions:
 jobs:
   go-test-darwin:
     name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -22,7 +24,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup go ${{ matrix.go }}
         uses: actions/setup-go@v6
@@ -55,6 +57,8 @@ jobs:
   coverage:
     name: Coverage
     needs: go-test-darwin
-    uses: senzing-factory/build-resources/.github/workflows/go-coverage.yaml@v2
+    permissions:
+      contents: read
+    uses: senzing-factory/build-resources/.github/workflows/go-coverage.yaml@v3
     with:
       coverage-config: ./.github/coverage/testcoverage.yaml
