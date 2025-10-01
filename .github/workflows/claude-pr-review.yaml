@@ -3,8 +3,7 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   checklist-review:
