@@ -267,6 +267,7 @@ func ExampleSzengine_FetchNext() {
 
 		jsonEntityReportBuilder.WriteString(jsonEntityReportFragment)
 	}
+
 	_ = jsonEntityReportBuilder.String()
 
 	// Output:
