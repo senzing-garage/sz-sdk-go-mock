@@ -259,6 +259,8 @@ func ExampleSzengine_FetchNext() {
 		jsonEntityReportFragment, err := szEngine.FetchNext(ctx, exportHandle)
 		if err != nil {
 			handleError(err)
+
+			return
 		}
 
 		if len(jsonEntityReportFragment) == 0 {
@@ -269,7 +271,6 @@ func ExampleSzengine_FetchNext() {
 	}
 
 	_ = jsonEntityReportBuilder.String()
-
 	// Output:
 }
 
