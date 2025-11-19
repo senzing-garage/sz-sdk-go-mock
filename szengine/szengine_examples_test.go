@@ -259,6 +259,7 @@ func ExampleSzengine_FetchNext() {
 		jsonEntityReportFragment, err := szEngine.FetchNext(ctx, exportHandle)
 		if err != nil {
 			handleError(err)
+
 			return
 		}
 
