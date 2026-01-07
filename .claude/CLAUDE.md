@@ -43,16 +43,16 @@ make dependencies
 
 ### Package Structure
 
-| Package             | Purpose                               | Component ID |
-|---------------------|---------------------------------------|--------------|
-| `szabstractfactory` | Factory creating all mock Sz* objects | 6030         |
-| `szconfig`          | In-memory configuration management    | 6031         |
-| `szconfigmanager`   | Configuration persistence             | 6032         |
-| `szengine`          | Entity resolution & record processing | 6033         |
-| `szdiagnostic`      | Repository diagnostics                | 6034         |
-| `szproduct`         | License & version info                | 6036         |
-| `helper`            | Shared logging/messaging utilities    | -            |
-| `testdata`          | Test data helpers                     | -            |
+| Package             | Purpose                                | Component ID |
+| ------------------- | -------------------------------------- | ------------ |
+| `szabstractfactory` | Factory creating all mock Sz\* objects | 6030         |
+| `szconfig`          | In-memory configuration management     | 6031         |
+| `szconfigmanager`   | Configuration persistence              | 6032         |
+| `szengine`          | Entity resolution & record processing  | 6033         |
+| `szdiagnostic`      | Repository diagnostics                 | 6034         |
+| `szproduct`         | License & version info                 | 6036         |
+| `helper`            | Shared logging/messaging utilities     | -            |
+| `testdata`          | Test data helpers                      | -            |
 
 ### Mock Object Pattern
 
