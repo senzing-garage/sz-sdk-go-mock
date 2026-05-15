@@ -64,6 +64,13 @@ const (
 	noError              = 0
 )
 
+const (
+	keyDataSourceCode = "dataSourceCode"
+	keyEntityID       = "entityID"
+	keyFlags          = "flags"
+	keyRecordID       = "recordID"
+)
+
 // ----------------------------------------------------------------------------
 // sz-sdk-go.SzEngine interface methods
 // ----------------------------------------------------------------------------
@@ -115,9 +122,9 @@ func (client *Szengine) AddRecord(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8001, err, details)
 		}()
@@ -235,9 +242,9 @@ func (client *Szengine) DeleteRecord(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8004, err, details)
 		}()
@@ -314,7 +321,7 @@ func (client *Szengine) ExportCsvEntityReport(ctx context.Context, csvColumnList
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"flags": strconv.FormatInt(flags, baseTen),
+				keyFlags: strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8006, err, details)
 		}()
@@ -362,7 +369,7 @@ func (client *Szengine) ExportCsvEntityReportIterator(
 		if client.observers != nil {
 			go func() {
 				details := map[string]string{
-					"flags": strconv.FormatInt(flags, baseTen),
+					keyFlags: strconv.FormatInt(flags, baseTen),
 				}
 				notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8007, err, details)
 			}()
@@ -407,7 +414,7 @@ func (client *Szengine) ExportJSONEntityReport(ctx context.Context, flags int64)
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"flags": strconv.FormatInt(flags, baseTen),
+				keyFlags: strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8008, err, details)
 		}()
@@ -539,8 +546,8 @@ func (client *Szengine) FindInterestingEntitiesByEntityID(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"entityID": formatEntityID(entityID),
-				"flags":    strconv.FormatInt(flags, baseTen),
+				keyEntityID: formatEntityID(entityID),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8011, err, details)
 		}()
@@ -589,9 +596,9 @@ func (client *Szengine) FindInterestingEntitiesByRecordID(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8012, err, details)
 		}()
@@ -658,7 +665,7 @@ func (client *Szengine) FindNetworkByEntityID(
 		go func() {
 			details := map[string]string{
 				"entityIDs": entityIDs,
-				"flags":     strconv.FormatInt(flags, baseTen),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8013, err, details)
 		}()
@@ -725,7 +732,7 @@ func (client *Szengine) FindNetworkByRecordID(
 		go func() {
 			details := map[string]string{
 				"recordKeys": recordKeys,
-				"flags":      strconv.FormatInt(flags, baseTen),
+				keyFlags:     strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8014, err, details)
 		}()
@@ -789,7 +796,7 @@ func (client *Szengine) FindPathByEntityID(
 				"endEntityID":         formatEntityID(endEntityID),
 				"avoidEntityIDs":      avoidEntityIDs,
 				"requiredDataSources": requiredDataSources,
-				"flags":               strconv.FormatInt(flags, baseTen),
+				keyFlags:              strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8015, err, details)
 		}()
@@ -880,7 +887,7 @@ func (client *Szengine) FindPathByRecordID(
 				"endRecordID":         endRecordID,
 				"avoidRecordKeys":     avoidRecordKeys,
 				"requiredDataSources": requiredDataSources,
-				"flags":               strconv.FormatInt(flags, baseTen),
+				keyFlags:              strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8016, err, details)
 		}()
@@ -957,8 +964,8 @@ func (client *Szengine) GetEntityByEntityID(ctx context.Context, entityID int64,
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"entityID": formatEntityID(entityID),
-				"flags":    strconv.FormatInt(flags, baseTen),
+				keyEntityID: formatEntityID(entityID),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8018, err, details)
 		}()
@@ -1005,9 +1012,9 @@ func (client *Szengine) GetEntityByRecordID(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8019, err, details)
 		}()
@@ -1057,9 +1064,9 @@ func (client *Szengine) GetRecord(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8020, err, details)
 		}()
@@ -1102,7 +1109,7 @@ func (client *Szengine) GetRecordPreview(ctx context.Context, recordDefinition s
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"flags": strconv.FormatInt(flags, baseTen),
+				keyFlags: strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8035, err, details)
 		}()
@@ -1233,7 +1240,7 @@ func (client *Szengine) GetVirtualEntityByRecordID(
 		go func() {
 			details := map[string]string{
 				"recordKeys": recordKeys,
-				"flags":      strconv.FormatInt(flags, baseTen),
+				keyFlags:     strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8023, err, details)
 		}()
@@ -1272,8 +1279,8 @@ func (client *Szengine) HowEntityByEntityID(ctx context.Context, entityID int64,
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"entityID": formatEntityID(entityID),
-				"flags":    strconv.FormatInt(flags, baseTen),
+				keyEntityID: formatEntityID(entityID),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8024, err, details)
 		}()
@@ -1346,7 +1353,7 @@ func (client *Szengine) ProcessRedoRecord(ctx context.Context, redoRecord string
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"flags": strconv.FormatInt(flags, baseTen),
+				keyFlags: strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8027, err, details)
 		}()
@@ -1386,8 +1393,8 @@ func (client *Szengine) ReevaluateEntity(ctx context.Context, entityID int64, fl
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"entityID": formatEntityID(entityID),
-				"flags":    strconv.FormatInt(flags, baseTen),
+				keyEntityID: formatEntityID(entityID),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8028, err, details)
 		}()
@@ -1433,9 +1440,9 @@ func (client *Szengine) ReevaluateRecord(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8029, err, details)
 		}()
@@ -1487,7 +1494,7 @@ func (client *Szengine) SearchByAttributes(
 			details := map[string]string{
 				"attributes":    attributes,
 				"searchProfile": searchProfile,
-				"flags":         strconv.FormatInt(flags, baseTen),
+				keyFlags:        strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8031, err, details)
 		}()
@@ -1534,7 +1541,7 @@ func (client *Szengine) WhyEntities(
 			details := map[string]string{
 				"entityID1": formatEntityID(entityID1),
 				"entityID2": formatEntityID(entityID2),
-				"flags":     strconv.FormatInt(flags, baseTen),
+				keyFlags:    strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8032, err, details)
 		}()
@@ -1579,9 +1586,9 @@ func (client *Szengine) WhyRecordInEntity(
 	if client.observers != nil {
 		go func() {
 			details := map[string]string{
-				"dataSourceCode": dataSourceCode,
-				"recordID":       recordID,
-				"flags":          strconv.FormatInt(flags, baseTen),
+				keyDataSourceCode: dataSourceCode,
+				keyRecordID:       recordID,
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8033, err, details)
 		}()
@@ -1646,7 +1653,7 @@ func (client *Szengine) WhyRecords(
 				"recordID1":       recordID1,
 				"dataSourceCode2": dataSourceCode2,
 				"recordID2":       recordID2,
-				"flags":           strconv.FormatInt(flags, baseTen),
+				keyFlags:          strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8034, err, details)
 		}()
@@ -1701,9 +1708,9 @@ func (client *Szengine) WhySearch(
 		go func() {
 			details := map[string]string{
 				"attributes":    attributes,
-				"entityID":      formatEntityID(entityID),
+				keyEntityID:     formatEntityID(entityID),
 				"searchProfile": searchProfile,
-				"flags":         strconv.FormatInt(flags, baseTen),
+				keyFlags:        strconv.FormatInt(flags, baseTen),
 			}
 			notifier.Notify(ctx, client.observers, client.observerOrigin, ComponentID, 8031, err, details)
 		}()
