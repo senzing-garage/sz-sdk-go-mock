@@ -18,8 +18,8 @@ github.com/senzing-garage/go-helpers v0.6.16 h1:5iT2lBJ3RlXroKluX4EHicF7L3YSlyMS
 github.com/senzing-garage/go-helpers v0.6.16/go.mod h1:wck/9kF1RkxNLu1VY2Vqaak8P2o9ykZ3x7kuwGe7Q5s=
 github.com/senzing-garage/go-logging v1.5.4 h1:xTlvbvnX2j5KAKfMhwXw278smKKuFnRLmbLY2x8a8Og=
 github.com/senzing-garage/go-logging v1.5.4/go.mod h1:4J8IpcncQtNo4+0PYaB853xvbyvt+0zBh1sAt6E5MSA=
-github.com/senzing-garage/go-messaging v1.5.3 h1:bH+LtEgNJj/PRbg1VMK9/Gk457CdfdcjMiubxffbTog=
-github.com/senzing-garage/go-messaging v1.5.3/go.mod h1:7qvSNAVyWcSIcsnDAm8obCxHItljN295O3fX4bOgfp0=
+github.com/senzing-garage/go-messaging v1.5.4 h1:YVjElG6W1mA38GWvfeegWaxGbzzt/WY8+YfkB3ddA34=
+github.com/senzing-garage/go-messaging v1.5.4/go.mod h1:9Xgftj4PB1P3Ur7KNSa05JfKk8y61pPqJHBypqwXpOw=
 github.com/senzing-garage/go-observing v0.3.7 h1:eEoxULyO3MKvObEJePh6Nmw1ZQRlahJ3GkHH9FPvB7o=
 github.com/senzing-garage/go-observing v0.3.7/go.mod h1:E/hy/eTahdfcXEPAQIELBFEBPIbYAp4hQRahbbH0u+Y=
 github.com/senzing-garage/sz-sdk-go v0.15.14 h1:Pcnms1HYy3RcGbpEW7Fikg+rhOI5/h068NDx3U84hhI=
@@ -40,8 +40,8 @@ go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/
 go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
 go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
 go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
-golang.org/x/exp v0.0.0-20260611194520-c48552f49976 h1:X8Hz2ImujgbmetVuW+w2YkyZChE3cBpZi2P158rTG9M=
-golang.org/x/exp v0.0.0-20260611194520-c48552f49976/go.mod h1:vnf4pv9iKZXY58sQE1L86zmNWJ4159e1RkcWiLCkeEY=
+golang.org/x/exp v0.0.0-20260811152304-ee035b5b010f h1:iXpLj9sdDH/RLYsnOMpbETK6KWtrHwvegcc4psWJHV8=
+golang.org/x/exp v0.0.0-20260811152304-ee035b5b010f/go.mod h1:EdfpwwqSu+0Li0mzskwHU6FWDV3t9Q+RZDo3QMUtL3Q=
 golang.org/x/net v0.56.0 h1:Rw8j/hFzGvJUZwNBXnAtf5sVDVt+65SK2C7IxCxZt5o=
 golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
 golang.org/x/sys v0.46.0 h1:noSf2Fq6F8DBgS+LysIkx7rIExoNHJsxOAtPp4rthXw=
