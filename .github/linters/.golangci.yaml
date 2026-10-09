@@ -24,7 +24,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exhaustruct
+    - exhaustruct_v5
     - exptostd
     - fatcontext
     - forbidigo
@@ -44,7 +44,7 @@ linters:
     - godox
     - goheader
     - gomoddirectives
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - gosmopolitan
@@ -109,6 +109,7 @@ linters:
     - zerologlint
   disable:
     - gochecknoglobals
+    - gochecknoinits
     - lll
     - prealloc
   exclusions:
@@ -126,7 +127,7 @@ linters:
     depguard:
       rules:
         prevent_unmaintained_packages:
-          list-mode: lax # allow unless explicitely denied
+          list-mode: lax # allow unless explicitly denied
           allow:
             - github.com/stretchr/testify/*
           deny:
@@ -134,8 +135,8 @@ linters:
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
     dupl:
       threshold: 200
-    exhaustruct:
-      exclude:
+    exhaustruct_v5:
+      ignore-patterns:
         - '.+/subject\.SimpleSubject$'
         - '.+/szabstractfactory\.Szabstractfactory$'
         - '.+/szconfig\.Szconfig$'
@@ -146,6 +147,8 @@ linters:
         - "CUSTOMERS"
     ireturn:
       allow:
+        - anon
+        - empty
         - error
         - logging.Logging
         - messenger.Messenger
@@ -156,6 +159,7 @@ linters:
         - senzing.SzDiagnostic
         - senzing.SzEngine
         - senzing.SzProduct
+        - stdlib
     mnd:
       ignored-functions:
         - '^big\.NewInt$'
